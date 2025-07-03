@@ -1,0 +1,14 @@
+return {
+  {
+    "folke/noice.nvim",
+    opts = {
+      notify = {
+        enabled = false,
+      },
+    },
+    enabled = true,
+    -- anything newer than this commit causes lazvim to hang on :q
+    commit = "d9328ef903168b6f52385a751eb384ae7e906c6f"
+  },
+  { "rcarriga/nvim-notify", enabled = false },
+}

@@ -1,0 +1,15 @@
+title = "👻"
+
+theme = catppuccin-mocha
+
+font-size=16
+
+font-family=GeistMono Nerd Font Mono
+font-style=Regular
+
+cursor-color = #fab387
+cursor-style = block
+cursor-style-blink = false
+
+clipboard-read = "allow"
+clipboard-paste-protection = false
