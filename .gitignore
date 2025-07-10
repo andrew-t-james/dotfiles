@@ -2,3 +2,5 @@ nvim/.config/nvim/lazy-lock.json
 nvim/.config/nvim/spell
 
 tmux/.config/tmux/plugins
+tmux/.config/tmux/resurrect
+tmux/.config/tmux/continuum
