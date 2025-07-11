@@ -141,10 +141,10 @@ EOF
 echo "[INFO] ~/.zshrc written successfully."
 
 # -------------------- Change Default Shell --------------------
-echo "[INFO] Setting zsh as default shell..."
+echo "[INFO] Setting zsh as default shell (using sudo)..."
 ZSH_PATH="$(command -v zsh)"
 if [[ "$SHELL" != "$ZSH_PATH" ]]; then
-  chsh -s "$ZSH_PATH"
+  sudo chsh -s "$ZSH_PATH" "$USER"
   echo "[INFO] Default shell changed to zsh. Re-login for changes to take effect."
 else
   echo "[INFO] zsh is already the default shell."
