@@ -46,9 +46,6 @@ alias envrc='echo '\''source "${HOME}/.config/env/.envrc"'\'' > .envrc && direnv
 # Kubernetes
 alias k='kubectl'
 
-# Code editors
-alias ci='code-insiders' # VSCode Insiders
-
 # ====================
 # System Utilities
 # ====================
