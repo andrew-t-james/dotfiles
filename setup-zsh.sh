@@ -44,7 +44,7 @@ ZSHRC="$HOME/.zshrc"
 echo "[INFO] Writing full ~/.zshrc..."
 
 cat >"$ZSHRC" <<'EOF'
-# Path Management
+# -------------------- Path Management --------------------
 typeset -U path
 path=(
     /opt/homebrew/bin
@@ -58,30 +58,15 @@ path=(
 )
 export PATH
 
-# Path to your Oh My Zsh installation.
+# -------------------- Oh My Zsh --------------------
 export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load.
 ZSH_THEME="robbyrussell"
+source "$ZSH/oh-my-zsh.sh"
 
-# Uncomment for random themes
-# ZSH_THEME="random"
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+# -------------------- Antigen --------------------
+export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+source "$XDG_CONFIG_HOME/zsh/antigen.zsh"
 
-# Uncomment to configure Oh My Zsh behavior
-# CASE_SENSITIVE="true"
-# HYPHEN_INSENSITIVE="true"
-# DISABLE_AUTO_UPDATE="true"
-# export UPDATE_ZSH_DAYS=13
-# DISABLE_LS_COLORS="true"
-# DISABLE_AUTO_TITLE="true"
-# ENABLE_CORRECTION="true"
-# COMPLETION_WAITING_DOTS="true"
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Antigen Plugin Management
-source $XDG_CONFIG_HOME/antigen.zsh
 antigen use oh-my-zsh
 antigen bundles <<EOBUNDLES
     git
@@ -92,50 +77,22 @@ antigen bundles <<EOBUNDLES
 EOBUNDLES
 antigen apply
 
-# Load Oh My Zsh
-source $ZSH/oh-my-zsh.sh
+# -------------------- Custom Aliases & Functions --------------------
+source "$ZDOTDIR/alias.sh"
+source "$ZDOTDIR/ssh.sh"
+source "$ZDOTDIR/functions.sh"
 
-# Load aliases and functions
-source $ZDOTDIR/alias.sh
-source $ZDOTDIR/ssh.sh
-source $ZDOTDIR/functions.sh
-
-# Terminal and tmux configuration
+# -------------------- Tool Initializations --------------------
 [[ -n $TMUX ]] && export TERM=xterm-256color
-
-# Plugin configurations
 export YSU_HARDCORE=1
-
-# Tool initializations
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export GPG_TTY=$(tty)
 
-# Starship prompt
+# -------------------- Prompts & Tools --------------------
 eval "$(starship init zsh)"
-export STARSHIP_CONFIG=$XDG_CONFIG_HOME/config/starship.toml
-
-# Navigation tools
+export STARSHIP_CONFIG="$XDG_CONFIG_HOME/starship.toml"
 eval "$(zoxide init zsh --cmd z)"
-
-# direnv
 eval "$(direnv hook zsh)"
-
-# asdf Version Manager
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
-
-# Bun configuration
-export BUN_INSTALL="$HOME/.bun"
-[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
-
-# PNPM configuration
-export PNPM_HOME="$XDG_DATA_HOME/pnpm"
-case ":$PATH:" in
-    *":$PNPM_HOME:"*) ;;
-    *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# Load local environment
-. "$XDG_DATA_HOME/../bin/env"
 EOF
 
 echo "[INFO] ~/.zshrc written successfully."
