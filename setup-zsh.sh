@@ -28,7 +28,98 @@ else
   curl -L git.io/antigen >"$ANTIGEN_FILE"
 fi
 
-# -------------------- Change default shell --------------------
+# -------------------- Install Oh My Zsh --------------------
+echo "[INFO] Installing Oh My Zsh..."
+export RUNZSH=no
+export CHSH=no
+export KEEP_ZSHRC=yes
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# -------------------- Write Complete .zshrc --------------------
+ZSHRC="$HOME/.zshrc"
+echo "[INFO] Writing full ~/.zshrc..."
+
+cat >"$ZSHRC" <<'EOF'
+# Path Management
+typeset -U path
+path=(
+    /opt/homebrew/bin
+    /opt/homebrew/sbin
+    /usr/local/bin
+    "$HOME/.local/bin"
+    "$HOME/.bun/bin"
+    "$HOME/go/bin"
+    "$XDG_DATA_HOME/pnpm"
+    $path
+)
+export PATH
+
+# Path to your Oh My Zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+
+# Set name of the theme to load.
+ZSH_THEME="robbyrussell"
+
+# Uncomment for random themes
+# ZSH_THEME="random"
+# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+
+# Uncomment to configure Oh My Zsh behavior
+# CASE_SENSITIVE="true"
+# HYPHEN_INSENSITIVE="true"
+# DISABLE_AUTO_UPDATE="true"
+# export UPDATE_ZSH_DAYS=13
+# DISABLE_LS_COLORS="true"
+# DISABLE_AUTO_TITLE="true"
+# ENABLE_CORRECTION="true"
+# COMPLETION_WAITING_DOTS="true"
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Antigen Plugin Management
+source $XDG_CONFIG_HOME/antigen.zsh
+antigen use oh-my-zsh
+antigen bundles <<EOBUNDLES
+    git
+    zsh-users/zsh-autosuggestions
+    zdharma-continuum/fast-syntax-highlighting
+    paulirish/git-open
+    jeffreytse/zsh-vi-mode
+EOBUNDLES
+antigen apply
+
+# Load Oh My Zsh
+source $ZSH/oh-my-zsh.sh
+
+# Load aliases and functions
+source $ZDOTDIR/alias.sh
+source $ZDOTDIR/ssh.sh
+source $ZDOTDIR/functions.sh
+
+# Terminal and tmux configuration
+[[ -n $TMUX ]] && export TERM=xterm-256color
+
+# Plugin configurations
+export YSU_HARDCORE=1
+
+# Tool initializations
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export GPG_TTY=$(tty)
+
+# Starship prompt
+eval "$(starship init zsh)"
+export STARSHIP_CONFIG=$XDG_CONFIG_HOME/config/starship.toml
+
+# Navigation tools
+eval "$(zoxide init zsh --cmd z)"
+
+# Load local environment
+. "$XDG_DATA_HOME/../bin/env"
+EOF
+
+echo "[INFO] ~/.zshrc written successfully."
+
+# -------------------- Change Default Shell --------------------
 echo "[INFO] Setting zsh as default shell..."
 ZSH_PATH="$(command -v zsh)"
 if [[ "$SHELL" != "$ZSH_PATH" ]]; then
@@ -36,21 +127,6 @@ if [[ "$SHELL" != "$ZSH_PATH" ]]; then
   echo "[INFO] Default shell changed to zsh. Re-login for changes to take effect."
 else
   echo "[INFO] zsh is already the default shell."
-fi
-
-# -------------------- Update ~/.zshrc --------------------
-ZSHRC="$HOME/.zshrc"
-OMARCHY_BIN='export PATH="$HOME/.local/share/omarchy/bin:$PATH"'
-
-echo "[INFO] Configuring ~/.zshrc..."
-[[ -f "$ZSHRC" ]] || touch "$ZSHRC"
-
-# Add Omarchy bin path
-if grep -Fxq "$OMARCHY_BIN" "$ZSHRC"; then
-  echo "[INFO] Omarchy bin directory already present in ~/.zshrc"
-else
-  echo "$OMARCHY_BIN" >>"$ZSHRC"
-  echo "[INFO] Added Omarchy bin directory to PATH in ~/.zshrc"
 fi
 
 # -------------------- Hyprland Auto-start (Linux Only) --------------------
@@ -76,4 +152,4 @@ else
   echo "[INFO] Skipping Hyprland auto-start (macOS detected)"
 fi
 
-echo "[INFO] Setup complete. Reload your shell with: source ~/.zshrc"
+echo "[INFO] Zsh setup complete. Reload your shell with: source ~/.zshrc"
