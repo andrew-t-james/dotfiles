@@ -25,8 +25,28 @@ fi
 
 # -------------------- OS Detection & Package Manager Setup --------------------
 if [[ "$OS" == "Linux" ]]; then
-  PKG_MANAGER="pacman"
-  INSTALL_CMD="sudo pacman -Syu --noconfirm"
+  # Ensure yay is installed
+  if ! command -v yay >/dev/null 2>&1; then
+    echo "[INFO] yay not found."
+
+    if $INSTALL_MODE; then
+      echo "[INFO] Installing yay from AUR..."
+      sudo pacman -S --noconfirm git base-devel
+      git clone https://aur.archlinux.org/yay.git /tmp/yay
+      pushd /tmp/yay >/dev/null
+      makepkg -si --noconfirm
+      popd >/dev/null
+      rm -rf /tmp/yay
+    else
+      echo "[DRY RUN] Would install yay from AUR"
+    fi
+  else
+    echo "[INFO] yay is already installed."
+  fi
+
+  PKG_MANAGER="yay"
+  INSTALL_CMD="yay -S --noconfirm"
+
 elif [[ "$OS" == "Darwin" ]]; then
   if ! command -v brew >/dev/null 2>&1; then
     echo "[INFO] Homebrew not found."
@@ -35,9 +55,13 @@ elif [[ "$OS" == "Darwin" ]]; then
       echo "[INFO] Installing Homebrew..."
       NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       # Add Homebrew to PATH
-      eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
-      echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
-      echo 'eval "$(/usr/local/bin/brew shellenv)"' >>~/.zprofile
+      if [[ -d "/opt/homebrew/bin" ]]; then
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >>~/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+      else
+        echo 'eval "$(/usr/local/bin/brew shellenv)"' >>~/.zprofile
+        eval "$(/usr/local/bin/brew shellenv)"
+      fi
     else
       echo "[DRY RUN] Would install Homebrew"
     fi
@@ -47,6 +71,7 @@ elif [[ "$OS" == "Darwin" ]]; then
 
   PKG_MANAGER="brew"
   INSTALL_CMD="brew install"
+
 else
   echo "[ERROR] Unsupported OS: $OS"
   exit 1
@@ -57,29 +82,15 @@ echo
 echo "[INFO] Packages to install with $PKG_MANAGER:"
 printf ' - %s\n' "${COMMON_PACKAGES[@]}"
 
-# Install packages with the package manager
 if $INSTALL_MODE; then
   echo "[INFO] Installing packages..."
   for pkg in "${COMMON_PACKAGES[@]}"; do
     echo "[INFO] Installing $pkg..."
     $INSTALL_CMD "$pkg"
   done
-
-  # AUR install for sesh
-  if [[ "${SESH_AUR:-false}" == true ]]; then
-    if command -v yay >/dev/null 2>&1; then
-      echo "[INFO] Installing sesh from AUR using yay..."
-      yay -S --noconfirm sesh
-    else
-      echo "[WARN] sesh is not in pacman and yay not found. Skipping sesh install. Please install manually."
-    fi
-  fi
 else
   echo "[DRY RUN] Would install packages:"
   printf ' - %s\n' "${COMMON_PACKAGES[@]}"
-  if [[ "${SESH_AUR:-false}" == true ]]; then
-    echo "[DRY RUN] Would attempt to install sesh from AUR with yay"
-  fi
 fi
 
 # -------------------- Dotfiles Repository Clone --------------------
@@ -95,7 +106,7 @@ if $INSTALL_MODE; then
     git clone "$REPO_URL" "$DOTFILES_DIR"
   fi
 else
-  echo "[DRY RUN] Skipping git clone"
+  echo "[DRY RUN] Would clone repo to $DOTFILES_DIR"
 fi
 
 # -------------------- ZSH Setup --------------------
