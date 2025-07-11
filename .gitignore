@@ -1,3 +1,5 @@
+bat/.config/bat/themes
+
 nvim/.config/nvim/lazy-lock.json
 nvim/.config/nvim/spell
 

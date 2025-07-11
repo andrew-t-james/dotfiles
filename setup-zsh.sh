@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
 
+# -------------------- OS Detection --------------------
 OS="$(uname -s)"
-
 echo "[INFO] Detected OS: $OS"
 
 # -------------------- Install zsh --------------------
@@ -45,21 +44,22 @@ OMARCHY_BIN='export PATH="$HOME/.local/share/omarchy/bin:$PATH"'
 OMARCHY_ALIAS_SOURCE='source ~/.local/share/omarchy/default/bash/rc'
 
 echo "[INFO] Configuring ~/.zshrc..."
+[[ -f "$ZSHRC" ]] || touch "$ZSHRC"
 
 # Add Omarchy bin path
-if ! grep -Fxq "$OMARCHY_BIN" "$ZSHRC"; then
+if grep -Fxq "$OMARCHY_BIN" "$ZSHRC"; then
+  echo "[INFO] Omarchy bin directory already present in ~/.zshrc"
+else
   echo "$OMARCHY_BIN" >>"$ZSHRC"
   echo "[INFO] Added Omarchy bin directory to PATH in ~/.zshrc"
-else
-  echo "[INFO] Omarchy bin directory already present in ~/.zshrc"
 fi
 
 # Source Omarchy bash rc
-if ! grep -Fxq "$OMARCHY_ALIAS_SOURCE" "$ZSHRC"; then
+if grep -Fxq "$OMARCHY_ALIAS_SOURCE" "$ZSHRC"; then
+  echo "[INFO] Omarchy bash aliases already sourced in ~/.zshrc"
+else
   echo "$OMARCHY_ALIAS_SOURCE" >>"$ZSHRC"
   echo "[INFO] Added Omarchy bash aliases to ~/.zshrc"
-else
-  echo "[INFO] Omarchy bash aliases already sourced in ~/.zshrc"
 fi
 
 # -------------------- Hyprland Auto-start (Linux Only) --------------------
@@ -73,11 +73,13 @@ fi
 EOF
   )
 
-  if ! grep -q "exec Hyprland" "$ZPROFILE" 2>/dev/null; then
+  [[ -f "$ZPROFILE" ]] || touch "$ZPROFILE"
+
+  if grep -q "exec Hyprland" "$ZPROFILE"; then
+    echo "[INFO] Hyprland auto-start already configured in ~/.zprofile"
+  else
     echo "$HYPRLAND_AUTO_START" >>"$ZPROFILE"
     echo "[INFO] Hyprland auto-start block added to ~/.zprofile"
-  else
-    echo "[INFO] Hyprland auto-start already configured in ~/.zprofile"
   fi
 else
   echo "[INFO] Skipping Hyprland auto-start (macOS detected)"
