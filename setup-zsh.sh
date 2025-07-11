@@ -41,7 +41,6 @@ fi
 # -------------------- Update ~/.zshrc --------------------
 ZSHRC="$HOME/.zshrc"
 OMARCHY_BIN='export PATH="$HOME/.local/share/omarchy/bin:$PATH"'
-OMARCHY_ALIAS_SOURCE='source ~/.local/share/omarchy/default/bash/rc'
 
 echo "[INFO] Configuring ~/.zshrc..."
 [[ -f "$ZSHRC" ]] || touch "$ZSHRC"
@@ -52,14 +51,6 @@ if grep -Fxq "$OMARCHY_BIN" "$ZSHRC"; then
 else
   echo "$OMARCHY_BIN" >>"$ZSHRC"
   echo "[INFO] Added Omarchy bin directory to PATH in ~/.zshrc"
-fi
-
-# Source Omarchy bash rc
-if grep -Fxq "$OMARCHY_ALIAS_SOURCE" "$ZSHRC"; then
-  echo "[INFO] Omarchy bash aliases already sourced in ~/.zshrc"
-else
-  echo "$OMARCHY_ALIAS_SOURCE" >>"$ZSHRC"
-  echo "[INFO] Added Omarchy bash aliases to ~/.zshrc"
 fi
 
 # -------------------- Hyprland Auto-start (Linux Only) --------------------
