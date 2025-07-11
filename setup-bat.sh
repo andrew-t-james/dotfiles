@@ -19,8 +19,12 @@ else
 fi
 
 # Copy all .tmTheme files into bat's themes directory
-echo "[INFO] Copying themes into bat themes directory..."
-cp "$BAT_THEMES_DIR/catppuccin-bat"/*.tmTheme "$BAT_THEMES_DIR/"
+if compgen -G "$BAT_THEMES_DIR/catppuccin-bat/themes/*.tmTheme" >/dev/null; then
+  cp "$BAT_THEMES_DIR/catppuccin-bat/themes/"*.tmTheme "$BAT_THEMES_DIR/"
+  echo "[INFO] Copied .tmTheme files into bat themes directory."
+else
+  echo "[WARN] No .tmTheme files found in catppuccin-bat repository!"
+fi
 
 # Rebuild bat cache
 echo "[INFO] Rebuilding bat theme cache..."
