@@ -129,18 +129,6 @@ else
   echo "[DRY RUN] Would run: bash $DOTFILES_DIR/setup-bat.sh"
 fi
 
-# -------------------- Oh My Zsh Installation --------------------
-echo
-echo "[INFO] Installing oh-my-zsh"
-
-if $INSTALL_MODE; then
-  export RUNZSH=no
-  export CHSH=no
-  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-else
-  echo "[DRY RUN] Would run oh-my-zsh install script"
-fi
-
 # -------------------- Dotfiles Stow --------------------
 echo
 echo "[INFO] Stowing dotfiles packages:"
