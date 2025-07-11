@@ -30,10 +30,15 @@ fi
 
 # -------------------- Install Oh My Zsh --------------------
 echo "[INFO] Installing Oh My Zsh..."
-export RUNZSH=no
-export CHSH=no
-export KEEP_ZSHRC=yes
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  echo "[INFO] Installing Oh My Zsh..."
+  export RUNZSH=no
+  export CHSH=no
+  export KEEP_ZSHRC=yes
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+else
+  echo "[INFO] Oh My Zsh already installed at $HOME/.oh-my-zsh, skipping install."
+fi
 
 # -------------------- Write Complete .zshrc --------------------
 ZSHRC="$HOME/.zshrc"
