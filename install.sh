@@ -57,14 +57,29 @@ echo
 echo "[INFO] Packages to install with $PKG_MANAGER:"
 printf ' - %s\n' "${COMMON_PACKAGES[@]}"
 
+# Install packages with the package manager
 if $INSTALL_MODE; then
   echo "[INFO] Installing packages..."
   for pkg in "${COMMON_PACKAGES[@]}"; do
     echo "[INFO] Installing $pkg..."
     $INSTALL_CMD "$pkg"
   done
+
+  # AUR install for sesh
+  if [[ "${SESH_AUR:-false}" == true ]]; then
+    if command -v yay >/dev/null 2>&1; then
+      echo "[INFO] Installing sesh from AUR using yay..."
+      yay -S --noconfirm sesh
+    else
+      echo "[WARN] sesh is not in pacman and yay not found. Skipping sesh install. Please install manually."
+    fi
+  fi
 else
-  echo "[DRY RUN] Skipping package installation"
+  echo "[DRY RUN] Would install packages:"
+  printf ' - %s\n' "${COMMON_PACKAGES[@]}"
+  if [[ "${SESH_AUR:-false}" == true ]]; then
+    echo "[DRY RUN] Would attempt to install sesh from AUR with yay"
+  fi
 fi
 
 # -------------------- Dotfiles Repository Clone --------------------
