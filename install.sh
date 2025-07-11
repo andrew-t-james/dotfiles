@@ -9,7 +9,7 @@ DOTFILES_DIR="$HOME/dotfiles"
 COMMON_PACKAGES=(bat tmux sesh zsh stow starship)
 
 # Dotfiles directories to stow
-STOW_PACKAGES=(bat tmux hypr sesh zsh starship nvim)
+STOW_PACKAGES=(bat tmux hypr zsh starship nvim)
 
 OS="$(uname -s)"
 INSTALL_MODE=false
