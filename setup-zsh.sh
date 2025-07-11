@@ -30,9 +30,9 @@ fi
 
 # -------------------- Install Oh My Zsh --------------------
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  echo "[INFO] Installing Oh My Zsh in clean environment..."
-  env -i HOME="$HOME" USER="$USER" PATH="$PATH" \
-    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+  echo "[INFO] Installing Oh My Zsh..."
+  unset ZSH
+  RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   echo "[INFO] Oh My Zsh installed successfully."
 else
