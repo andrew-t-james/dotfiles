@@ -6,7 +6,7 @@ REPO_URL="git@github.com:andrew-t-james/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 
 # Packages to install via package manager
-COMMON_PACKAGES=(bat tmux sesh zsh stow starship)
+COMMON_PACKAGES=(bat tmux sesh zsh stow starship direnv)
 
 # Dotfiles directories to stow
 STOW_PACKAGES=(bat tmux hypr zsh starship nvim)

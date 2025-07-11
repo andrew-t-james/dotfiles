@@ -64,8 +64,11 @@ ZSH_THEME="robbyrussell"
 source "$ZSH/oh-my-zsh.sh"
 
 # -------------------- Antigen --------------------
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-source "$XDG_CONFIG_HOME/zsh/antigen.zsh"
+# Path to your zsh config directory
+export ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
+
+# Antigen
+source "$ZDOTDIR/antigen.zsh"
 
 antigen use oh-my-zsh
 antigen bundles <<EOBUNDLES
@@ -79,7 +82,6 @@ antigen apply
 
 # -------------------- Custom Aliases & Functions --------------------
 source "$ZDOTDIR/alias.sh"
-source "$ZDOTDIR/ssh.sh"
 source "$ZDOTDIR/functions.sh"
 
 # -------------------- Tool Initializations --------------------
