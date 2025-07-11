@@ -29,12 +29,11 @@ else
 fi
 
 # -------------------- Install Oh My Zsh --------------------
-echo "[INFO] Installing Oh My Zsh..."
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-  export RUNZSH=no
-  export CHSH=no
-  export KEEP_ZSHRC=yes
-  ZSH= sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  echo "[INFO] Installing Oh My Zsh in clean environment..."
+  env -i HOME="$HOME" USER="$USER" PATH="$PATH" \
+    RUNZSH=no CHSH=no KEEP_ZSHRC=yes \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
   echo "[INFO] Oh My Zsh installed successfully."
 else
   echo "[INFO] Oh My Zsh already installed at $HOME/.oh-my-zsh, skipping install."
@@ -117,6 +116,23 @@ export STARSHIP_CONFIG=$XDG_CONFIG_HOME/config/starship.toml
 
 # Navigation tools
 eval "$(zoxide init zsh --cmd z)"
+
+# direnv
+eval "$(direnv hook zsh)"
+
+# asdf Version Manager
+. /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+# Bun configuration
+export BUN_INSTALL="$HOME/.bun"
+[ -s "$BUN_INSTALL/_bun" ] && source "$BUN_INSTALL/_bun"
+
+# PNPM configuration
+export PNPM_HOME="$XDG_DATA_HOME/pnpm"
+case ":$PATH:" in
+    *":$PNPM_HOME:"*) ;;
+    *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
 
 # Load local environment
 . "$XDG_DATA_HOME/../bin/env"
