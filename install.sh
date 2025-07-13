@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # -------------------- Config --------------------
-REPO_URL="git@github.com:andrew-t-james/dotfiles.git"
+REPO_URL="https://github.com/andrew-t-james/dotfiles.git"
 DOTFILES_DIR="$HOME/dotfiles"
 
 # Packages to install via package manager
@@ -147,3 +147,20 @@ done
 
 echo
 echo "[INFO] Setup complete!"
+
+# -------------------- Optional Reboot --------------------
+if $INSTALL_MODE; then
+  echo
+  read -rp "Do you want to reboot now? [y/N]: " REBOOT_CONFIRM
+  case "$REBOOT_CONFIRM" in
+  [yY][eE][sS] | [yY])
+    echo "[INFO] Rebooting..."
+    reboot
+    ;;
+  *)
+    echo "[INFO] Reboot skipped."
+    ;;
+  esac
+else
+  echo "[DRY RUN] Would prompt for reboot."
+fi
