@@ -139,14 +139,27 @@ cd "$DOTFILES_DIR"
 for pkg in "${STOW_PACKAGES[@]}"; do
   if $INSTALL_MODE; then
     echo "[INFO] Stowing $pkg..."
-    stow "$pkg"
+
+    # Check if target directory exists
+    TARGET_DIR="$HOME/.config/$pkg"
+    if [[ -d "$TARGET_DIR" ]]; then
+      echo "[INFO] Target directory exists for $pkg, backing up and removing..."
+      mv "$TARGET_DIR" "$TARGET_DIR.backup.$(date +%Y%m%d_%H%M%S)"
+      rm -rf "$TARGET_DIR"
+    fi
+
+    # Attempt to stow
+    if stow "$pkg"; then
+      echo "[INFO] Successfully stowed $pkg"
+    else
+      echo "[ERROR] Failed to stow $pkg"
+      exit 1
+    fi
   else
     echo "[DRY RUN] Would run: stow $pkg"
+    echo "[DRY RUN] Would backup and remove existing $pkg directory if present"
   fi
 done
-
-echo
-echo "[INFO] Setup complete!"
 
 # -------------------- Optional Reboot --------------------
 if $INSTALL_MODE; then
