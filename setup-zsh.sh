@@ -36,9 +36,15 @@ fi
 
 # -------------------- Write .zshrc --------------------
 cat >"$ZSHRC" <<'EOF'
+# -------------------- Hyprland Autostart ----------------
+if command -v Hyprland >/dev/null && [[ -z $DISPLAY ]] && [[ $(tty) == /dev/tty1 ]]; then
+    exec Hyprland
+fi
+
 # -------------------- XDG Base --------------------
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
 
 # -------------------- PATH Setup --------------------
 unset DYLD_LIBRARY_PATH
