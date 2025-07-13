@@ -1,0 +1,58 @@
+{
+  "profile": {
+    "bootloader": "systemd-boot",
+    "kernels": [
+      "linux"
+    ],
+    "hostname": "omarchy-aj",
+    "timezone": "America/Chicago",
+    "locale": "en_US.UTF-8",
+    "keyboard-layout": "us",
+    "mirror-region": [
+      "United States"
+    ],
+    "network-configuration": {
+      "type": "copy-from-iso"
+    },
+    "user-accounts": [
+      {
+        "username": "aj",
+        "password": "<CHANGEME>",
+        "superuser": true
+      }
+    ],
+    "disk-configuration": [
+      {
+        "device": "/dev/nvme0n1",
+        "wipe": false,
+        "partitions": [
+          {
+            "mountpoint": "/boot",
+            "size": "512M",
+            "filesystem": "vfat",
+            "format": false,
+            "flags": [
+              "boot",
+              "esp"
+            ]
+          },
+          {
+            "mountpoint": "/",
+            "size": "500G",
+            "filesystem": "btrfs",
+            "encrypt": {
+              "enabled": true,
+              "type": "luks"
+            },
+            "format": true,
+            "device-id": "nvme0n1p3"
+          }
+        ]
+      }
+    ],
+    "additional-packages": [
+      "wget"
+    ],
+    "audio": "pipewire"
+  }
+}
