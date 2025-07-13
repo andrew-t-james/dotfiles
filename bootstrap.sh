@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="git@github.com:andrew-t-james/dotfiles.git"
+REPO_URL="https://github.com/andrew-t-james/dotfiles.git"
 CLONE_DIR="$HOME/dotfiles"
 
 echo "[INFO] Bootstrapping dotfiles from $REPO_URL"
