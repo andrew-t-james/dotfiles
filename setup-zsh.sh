@@ -2,7 +2,39 @@
 set -euo pipefail
 
 ZSHRC="$HOME/.zshrc"
+ZDOTDIR="$HOME/.config/zsh"
 
+# -------------------- Install Zsh if not present --------------------
+if ! command -v zsh &>/dev/null; then
+  echo "[INFO] Installing zsh..."
+  if command -v apt &>/dev/null; then
+    sudo apt install -y zsh
+  elif command -v brew &>/dev/null; then
+    brew install zsh
+  elif command -v pacman &>/dev/null; then
+    sudo pacman -S --noconfirm zsh
+  else
+    echo "[ERROR] Package manager not found. Please install zsh manually."
+    exit 1
+  fi
+fi
+
+# -------------------- Create ZDOTDIR if it doesn't exist --------------------
+mkdir -p "$ZDOTDIR"
+
+# -------------------- Install Oh My Zsh --------------------
+if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
+  echo "[INFO] Installing Oh My Zsh..."
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+fi
+
+# -------------------- Install Antigen --------------------
+if [[ ! -f "$ZDOTDIR/antigen.zsh" ]]; then
+  echo "[INFO] Installing Antigen..."
+  curl -L git.io/antigen >"$ZDOTDIR/antigen.zsh"
+fi
+
+# -------------------- Write .zshrc --------------------
 cat >"$ZSHRC" <<'EOF'
 # -------------------- XDG Base --------------------
 export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -58,4 +90,16 @@ command -v mise &>/dev/null && eval "$(mise activate zsh)"
 [[ -f "$ZDOTDIR/functions.sh" ]] && source "$ZDOTDIR/functions.sh"
 EOF
 
-echo "[INFO] ~/.zshrc written successfully."
+# -------------------- Change Shell to Zsh --------------------
+if [[ "$SHELL" != *"zsh"* ]]; then
+  echo "[INFO] Changing default shell to zsh..."
+  ZSH_PATH=$(command -v zsh)
+  if ! grep -q "$ZSH_PATH" /etc/shells; then
+    echo "[INFO] Adding $ZSH_PATH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells
+  fi
+  chsh -s "$ZSH_PATH"
+  echo "[INFO] Shell changed to zsh. Please log out and log back in for changes to take effect."
+fi
+
+echo "[INFO] Setup complete!"
