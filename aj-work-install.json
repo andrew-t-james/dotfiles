@@ -45,7 +45,7 @@
               "type": "luks"
             },
             "format": true,
-            "device-id": "nvme0n1p2"
+            "device-id": "nvme0n1p3"
           }
         ]
       }
