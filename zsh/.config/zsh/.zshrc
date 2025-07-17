@@ -1,105 +1,158 @@
-#!/usr/bin/env bash
-set -euo pipefail
+# ---------------- ZSH OPTIONS ----------------
+export EDITOR="nvim"
+export SUDO_EDITOR="$EDITOR"
 
-# Setup directories
-ZDOTDIR="${XDG_CONFIG_HOME:-$HOME/.config}/zsh"
-mkdir -p "$ZDOTDIR"
+HISTSIZE=32768
+SAVEHIST=32768
+HISTFILE="$HOME/.zsh_history"
 
-# Install Oh My Zsh
-if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
-    echo "[INFO] Installing Oh My Zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-fi
+# ---------------- LOCAL SCRIPTS ----------------
 
-# Install Antigen
-echo "[INFO] Installing Antigen..."
-curl -L git.io/antigen > "${XDG_CONFIG_HOME:-$HOME/.config}/antigen.zsh"
+ZSH_LOCAL="$HOME/.config/zsh"
 
-# Write zsh configuration
-cat > "$HOME/.zshrc" <<'EOF'
-# ---------------- Environment Setup ----------------
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+[[ -f "$ZSH_LOCAL/alias.sh" ]] && source "$ZSH_LOCAL/alias.sh"
+[[ -f "$ZSH_LOCAL/functions.sh" ]] && source "$ZSH_LOCAL/functions.sh"
+[[ -f "$ZSH_LOCAL/clone-worktree.sh" ]] && source "$ZSH_LOCAL/clone-worktree.sh"
 
-# ---------------- Hyprland Autostart ----------------
-if [[ -z $DISPLAY ]] && [[ $(tty) == /dev/tty1 ]]; then
-    exec Hyprland
-fi
+bindkey -v  # Optional: enable vi-mode keybindings
 
 # ---------------- PATH SETUP ----------------
-typeset -aU path
+typeset -U path
 path=(
-  "$HOME/.local/share/mise/shims"
-  "$HOME/.local/share/omarchy/bin"
-  "$HOME/.local/bin"
-  "$HOME/.cargo/bin"
-  "$HOME/go/bin"
-  /usr/local/bin
-  /usr/bin
-  /bin
+  ./bin
+  $HOME/.local/bin
+  $HOME/.local/share/omarchy/bin
+  $path
 )
-
 export PATH
 
-# ---------------- Oh My Zsh Configuration ----------------
-if [[ -d "$HOME/.oh-my-zsh" ]]; then
-    export ZSH="$HOME/.oh-my-zsh"
-    ZSH_THEME="robbyrussell"
-    source "$ZSH/oh-my-zsh.sh"
-fi
-
-# ---------------- Antigen Plugin Manager ----------------
+# ---------------- ANTIGEN SETUP ----------------
 ANTIGEN_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/antigen.zsh"
-if [[ -f "$ANTIGEN_PATH" ]]; then
-    source "$ANTIGEN_PATH"
+[[ -f "$ANTIGEN_PATH" ]] && source "$ANTIGEN_PATH"
 
-    antigen use oh-my-zsh
+antigen use oh-my-zsh
 
-    # Core plugins
-    antigen bundle git
-    antigen bundle zsh-users/zsh-autosuggestions
-    antigen bundle zdharma-continuum/fast-syntax-highlighting
-    antigen bundle jeffreytse/zsh-vi-mode
+# Core plugins
+antigen bundle git
+antigen bundle zsh-users/zsh-completions
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-users/zsh-syntax-highlighting
 
-    antigen apply
-fi
+# Apply plugins
+antigen apply
 
-# ---------------- Terminal Settings ----------------
-[[ -n "$TMUX" ]] && export TERM="xterm-256color"
-command -v tty &>/dev/null && export GPG_TTY=$(tty)
-
-# ---------------- Tool Initialization ----------------
-# Starship prompt
+# ---------------- STARSHIP ----------------
 if command -v starship &>/dev/null; then
-    eval "$(starship init zsh)"
-    export STARSHIP_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/starship/starship.toml"
+  eval "$(starship init zsh)"
 fi
 
-# Additional tools
-command -v zoxide &>/dev/null && eval "$(zoxide init zsh)"
-command -v direnv &>/dev/null && eval "$(direnv hook zsh)"
-command -v mise &>/dev/null && eval "$(mise activate zsh)"
+# ---------------- TOOL INIT ----------------
+# mise (environment/version manager)
+if command -v mise &> /dev/null; then
+  eval "$(mise activate zsh)"
+fi
 
-# FZF
-[[ -f "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
+# zoxide (smarter cd)
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
+fi
 
-# ---------------- Additional Configuration ----------------
-# Aliases
-[[ -f "$ZDOTDIR/alias.sh" ]] && source "$ZDOTDIR/alias.sh"
+# fzf keybindings
+if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
+  source /usr/share/fzf/key-bindings.zsh
+fi
 
-# Local environment overrides
-[[ -f "$HOME/bin/env" ]] && source "$HOME/bin/env"
+# macOS Homebrew fzf path fallback
+if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
+  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+fi
+
+# ---------------- FUNCTIONS ----------------
+
+compress() {
+  tar -czf "$1.tar.gz" "$1"
+}
+
+zd() {
+  if [[ $# -eq 0 ]]; then
+    cd ~
+  elif [[ -d "$1" ]]; then
+    cd "$1"
+  else
+    z "$@" && printf " \U000F17A9 " && pwd || echo "Error: Directory not found"
+  fi
+}
+
+open() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    open "$@"  # macOS native
+  else
+    xdg-open "$@" >/dev/null 2>&1
+  fi
+}
+
+iso2sd() {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: iso2sd <input_file> <output_device>"
+    echo "Example: iso2sd ~/Downloads/ubuntu.iso /dev/sda"
+    echo -e "\nAvailable SD cards:"
+    lsblk -d -o NAME | grep -E '^sd[a-z]' | awk '{print "/dev/"$1}'
+    return 1
+  fi
+  sudo dd bs=4M status=progress oflag=sync if="$1" of="$2"
+  sudo eject "$2"
+}
+
+web2app() {
+  if [[ $# -ne 3 ]]; then
+    echo "Usage: web2app <AppName> <AppURL> <IconURL>"
+    return 1
+  fi
+
+  local APP_NAME="$1"
+  local APP_URL="$2"
+  local ICON_URL="$3"
+  local ICON_DIR="$HOME/.local/share/applications/icons"
+  local DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
+  local ICON_PATH="$ICON_DIR/$APP_NAME.png"
+
+  mkdir -p "$ICON_DIR"
+
+  if ! curl -sL -o "$ICON_PATH" "$ICON_URL"; then
+    echo "Error: Failed to download icon."
+    return 1
+  fi
+
+  cat > "$DESKTOP_FILE" <<EOF
+[Desktop Entry]
+Version=1.0
+Name=$APP_NAME
+Comment=$APP_NAME
+Exec=chromium --new-window --ozone-platform=wayland --app="$APP_URL" --name="$APP_NAME" --class="$APP_NAME"
+Terminal=false
+Type=Application
+Icon=$ICON_PATH
+StartupNotify=true
 EOF
 
-# Change default shell to zsh if not already set
-if [[ "$SHELL" != "/usr/bin/zsh" ]]; then
-    echo "[INFO] Changing default shell to zsh..."
-    chsh -s /usr/bin/zsh
-fi
+  chmod +x "$DESKTOP_FILE"
+}
 
-# Set proper permissions
-chmod 644 "$HOME/.zshrc"
-chmod 755 "$ZDOTDIR"
+web2app-remove() {
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: web2app-remove <AppName>"
+    return 1
+  fi
 
-echo "[INFO] Zsh configuration complete!"
-echo "[INFO] Please log out and log back in for the shell change to take effect."
+  local APP_NAME="$1"
+  local ICON_DIR="$HOME/.local/share/applications/icons"
+  local DESKTOP_FILE="$HOME/.local/share/applications/$APP_NAME.desktop"
+  local ICON_PATH="$ICON_DIR/$APP_NAME.png"
+
+  rm -f "$DESKTOP_FILE" "$ICON_PATH"
+}
+
+refresh-xcompose() {
+  pkill fcitx5
+  setsid fcitx5 &>/dev/null &
+}

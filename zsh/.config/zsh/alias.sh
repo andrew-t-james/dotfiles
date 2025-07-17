@@ -39,8 +39,7 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew cleanup; brew doctor
 # ====================
 # Git related
 alias acm='git diff | pbcopy && open "raycast://ai-commands/git-commit-message"' # Copy git diff and open Raycast
-alias git-clone-worktree='~/.config/zsh/clone-worktree.sh'
-alias gcw='git-clone-worktree'
+alias cw='clone_worktree'
 alias envrc='echo '\''source "${HOME}/.config/env/.envrc"'\'' > .envrc && direnv allow .'
 
 # Kubernetes
@@ -52,6 +51,9 @@ alias k='kubectl'
 # Modern replacements for traditional tools
 alias cat=bat    # Modern replacement for cat
 alias diff=delta # Modern replacement for diff
+alias ll='exa -l --git --icons'
+alias la='exa -la --icons'
+alias lt='exa --tree --level=2 --icons'
 
 # System monitoring
 alias sleepless="pmset -g assertions | egrep '(PreventUserIdleSystemSleep|PreventUserIdleDisplaySleep)'" # Check sleep preventing processes

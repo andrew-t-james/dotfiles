@@ -6,3 +6,5 @@ nvim/.config/nvim/spell
 tmux/.config/tmux/plugins
 tmux/.config/tmux/resurrect
 tmux/.config/tmux/continuum
+
+zsh/.config/zsh/.zshrc.zwc
