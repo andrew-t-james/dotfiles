@@ -7,18 +7,23 @@ STOW_DIRS=("zsh" "starship")
 OHMYZSH_DIR="$HOME/.oh-my-zsh"
 ANTIGEN_PATH="$HOME/.config/antigen.zsh"
 ZSHRC_PATH="$HOME/.zshrc"
+ZPROFILE_PATH="$HOME/.zprofile"
 
-# ---------------- HELPER ----------------
-info() { echo -e "\033[1;34m[INFO]\033[0m $*"; }
+# ---------------- HELPERS ----------------
+info() {
+  echo -e "\033[1;34m[INFO]\033[0m $*"
+}
 
-ok() { echo -e "\033[1;32m[ OK ]\033[0m $*"; }
+ok() {
+  echo -e "\033[1;32m[ OK ]\033[0m $*"
+}
 
 error() {
   echo -e "\033[1;31m[ERR ]\033[0m $*" >&2
   exit 1
 }
 
-# ---------------- INSTALL ZSH ----------------
+# ---------------- ZSH INSTALL ----------------
 if ! command -v zsh &>/dev/null; then
   info "Installing Zsh..."
   if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -35,7 +40,7 @@ else
   info "Zsh already installed"
 fi
 
-# ---------------- STOW CONFIG FILES ----------------
+# ---------------- STOW DOTFILES ----------------
 info "Stowing dotfiles: ${STOW_DIRS[*]}"
 cd "$DOTFILES_DIR"
 for dir in "${STOW_DIRS[@]}"; do
@@ -43,7 +48,7 @@ for dir in "${STOW_DIRS[@]}"; do
 done
 ok "Dotfiles stowed"
 
-# ---------------- OH-MY-ZSH ----------------
+# ---------------- OH MY ZSH ----------------
 if [[ ! -d "$OHMYZSH_DIR" ]]; then
   info "Installing Oh My Zsh silently..."
   export RUNZSH=no
@@ -80,14 +85,29 @@ else
   info "Starship already installed"
 fi
 
-# ---------------- ~/.zshrc BRIDGE ----------------
+# ---------------- ~/.zshrc ----------------
 if [[ ! -f "$ZSHRC_PATH" || "$(cat "$ZSHRC_PATH")" != "source ~/.config/zsh/.zshrc" ]]; then
-  info "Linking ~/.zshrc to ~/.config/zsh/.zshrc"
+  info "Creating ~/.zshrc to source ~/.config/zsh/.zshrc"
   echo 'source ~/.config/zsh/.zshrc' >"$ZSHRC_PATH"
-  ok "~/.zshrc linked"
+  ok "~/.zshrc created"
 else
   info "~/.zshrc already linked"
 fi
+
+# ---------------- ~/.zprofile ----------------
+info "Writing ~/.zprofile with Hyprland autostart and Zsh sourcing"
+
+cat <<'EOF' >"$ZPROFILE_PATH"
+# Source interactive shell config
+source ~/.zshrc
+
+# Launch Hyprland if on tty1 and not in a display session
+if [[ -z $DISPLAY ]] && [[ $(tty) == /dev/tty1 ]]; then
+  exec Hyprland
+fi
+EOF
+
+ok "~/.zprofile written"
 
 # ---------------- Set Zsh as Default Shell ----------------
 if [[ "$SHELL" != "$(command -v zsh)" ]]; then
