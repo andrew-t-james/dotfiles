@@ -67,6 +67,11 @@ if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh 
   source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 fi
 
+# ---------------- DIRENV ----------------
+if command -v direnv &> /dev/null; then
+  eval "$(direnv hook zsh)"
+fi
+
 # ---------------- FUNCTIONS ----------------
 
 compress() {
