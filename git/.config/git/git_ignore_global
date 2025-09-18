@@ -56,3 +56,6 @@ env/.envrc
 */env/.envrc
 
 .vectorcode/
+.claude/
+.tool-versions
+mise.toml

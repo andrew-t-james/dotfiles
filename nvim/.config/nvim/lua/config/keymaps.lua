@@ -73,19 +73,3 @@ keymap("n", "gv", function()
   vim.lsp.buf.definition()
 end, { desc = "Go to definition in vertical split" })
 keymap("n", "gs", "<C-W><C-]>", { desc = "Split and go to tag definition" })
-
-keymap("v", "<leader>cw", function()
-  -- Save the current selection marks
-  local start_pos = vim.fn.getpos("'<")
-  local end_pos = vim.fn.getpos("'>")
-
-  -- Get the selected text
-  local lines = vim.api.nvim_buf_get_text(0, start_pos[2] - 1, start_pos[3] - 1, end_pos[2] - 1, end_pos[3], {})
-
-  -- Count words in the selected text
-  local text = table.concat(lines, " ")
-  local word_count = select(2, string.gsub(text, "%S+", ""))
-
-  -- Display the count
-  vim.notify("Word count: " .. word_count, vim.log.levels.INFO)
-end, { desc = "Count words in selection" })

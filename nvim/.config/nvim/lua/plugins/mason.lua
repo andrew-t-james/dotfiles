@@ -1,34 +1,28 @@
 return {
-  "williamboman/mason.nvim",
+  "mason-org/mason.nvim",
   opts = {
     ensure_installed = {
-      "bash-language-server",
+      -- Formatters
+      "autopep8",
       "biome",
       "black",
-      "pyright",
-      "autopep8",
-      "flake8",
-      "isort",
-      "debugpy",
-      "docker-compose-language-service",
-      "dockerfile-language-server",
-      "eslint-lsp",
-      "graphql-language-service-cli",
-      "json-lsp",
-      "lua-language-server",
-      "luacheck",
       "prettier",
-      "rust-analyzer",
-      "ruff",
-      "shellcheck",
       "shfmt",
       "stylua",
-      "tailwindcss-language-server",
-      "typescript-language-server",
-      "yaml-language-server",
       "yamlfmt",
+
+      -- Linters
+      "flake8",
+      "luacheck",
+      "shellcheck",
       "yamllint",
-      "svelte-language-server",
+
+      -- Debug Adapters
+      "debugpy",
+
+      -- Other Tools
+      "isort",
+      "ruff",
     },
   },
 }
