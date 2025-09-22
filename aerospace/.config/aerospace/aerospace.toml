@@ -129,7 +129,7 @@ alt-m = 'workspace messages'
 alt-n = 'workspace notes'
 alt-o = 'workspace outlook'
 alt-s = 'workspace slack'
-alt-t = 'workspace taskade'
+alt-t = 'workspace tasks'
 alt-w = 'workspace whatsapp'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
@@ -141,7 +141,7 @@ alt-shift-m = 'move-node-to-workspace messages'
 alt-shift-n = 'move-node-to-workspace notes'
 alt-shift-o = 'move-node-to-workspace outlook'
 alt-shift-s = 'move-node-to-workspace slack'
-alt-shift-t = 'move-node-to-workspace taskade'
+alt-shift-t = 'move-node-to-workspace tasks'
 alt-shift-w = 'move-node-to-workspace whatsapp'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
@@ -213,7 +213,12 @@ run = "move-node-to-workspace notes"
 
 [[on-window-detected]]
 if.app-id = "com.mikekreeki.tasks"
-run = "move-node-to-workspace taskade"
+run = "move-node-to-workspace tasks"
+
+[[on-window-detected]]
+if.app-id = "com.electron.griply"
+run = "move-node-to-workspace tasks"
+
 
 [[on-window-detected]]
 if.app-id = "com.microsoft.Outlook"
