@@ -62,6 +62,13 @@ local function get_adapters()
     if string.find(package_contents, "vitest") then
       table.insert(adapters, require("neotest-vitest")({}))
     end
+
+    -- Check for Bun
+    if string.find(package_contents, "bun") or vim.fn.executable("bun") == 1 then
+      -- Override inspect module for neotest-bun
+      package.preload['inspect'] = function() return vim.inspect end
+      table.insert(adapters, require("neotest-bun")({}))
+    end
   end
 
   return adapters
@@ -74,6 +81,7 @@ return {
       "nvim-neotest/neotest-jest",
       "marilari88/neotest-vitest",
       "nvim-neotest/neotest-python",
+      "arthur944/neotest-bun",
     },
     keys = {
       {
