@@ -152,9 +152,10 @@ return {
       },
       -- Signs configuration
       signs = {
+        -- { CLOSED, OPENED }
+        section = { "", "" },
+        item = { "", "" },
         hunk = { "", "" },
-        item = { ">", "v" },
-        section = { ">", "v" },
       },
       -- Integrations
       integrations = {
