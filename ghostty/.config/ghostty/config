@@ -1,6 +1,6 @@
 title = "👻"
 
-theme = catppuccin-mocha.conf
+theme = Cappuccino Mocha
 
 font-size=16
 
@@ -13,3 +13,4 @@ cursor-style-blink = false
 
 clipboard-read = "allow"
 clipboard-paste-protection = false
+keybind = shift+enter=text:\x1b\r
