@@ -17,6 +17,17 @@ return {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
     },
+    strategies = {
+      chat = {
+        adapter = "anthropic",
+      },
+      inline = {
+        adapter = "anthropic",
+      },
+      cmd = {
+        adapter = "anthropic",
+      },
+    },
   },
   -- {
   --   "Davidyz/VectorCode",

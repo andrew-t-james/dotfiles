@@ -1,6 +1,6 @@
 title = "👻"
 
-theme = Cappuccino Mocha
+theme = catppuccin-mocha.conf
 
 font-size=16
 
