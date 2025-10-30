@@ -1,0 +1,378 @@
+;; Copyright 2021 Manna Harbour
+;; github.com/manna-harbour/miryoku
+
+
+// Copyright 2022 Manna Harbour
+// https://github.com/manna-harbour/miryoku
+
+
+
+
+// Copyright 2021 Manna Harbour
+// https://github.com/manna-harbour/miryoku
+
+
+
+
+// Copyright 2022 Manna Harbour
+// https://github.com/manna-harbour/miryoku
+// generated -*- buffer-read-only: t -*-
+
+
+
+
+// Copyright 2022 Manna Harbour
+// https://github.com/manna-harbour/miryoku
+// generated -*- buffer-read-only: t -*-
+// target: kmonad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_BASE q, w, e, r, t, y, u, i, o, p, U_MT(a, met), U_MT(s, alt), U_MT(d, ctl), U_MT(f, sft), g, h, U_MT(j, sft), U_MT(k, ctl), U_MT(l, alt), U_MT(', met), U_LT(z, U_BUTTON), U_MT(x, ralt), c, v, b, n, m, ,, U_MT(., ralt), U_LT(/, U_BUTTON), U_NP, U_NP, U_LT(del, U_FUN), U_LT(bspc, U_NUM), U_LT(ent, U_SYM), U_LT(tab, U_MOUSE),U_LT(spc, U_NAV), U_LT(esc, U_MEDIA),U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_BASE q, w, e, r, t, y, u, i, o, p, U_MT(a, met), U_MT(s, alt), U_MT(d, ctl), U_MT(f, sft), g, h, U_MT(j, sft), U_MT(k, ctl), U_MT(l, alt), U_MT(', met), U_LT(z, U_BUTTON), U_MT(x, ralt), c, v, b, n, m, ,, U_MT(., ralt), U_LT(/, U_BUTTON), U_NP, U_NP, U_LT(esc, U_MEDIA),U_LT(spc, U_NAV), U_LT(tab, U_MOUSE),U_LT(ent, U_SYM), U_LT(bspc, U_NUM), U_LT(del, U_FUN), U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_BASE MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_EXTRA q, w, e, r, t, y, u, i, o, p, U_MT(a, met), U_MT(s, alt), U_MT(d, ctl), U_MT(f, sft), g, h, U_MT(j, sft), U_MT(k, ctl), U_MT(l, alt), U_MT(', met), U_LT(z, U_BUTTON), U_MT(x, ralt), c, v, b, n, m, ,, U_MT(., ralt), U_LT(/, U_BUTTON), U_NP, U_NP, U_LT(del, U_FUN), U_LT(bspc, U_NUM), U_LT(ent, U_SYM), U_LT(tab, U_MOUSE),U_LT(spc, U_NAV), U_LT(esc, U_MEDIA),U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_EXTRA q, w, e, r, t, y, u, i, o, p, U_MT(a, met), U_MT(s, alt), U_MT(d, ctl), U_MT(f, sft), g, h, U_MT(j, sft), U_MT(k, ctl), U_MT(l, alt), U_MT(', met), U_LT(z, U_BUTTON), U_MT(x, ralt), c, v, b, n, m, ,, U_MT(., ralt), U_LT(/, U_BUTTON), U_NP, U_NP, U_LT(esc, U_MEDIA),U_LT(spc, U_NAV), U_LT(tab, U_MOUSE),U_LT(ent, U_SYM), U_LT(bspc, U_NUM), U_LT(del, U_FUN), U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_EXTRA MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_TAP q, w, f, p, b, j, l, u, y, ', a, r, s, t, g, m, n, e, i, o, z, x, c, d, v, k, h, ,, ., /, U_NP, U_NP, del, bspc, ent, tab, spc, esc, U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_TAP q, w, f, p, b, j, l, u, y, ', a, r, s, t, g, m, n, e, i, o, z, x, c, d, v, k, h, ,, ., /, U_NP, U_NP, esc, spc, tab, ent, bspc, del, U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_TAP MIRYOKU_MAPPING
+
+
+
+  #define MIRYOKU_LAYER_BUTTON U_UND, U_CUT, U_CPY, U_PST, U_RDO, U_RDO, U_PST, U_CPY, U_CUT, U_UND, met, alt, ctl, sft, U_NU, U_NU, sft, ctl, alt, met, U_UND, U_CUT, U_CPY, U_PST, U_RDO, U_RDO, U_PST, U_CPY, U_CUT, U_UND, U_NP, U_NP, #(kp* kp5), #(kp/ kp5), #(kp- kp5), #(kp- kp5), #(kp/ kp5), #(kp* kp5), U_NP, U_NP
+
+  #define MIRYOKU_LAYERMAPPING_BUTTON MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_NAV home, pgdn, pgup, end, ins, U_NA, U_DF(U_BASE), U_DF(U_EXTRA), U_DF(U_TAP), U_NA, left, down, up, right, caps, U_NA, sft, ctl, alt, met, U_UND, U_CUT, U_CPY, U_PST, U_RDO, U_NA, U_DF(U_NAV), U_DF(U_NUM), ralt, U_NA, U_NP, U_NP, del, bspc, ent, U_NA, U_NA, U_NA, U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_NAV U_NA, U_DF(U_TAP), U_DF(U_EXTRA), U_DF(U_BASE), U_NA, U_RDO, U_PST, U_CPY, U_CUT, U_UND, met, alt, ctl, sft, U_NA, caps, left, down, up, right, U_NA, ralt, U_DF(U_NUM), U_DF(U_NAV), U_NA, ins, home, pgdn, pgup, end, U_NP, U_NP, U_NA, U_NA, U_NA, ent, bspc, del, U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_NAV MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_MOUSE U_NU, U_NU, U_NU, U_NU, U_NU, U_NA, U_DF(U_BASE), U_DF(U_EXTRA), U_DF(U_TAP), U_NA, kp4, kp2, kp8, kp6, U_NU, U_NA, sft, ctl, alt, met, U_UND, U_CUT, U_CPY, U_PST, U_RDO, U_NA, U_DF(U_MOUSE), U_DF(U_SYM), ralt, U_NA, U_NP, U_NP, #(kp* kp5), #(kp/ kp5), #(kp- kp5), U_NA, U_NA, U_NA, U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_MOUSE U_NA, U_DF(U_TAP), U_DF(U_EXTRA), U_DF(U_BASE), U_NA, U_RDO, U_PST, U_CPY, U_CUT, U_UND, met, alt, ctl, sft, U_NA, U_NU, kp4, kp2, kp8, kp6, U_NA, ralt, U_DF(U_SYM), U_DF(U_MOUSE), U_NA, U_NU, U_NU, U_NU, U_NU, U_NU, U_NP, U_NP, U_NA, U_NA, U_NA, #(kp- kp5), #(kp/ kp5), #(kp* kp5), U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_MOUSE MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+      #define MIRYOKU_LAYER_MEDIA U_NU, U_NU, U_NU, U_NU, U_NU, U_NA, U_DF(U_BASE), U_DF(U_EXTRA), U_DF(U_TAP), U_NA, previoussong, vold, volu, nextsong, U_NU, U_NA, sft, ctl, alt, met, U_NU, U_NU, U_NU, U_NU, U_NU, U_NA, U_DF(U_MEDIA), U_DF(U_FUN), ralt, U_NA, U_NP, U_NP, mute, playpause, stopcd, U_NA, U_NA, U_NA, U_NP, U_NP
+    
+  #else
+    
+      #define MIRYOKU_LAYER_MEDIA U_NA, U_DF(U_TAP), U_DF(U_EXTRA), U_DF(U_BASE), U_NA, U_NU, U_NU, U_NU, U_NU, U_NU, met, alt, ctl, sft, U_NA, U_NU, previoussong, vold, volu, nextsong, U_NA, ralt, U_DF(U_FUN), U_DF(U_MEDIA), U_NA, U_NU, U_NU, U_NU, U_NU, U_NU, U_NP, U_NP, U_NA, U_NA, U_NA, stopcd, playpause, mute, U_NP, U_NP
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_MEDIA MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+  #else
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_NUM MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+  #else
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_SYM MIRYOKU_MAPPING
+
+
+
+  #if defined (1)
+    
+  #else
+    
+  #endif
+
+  #define MIRYOKU_LAYERMAPPING_FUN MIRYOKU_MAPPING
+
+// Copyright 2022 Manna Harbour
+// https://github.com/manna-harbour/miryoku
+// generated -*- buffer-read-only: t -*-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  #define U_RDO again
+  
+  #define U_CPY C-ins
+  
+  #define U_UND undo
+
+
+
+
+
+
+
+  #define MIRYOKU_MAPPING MIRYOKU_MAPPING_MAIN
+
+
+
+  #define MIRYOKU_KMONAD_KEYBOARD_LINUX "keyboard"
+
+
+
+  #define MIRYOKU_KMONAD_KEYBOARD_MAC
+
+
+(defcfg
+
+  input  (iokit-name MIRYOKU_KMONAD_KEYBOARD_MAC)
+  output (kext)
+
+  fallthrough false
+
+)
+
+(defsrc
+
+  2      3      4      5      6           8      9      0      -      =
+  q      w      e      r      t           i      o      p      [      ]
+  caps   a      s      d      f           k      l      ;      ' ent
+                x      c      v           ,      .      /
+
+)
+
+
+(deflayer U_##BASE
+MIRYOKU_LAYERMAPPING_##BASE(MIRYOKU_LAYER_##BASE)
+)
+(deflayer U_##EXTRA
+MIRYOKU_LAYERMAPPING_##EXTRA(MIRYOKU_LAYER_##EXTRA)
+)
+(deflayer U_##TAP
+MIRYOKU_LAYERMAPPING_##TAP(MIRYOKU_LAYER_##TAP)
+)
+(deflayer U_##BUTTON
+MIRYOKU_LAYERMAPPING_##BUTTON(MIRYOKU_LAYER_##BUTTON)
+)
+(deflayer U_##NAV
+MIRYOKU_LAYERMAPPING_##NAV(MIRYOKU_LAYER_##NAV)
+)
+(deflayer U_##MOUSE
+MIRYOKU_LAYERMAPPING_##MOUSE(MIRYOKU_LAYER_##MOUSE)
+)
+(deflayer U_##MEDIA
+MIRYOKU_LAYERMAPPING_##MEDIA(MIRYOKU_LAYER_##MEDIA)
+)
+(deflayer U_##NUM
+MIRYOKU_LAYERMAPPING_##NUM(MIRYOKU_LAYER_##NUM)
+)
+(deflayer U_##SYM
+MIRYOKU_LAYERMAPPING_##SYM(MIRYOKU_LAYER_##SYM)
+)
+(deflayer U_##FUN
+MIRYOKU_LAYERMAPPING_##FUN(MIRYOKU_LAYER_##FUN)
+)
+
+
+
+
+
