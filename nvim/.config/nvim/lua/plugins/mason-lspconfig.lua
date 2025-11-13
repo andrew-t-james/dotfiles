@@ -13,6 +13,7 @@ return {
       "rust_analyzer", -- rust-analyzer
       "tailwindcss", -- tailwindcss-language-server
       "tsserver", -- typescript-language-server
+      "templ", -- templ-language-server
       "vtsls", -- vtsls
       "yamlls", -- yaml-language-server
     },

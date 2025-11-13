@@ -155,7 +155,7 @@ return {
         -- { CLOSED, OPENED }
         section = { "", "" },
         item = { "", "" },
-        hunk = { "", "" },
+        hunk = { "", "" },
       },
       -- Integrations
       integrations = {

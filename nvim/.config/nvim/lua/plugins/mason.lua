@@ -6,6 +6,7 @@ return {
       "autopep8",
       "biome",
       "black",
+      "templ",
       "prettier",
       "shfmt",
       "stylua",

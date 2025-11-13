@@ -46,6 +46,11 @@ return {
       -- Other formats
       graphql = { "biome", "prettier" },
       handlebars = { "biome", "prettier" },
+      go = { "goimports", "gofumpt" },
+      templ = {
+        "templ",
+        "injected",
+      },
     },
   },
 }

@@ -19,6 +19,7 @@ return {
         "scss",
         "svelte",
         "toml",
+        "templ",
         "tsx",
         "yaml",
         -- "java",
