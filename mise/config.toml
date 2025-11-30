@@ -1,0 +1,4 @@
+[tools]
+node = "24"
+"npm:@antfu/ni" = "latest"
+"npm:@anthropic-ai/claude-code" = "latest"
