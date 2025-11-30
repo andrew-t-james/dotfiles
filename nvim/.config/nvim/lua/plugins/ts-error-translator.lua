@@ -4,7 +4,6 @@ return {
     "typescript",
     "typescriptreact",
     "typescript.tsx",
-    "svelte",
   },
   config = true,
 }
