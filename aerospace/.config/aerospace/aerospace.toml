@@ -212,6 +212,10 @@ if.app-id = "notion.id"
 run = "move-node-to-workspace notes"
 
 [[on-window-detected]]
+if.app-id = "com.linear"
+run = "move-node-to-workspace notes"
+
+[[on-window-detected]]
 if.app-id = "com.mikekreeki.tasks"
 run = "move-node-to-workspace tasks"
 
