@@ -50,7 +50,7 @@ return {
         -- adding any nvim-cmp sources here will enable them
         -- with blink.compat
         compat = {},
-        default = { "lsp", "path", "snippets", "buffer", "copilot", "emoji" },
+        default = { "lsp", "path", "snippets", "buffer", "emoji" },
         providers = {
           emoji = {
             module = "blink-emoji",
