@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Slack
+Comment=Collaborate with your team
+Exec=zen-browser --new-instance -P web-app --new-window https://app.slack.com/
+Terminal=false
+Type=Application
+Icon=/home/your-username/.local/share/applications/icons/slack.png
+StartupNotify=true
+Categories=Utility;Network;

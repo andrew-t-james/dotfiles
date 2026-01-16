@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=ShortWave
+Comment=ShortWave
+Exec=zen-browser --new-instance -P web-app --new-window https://app.shortwave.com
+Terminal=false
+Type=Application
+Icon=/home/aj/.local/share/applications/icons/shortwave.png
+StartupNotify=true

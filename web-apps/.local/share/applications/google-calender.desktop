@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Google Calendar
+Comment=Manage your calendar
+Exec=zen-browser --new-instance -P web-app --new-window https://calendar.google.com/calendar
+Terminal=false
+Type=Application
+Icon=/home/your-username/.local/share/applications/icons/google-calendar.png
+StartupNotify=true
+Categories=Utility;Office;
