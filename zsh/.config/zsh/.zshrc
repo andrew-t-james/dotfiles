@@ -27,8 +27,18 @@ path=(
 export PATH
 
 # ---------------- ANTIGEN SETUP ----------------
-ANTIGEN_PATH="${XDG_CONFIG_HOME:-$HOME/.config}/antigen.zsh"
-[[ -f "$ANTIGEN_PATH" ]] && source "$ANTIGEN_PATH"
+# Antigen: shared macOS + Linux
+for antigen_file in \
+  /usr/share/zsh/share/antigen.zsh \
+  /usr/share/zsh/share/antigen/antigen.zsh \
+  /opt/homebrew/share/antigen/antigen.zsh \
+  /usr/local/share/antigen/antigen.zsh \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/antigen.zsh"
+do
+  [[ -r "$antigen_file" ]] && source "$antigen_file" && break
+done
+
+unset antigen_file
 
 antigen use oh-my-zsh
 
