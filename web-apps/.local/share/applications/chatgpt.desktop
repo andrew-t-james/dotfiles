@@ -2,7 +2,7 @@
 Version=1.0
 Name=ChatGPT
 Comment=Chat with GPT-3
-Exec=zen-browser --new-instance -P web-app --new-window https://chatgpt.com
+Exec=zen-browser --new-instance -P chatgpt --name chatgpt --new-window https://chatgpt.com
 Terminal=false
 Type=Application
 Icon=/home/your-username/.local/share/applications/icons/chatgpt.png

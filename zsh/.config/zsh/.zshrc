@@ -133,7 +133,7 @@ web2app() {
 Version=1.0
 Name=$APP_NAME
 Comment=$APP_NAME
-Exec=chromium --new-window --ozone-platform=wayland --app="$APP_URL" --name="$APP_NAME" --class="$APP_NAME"
+Exec=zen-browser --new-instance -P $APP_NAME --name $APP_NAME --new-window $APP_URL
 Terminal=false
 Type=Application
 Icon=$ICON_PATH
