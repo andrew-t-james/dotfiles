@@ -3,7 +3,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC_DIR="$SCRIPT_DIR/web-apps"
+SRC_DIR="$SCRIPT_DIR/../web-apps"
 SRC_ICON_DIR="$SRC_DIR/icons"
 DST_APPS="$HOME/.local/share/applications"
 DST_ICONS="$DST_APPS/icons"
