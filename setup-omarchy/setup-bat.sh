@@ -1,33 +1,37 @@
 #!/usr/bin/env bash
+# Sets up Catppuccin theme for bat
 set -euo pipefail
 
-echo "[INFO] Setting up Catppuccin theme for bat"
-
-# Detect bat config folder
 BAT_CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/bat"
 BAT_THEMES_DIR="$BAT_CONFIG_DIR/themes"
 
-mkdir -p "$BAT_THEMES_DIR"
+APPLY=false
+[[ ${1:-} == "--apply" ]] && APPLY=true
 
-# Clone the Catppuccin bat themes
-if [[ -d "$BAT_THEMES_DIR/catppuccin-bat" ]]; then
-  echo "[INFO] Catppuccin bat themes already cloned, updating..."
-  git -C "$BAT_THEMES_DIR/catppuccin-bat" pull
+BAT_SYNTAXES_DIR="$BAT_CONFIG_DIR/syntaxes"
+
+if $APPLY; then
+  mkdir -p "$BAT_THEMES_DIR" "$BAT_SYNTAXES_DIR"
+
+  if [[ -d "$BAT_THEMES_DIR/catppuccin-bat" ]]; then
+    git -C "$BAT_THEMES_DIR/catppuccin-bat" pull
+  else
+    git clone https://github.com/catppuccin/bat.git "$BAT_THEMES_DIR/catppuccin-bat"
+  fi
+
+  if compgen -G "$BAT_THEMES_DIR/catppuccin-bat/themes/*.tmTheme" >/dev/null; then
+    cp "$BAT_THEMES_DIR/catppuccin-bat/themes/"*.tmTheme "$BAT_THEMES_DIR/"
+  fi
+
+  # Install syntaxes
+  if [[ -d "$BAT_SYNTAXES_DIR/sublime-purescript-syntax" ]]; then
+    git -C "$BAT_SYNTAXES_DIR/sublime-purescript-syntax" pull
+  else
+    git clone https://github.com/tellnobody1/sublime-purescript-syntax "$BAT_SYNTAXES_DIR/sublime-purescript-syntax"
+  fi
+
+  bat cache --build
+  echo "[INFO] Set up Catppuccin theme for bat"
 else
-  echo "[INFO] Cloning Catppuccin bat themes into $BAT_THEMES_DIR"
-  git clone https://github.com/catppuccin/bat.git "$BAT_THEMES_DIR/catppuccin-bat"
+  echo "[DRY RUN] Would set up Catppuccin theme for bat"
 fi
-
-# Copy all .tmTheme files into bat's themes directory
-if compgen -G "$BAT_THEMES_DIR/catppuccin-bat/themes/*.tmTheme" >/dev/null; then
-  cp "$BAT_THEMES_DIR/catppuccin-bat/themes/"*.tmTheme "$BAT_THEMES_DIR/"
-  echo "[INFO] Copied .tmTheme files into bat themes directory."
-else
-  echo "[WARN] No .tmTheme files found in catppuccin-bat repository!"
-fi
-
-# Rebuild bat cache
-echo "[INFO] Rebuilding bat theme cache..."
-bat cache --build
-
-echo "[INFO] Done setting up Catppuccin theme for bat"
