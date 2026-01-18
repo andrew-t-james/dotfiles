@@ -1,7 +1,7 @@
 return {
   "LazyVim/LazyVim",
   opts = {
-    colorscheme = "catppuccin",
+    colorscheme = require("theme"),
     defaults = {
       autocmds = true, -- lazyvim.config.autocmds
       keymaps = true, -- lazyvim.config.keymaps
