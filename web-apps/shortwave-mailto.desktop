@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Name=Shortwave (mailto)
+Comment=Handle mailto links in existing Shortwave window
+Exec=__HOME__/dotfiles/scripts/shortwave-mailto.sh %u
+Terminal=false
+Type=Application
+Icon=__HOME__/.local/share/applications/icons/shortwave.png
+StartupNotify=false
+MimeType=x-scheme-handler/mailto;

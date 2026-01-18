@@ -5,6 +5,6 @@ Comment=Manage your calendar
 Exec=zen-browser --new-instance -P web-app --new-window https://calendar.google.com/calendar
 Terminal=false
 Type=Application
-Icon=/home/your-username/.local/share/applications/icons/google-calendar.png
+Icon=__HOME__/.local/share/applications/icons/google-calendar.png
 StartupNotify=true
 Categories=Utility;Office;

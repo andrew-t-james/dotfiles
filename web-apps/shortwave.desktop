@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=shortwave
+Comment=shortwave
+Exec=__HOME__/dotfiles/hypr/.config/hypr/shortwave.sh
+Terminal=false
+Type=Application
+Icon=__HOME__/.local/share/applications/icons/shortwave.png
+StartupNotify=true
