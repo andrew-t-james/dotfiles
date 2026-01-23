@@ -50,6 +50,7 @@ alias k='kubectl'
 # ====================
 # Modern replacements for traditional tools
 alias cat=bat    # Modern replacement for cat
+alias top=btop   # Modern replacement for top
 alias diff=delta # Modern replacement for diff
 alias ll='exa -l --git --icons'
 alias la='exa -la --icons'
