@@ -18,6 +18,6 @@ local f = io.open(vim.fn.expand("~/.config/omarchy/current/theme.name"), "r")
 if f then
   local name = f:read("*l")
   f:close()
-  return theme_map[name] or "default"
+  return theme_map[name] or "catppuccin"
 end
-return "default"
+return "catppuccin"

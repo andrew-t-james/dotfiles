@@ -41,6 +41,8 @@ alias brewup='brew update; brew upgrade; brew cleanup; brew cleanup; brew doctor
 alias acm='git diff | pbcopy && open "raycast://ai-commands/git-commit-message"' # Copy git diff and open Raycast
 alias cw='clone_worktree'
 alias envrc='echo '\''source "${HOME}/.config/env/.envrc"'\'' > .envrc && direnv allow .'
+alias cr='clear'
+alias aistatus='~/.config/zsh/ai-status.sh'
 
 # Kubernetes
 alias k='kubectl'
