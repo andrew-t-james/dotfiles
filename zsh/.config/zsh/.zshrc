@@ -75,6 +75,7 @@ fi
 # macOS Homebrew fzf path fallback
 if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
   source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+  export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
 fi
 
 # ---------------- DIRENV ----------------
