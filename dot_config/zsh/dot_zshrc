@@ -127,15 +127,15 @@ compress() {
   tar -czf "$1.tar.gz" "$1"
 }
 
-zd() {
-  if [[ $# -eq 0 ]]; then
-    cd ~
-  elif [[ -d "$1" ]]; then
-    cd "$1"
-  else
-    z "$@" && printf " \U000F17A9 " && pwd || echo "Error: Directory not found"
-  fi
-}
+# zd() {
+#   if [[ $# -eq 0 ]]; then
+#     cd ~
+#   elif [[ -d "$1" ]]; then
+#     cd "$1"
+#   else
+#     z "$@" && printf " \U000F17A9 " && pwd || echo "Error: Directory not found"
+#   fi
+# }
 
 iso2sd() {
   if [[ $# -ne 2 ]]; then
