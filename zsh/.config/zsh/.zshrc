@@ -27,6 +27,8 @@ path=(
 export PATH
 
 # ---------------- ANTIGEN SETUP ----------------
+ANTIGEN_CHECK_FILES=("${ZDOTDIR}/.zshrc")
+
 # Antigen: shared macOS + Linux
 for antigen_file in \
   /usr/share/zsh/share/antigen.zsh \
@@ -80,7 +82,24 @@ fi
 
 # ---------------- DIRENV ----------------
 if command -v direnv &> /dev/null; then
+  if [[ ! -f "${XDG_CONFIG_HOME:-$HOME/.config}/direnv/direnv.toml" ]]; then
+    mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}/direnv"
+    echo '[global]\nhide_env_diff = true' > "${XDG_CONFIG_HOME:-$HOME/.config}/direnv/direnv.toml"
+  fi
   eval "$(direnv hook zsh)"
+
+  _last_direnv_dir=""
+  _direnv_notify() {
+    if [[ "$_last_direnv_dir" != "$DIRENV_DIR" ]]; then
+      if [[ -n "$DIRENV_DIR" ]]; then
+        echo "direnv: loaded ${DIRENV_DIR#-}"
+      elif [[ -n "$_last_direnv_dir" ]]; then
+        echo "direnv: unloaded"
+      fi
+      _last_direnv_dir="$DIRENV_DIR"
+    fi
+  }
+  precmd_functions+=(_direnv_notify)
 fi
 
 # ---------------- FUNCTIONS ----------------
