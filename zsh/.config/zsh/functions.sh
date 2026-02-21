@@ -29,18 +29,20 @@ function dev() {
     return 1
   fi
 
+  local agent="${1:-claude}"
+
   local nvim_pane
   nvim_pane=$(tmux new-window -n dev -c "$PWD" -P -F '#{pane_id}')
 
-  # Split right for Claude (full height, 32% width)
-  local claude_pane
-  claude_pane=$(tmux split-window -h -t "$nvim_pane" -c "$PWD" -l 32% -P -F '#{pane_id}')
+  # Split right for agent (full height, 32% width)
+  local agent_pane
+  agent_pane=$(tmux split-window -h -t "$nvim_pane" -c "$PWD" -l 32% -P -F '#{pane_id}')
 
   # Split neovim pane bottom for terminal (14% height, under neovim only)
   tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 14%
 
   tmux send-keys -t "$nvim_pane" 'nvim' C-m
-  tmux send-keys -t "$claude_pane" 'claude' C-m
+  tmux send-keys -t "$agent_pane" "$agent" C-m
   tmux select-pane -t "$nvim_pane"
 }
 
