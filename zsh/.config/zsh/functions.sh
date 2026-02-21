@@ -32,7 +32,10 @@ function dev() {
   local agent="${1:-claude}"
 
   local nvim_pane
-  nvim_pane=$(tmux new-window -n dev -c "$PWD" -P -F '#{pane_id}')
+  nvim_pane=$(tmux new-window -c "$PWD" -P -F '#{pane_id}')
+
+  # Tag this window so devk can find it
+  tmux set-option -w -t "$nvim_pane" @dev 1
 
   # Split right for agent (full height, 32% width)
   local agent_pane
@@ -52,14 +55,12 @@ function devk() {
     return 1
   fi
 
-  local session
-  session=$(tmux display-message -p '#{session_name}')
-  local killed=0
+  local is_dev
+  is_dev=$(tmux display-message -p '#{@dev}')
 
-  for win in $(tmux list-windows -t "$session" -F '#{window_index} #{window_name}' | grep ' dev$' | awk '{print $1}' | sort -rn); do
-    tmux kill-window -t "$session:$win"
-    ((killed++))
-  done
-
-  echo "Killed $killed dev window(s)"
+  if [[ "$is_dev" == "1" ]]; then
+    tmux kill-window
+  else
+    echo "Not a dev window"
+  fi
 }
