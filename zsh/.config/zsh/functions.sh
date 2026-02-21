@@ -34,12 +34,12 @@ function nic() {
   local nvim_pane
   nvim_pane=$(tmux new-window -c "$PWD" -P -F '#{pane_id}')
 
-  # Split right for Claude (full height, 32% width)
+  # Split bottom for full-width terminal (14% height)
+  tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 14%
+
+  # Split the neovim pane right for Claude (32% width)
   local claude_pane
   claude_pane=$(tmux split-window -h -t "$nvim_pane" -c "$PWD" -l 32% -P -F '#{pane_id}')
-
-  # Split neovim pane bottom for terminal (21% height, under neovim only)
-  tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 21%
 
   # Launch apps
   tmux send-keys -t "$nvim_pane" 'nvim' C-m
