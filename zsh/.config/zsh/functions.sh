@@ -23,28 +23,41 @@ llm_txt() {
   done
 }
 
-function nic() {
-  # Create a new window in the current tmux session with neovim, claude, and a terminal
+function dev() {
   if [[ -z "$TMUX" ]]; then
     echo "Not in a tmux session"
     return 1
   fi
 
-  # Create new window (becomes the neovim pane)
   local nvim_pane
-  nvim_pane=$(tmux new-window -c "$PWD" -P -F '#{pane_id}')
+  nvim_pane=$(tmux new-window -n dev -c "$PWD" -P -F '#{pane_id}')
 
-  # Split bottom for full-width terminal (14% height)
-  tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 14%
-
-  # Split the neovim pane right for Claude (32% width)
+  # Split right for Claude (full height, 32% width)
   local claude_pane
   claude_pane=$(tmux split-window -h -t "$nvim_pane" -c "$PWD" -l 32% -P -F '#{pane_id}')
 
-  # Launch apps
+  # Split neovim pane bottom for terminal (14% height, under neovim only)
+  tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 14%
+
   tmux send-keys -t "$nvim_pane" 'nvim' C-m
   tmux send-keys -t "$claude_pane" 'claude' C-m
-
-  # Focus neovim
   tmux select-pane -t "$nvim_pane"
+}
+
+function devk() {
+  if [[ -z "$TMUX" ]]; then
+    echo "Not in a tmux session"
+    return 1
+  fi
+
+  local session
+  session=$(tmux display-message -p '#{session_name}')
+  local killed=0
+
+  for win in $(tmux list-windows -t "$session" -F '#{window_index} #{window_name}' | grep ' dev$' | awk '{print $1}' | sort -rn); do
+    tmux kill-window -t "$session:$win"
+    ((killed++))
+  done
+
+  echo "Killed $killed dev window(s)"
 }
