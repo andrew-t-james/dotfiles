@@ -10,3 +10,4 @@ tmux/.config/tmux/continuum
 zsh/.config/zsh/.zshrc.zwc
 
 hypr/.config/hypr/hyprland.local.conf
+.claude/

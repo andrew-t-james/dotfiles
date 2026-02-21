@@ -58,3 +58,4 @@ env/.envrc
 .vectorcode/
 .tool-versions
 mise.toml
+Wizard-*/

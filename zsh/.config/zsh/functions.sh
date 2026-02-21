@@ -22,3 +22,29 @@ llm_txt() {
     echo -e "\n" >>"$output" # Add a newline separator
   done
 }
+
+function nic() {
+  # Create a new window in the current tmux session with neovim, claude, and a terminal
+  if [[ -z "$TMUX" ]]; then
+    echo "Not in a tmux session"
+    return 1
+  fi
+
+  # Create new window (becomes the neovim pane)
+  local nvim_pane
+  nvim_pane=$(tmux new-window -c "$PWD" -P -F '#{pane_id}')
+
+  # Split right for Claude (full height, 32% width)
+  local claude_pane
+  claude_pane=$(tmux split-window -h -t "$nvim_pane" -c "$PWD" -l 32% -P -F '#{pane_id}')
+
+  # Split neovim pane bottom for terminal (21% height, under neovim only)
+  tmux split-window -v -t "$nvim_pane" -c "$PWD" -l 21%
+
+  # Launch apps
+  tmux send-keys -t "$nvim_pane" 'nvim' C-m
+  tmux send-keys -t "$claude_pane" 'claude' C-m
+
+  # Focus neovim
+  tmux select-pane -t "$nvim_pane"
+}

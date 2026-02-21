@@ -79,3 +79,8 @@ alias lo='tmux list-windows -F "#{window_active} #{window_layout}" | grep "^1" |
 # ====================
 alias pip=pip3       # use pip3 as default pip command
 alias python=python3 # use python3 as default python command
+
+# ====================
+# AI Tools
+# ====================
+alias yolo='claude --dangerously-skip-permissions'

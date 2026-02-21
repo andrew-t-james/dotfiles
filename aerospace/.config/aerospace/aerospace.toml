@@ -176,6 +176,10 @@ if.app-id = "com.electron.shortwave"
 run = "move-node-to-workspace email"
 
 [[on-window-detected]]
+if.app-id = "com.superhuman.electron"
+run = "move-node-to-workspace email"
+
+[[on-window-detected]]
 if.app-id = "com.cron.electron"
 run = "move-node-to-workspace calendar"
 
