@@ -9,6 +9,7 @@ return {
       "graphql", -- graphql-language-service-cli
       "jsonls", -- json-lsp
       "lua_ls", -- lua-language-server
+      "oxc", -- oxc-language-server (oxlint)
       "pyright", -- pyright
       "rust_analyzer", -- rust-analyzer
       "tailwindcss", -- tailwindcss-language-server

@@ -133,6 +133,48 @@ return {
       keys = ts_keys(),
     }
 
+    -- Configure tsgo (experimental Go-based TypeScript LSP)
+    -- Install: npm install -g @typescript/native-preview
+    -- Note: tsgo does not yet support goToSourceDefinition or findAllFileReferences
+    opts.servers.tsgo = {
+      enabled = false,
+      filetypes = ts_filetypes,
+      keys = {
+        {
+          "<leader>co",
+          ts_code_action({
+            "source.organizeImports",
+            "source.organizeImports.ts",
+          }),
+          desc = "Organize Imports",
+        },
+        {
+          "<leader>ci",
+          ts_code_action({
+            "source.addMissingImports",
+            "source.addMissingImports.ts",
+          }),
+          desc = "Add missing imports",
+        },
+        {
+          "<leader>cu",
+          ts_code_action({
+            "source.removeUnused",
+            "source.removeUnused.ts",
+          }),
+          desc = "Remove unused imports",
+        },
+        {
+          "<leader>cD",
+          ts_code_action({
+            "source.fixAll",
+            "source.fixAll.ts",
+          }),
+          desc = "Fix all diagnostics",
+        },
+      },
+    }
+
     -- Setup function to ensure javascript settings mirror typescript
     opts.setup = opts.setup or {}
     opts.setup.vtsls = function(_, server_opts)

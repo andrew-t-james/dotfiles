@@ -15,6 +15,7 @@ return {
       -- Linters
       "flake8",
       "luacheck",
+      "oxlint",
       "shellcheck",
       "yamllint",
 

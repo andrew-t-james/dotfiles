@@ -4,6 +4,13 @@ return {
   "stevearc/conform.nvim",
   opts = {
     formatters = {
+      oxfmt = {
+        command = "oxfmt",
+        args = { "--stdin-filepath", "$FILENAME" },
+        stdin = true,
+        require_cwd = true,
+        cwd = util.root_file({ ".oxfmtrc.json", ".oxfmtrc.jsonc" }),
+      },
       biome = {
         require_cwd = true,
         command = util.from_node_modules("biome"),
@@ -22,30 +29,30 @@ return {
       lua = { "stylua" },
 
       -- JavaScript/TypeScript ecosystem
-      javascript = { "biome", "prettier" },
-      javascriptreact = { "biome", "prettier" },
-      typescript = { "biome", "prettier" },
-      typescriptreact = { "biome", "prettier" },
+      javascript = { "oxfmt", "biome", "prettier" },
+      javascriptreact = { "oxfmt", "biome", "prettier" },
+      typescript = { "oxfmt", "biome", "prettier" },
+      typescriptreact = { "oxfmt", "biome", "prettier" },
 
       -- Data/Config files
-      json = { "biome", "prettier" },
-      jsonc = { "biome", "prettier" },
-      yaml = { "biome", "prettier" },
+      json = { "oxfmt", "biome", "prettier" },
+      jsonc = { "oxfmt", "biome", "prettier" },
+      yaml = { "oxfmt", "biome", "prettier" },
 
       -- Web files
-      vue = { "biome", "prettier" },
-      css = { "biome", "prettier" },
-      scss = { "biome", "prettier" },
-      less = { "biome", "prettier" },
-      html = { "biome", "prettier" },
+      vue = { "oxfmt", "biome", "prettier" },
+      css = { "oxfmt", "biome", "prettier" },
+      scss = { "oxfmt", "biome", "prettier" },
+      less = { "oxfmt", "biome", "prettier" },
+      html = { "oxfmt", "biome", "prettier" },
 
       -- Documentation
-      markdown = { "biome", "prettier" },
-      ["markdown.mdx"] = { "biome", "prettier" },
+      markdown = { "oxfmt", "biome", "prettier" },
+      ["markdown.mdx"] = { "oxfmt", "biome", "prettier" },
 
       -- Other formats
-      graphql = { "biome", "prettier" },
-      handlebars = { "biome", "prettier" },
+      graphql = { "oxfmt", "biome", "prettier" },
+      handlebars = { "oxfmt", "biome", "prettier" },
       go = { "goimports", "gofumpt" },
       templ = {
         "templ",

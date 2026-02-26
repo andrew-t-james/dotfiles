@@ -30,6 +30,9 @@ function dev() {
   fi
 
   local agent="${1:-claude}"
+  if [[ "$agent" == "yolo" ]]; then
+    agent="claude --dangerously-skip-permissions"
+  fi
 
   local nvim_pane
   nvim_pane=$(tmux new-window -c "$PWD" -P -F '#{pane_id}')

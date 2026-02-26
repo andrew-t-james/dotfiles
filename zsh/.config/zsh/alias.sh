@@ -84,3 +84,14 @@ alias python=python3 # use python3 as default python command
 # AI Tools
 # ====================
 alias yolo='claude --dangerously-skip-permissions'
+
+# ====================
+# Whatsapp tui be
+# ====================
+alias waha='docker run -d -p 9876:3000 -v waha-data:/app/.sessions devlikeapro/waha'
+
+# Load local/work aliases (not tracked in git)
+# Load local/work aliases (not tracked in git)
+if [[ -f ~/.config/zsh/.aliases.local.sh ]]; then
+  source ~/.config/zsh/.aliases.local.sh
+fi
