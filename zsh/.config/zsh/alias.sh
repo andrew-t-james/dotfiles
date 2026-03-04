@@ -88,7 +88,7 @@ alias yolo='claude --dangerously-skip-permissions'
 # ====================
 # Whatsapp tui be
 # ====================
-alias waha='docker run -d -p 9876:3000 -v waha-data:/app/.sessions devlikeapro/waha'
+alias waha='docker run -d -p 9876:3000 -v waha-data:/app/.sessions -e WHATSAPP_API_KEY=$(grep WAHA_API_KEY ~/.config/waha-tui/.env | cut -d= -f2) devlikeapro/waha'
 
 # Load local/work aliases (not tracked in git)
 # Load local/work aliases (not tracked in git)
