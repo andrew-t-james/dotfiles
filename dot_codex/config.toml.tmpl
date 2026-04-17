@@ -6,10 +6,6 @@ model_auto_compact_token_limit = 900000
 model = "gpt-5.4"
 personality = "pragmatic"
 
-[mcp_servers.codedb]
-command = "{{ .chezmoi.homeDir }}/bin/codedb"
-args = [ "mcp" ]
-
 [notice]
 hide_gpt5_1_migration_prompt = true
 

@@ -5,17 +5,24 @@ Managed with [chezmoi](https://chezmoi.io). One command gets you from a fresh Ma
 ## Quickstart
 
 ```sh
+# 1. Bootstrap everything
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --source ~/dotfiles --apply andrew-t-james/dotfiles
+
+# 2. Authenticate GitHub CLI (needed to register SSH key)
+gh auth login
+
+# 3. Re-apply to register SSH key with GitHub
+chezmoi apply
 ```
 
-This will:
-1. Install chezmoi
-2. Clone this repo to `~/dotfiles`
-3. Prompt for your git email and whether this is a work machine
-4. Install Xcode CLT + Homebrew + all packages from `Brewfile`
-5. Install Rust via rustup
-6. Apply all dotfiles to `~`
-7. Set macOS defaults (dock, finder, keyboard repeat, trackpad)
+The bootstrap will:
+1. Install chezmoi and clone this repo to `~/dotfiles`
+2. Prompt for your git email and whether this is a work machine
+3. Install Xcode CLT + Homebrew + all packages from `Brewfile`
+4. Install Rust via rustup
+5. Apply all dotfiles to `~`
+6. Set macOS defaults (dock, finder, keyboard repeat, trackpad)
+7. Generate an SSH key (GitHub registration requires step 2 above)
 8. Build the bat syntax/theme cache
 
 ## What gets installed

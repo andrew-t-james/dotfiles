@@ -53,6 +53,7 @@ brew "stow"
 brew "tldr"
 brew "tmux"
 brew "trash"
+brew "antigen"
 brew "atuin"
 brew "zoxide"
 
