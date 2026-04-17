@@ -1,3 +1,5 @@
+sourceDir = "{{ .chezmoi.homeDir }}/dotfiles"
+
 [data]
   name = "andrew james"
   email = {{ promptStringOnce . "email" "Git email" | quote }}
