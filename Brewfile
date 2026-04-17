@@ -6,7 +6,8 @@
 
 cask "1password"
 cask "1password-cli"
-cask "aerospace"
+tap "nikitabobko/tap"
+cask "nikitabobko/tap/aerospace"
 cask "appcleaner"
 cask "balenaetcher"
 cask "claude-code"
