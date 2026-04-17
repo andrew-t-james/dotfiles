@@ -17,9 +17,9 @@ else
   chmod 700 "$HOME/.ssh"
   ssh-keygen -t ed25519 -C "{{ .email }}" -f "$KEY" -N ""
 
-  # Add to macOS keychain and agent
-  ssh-add --apple-use-keychain "$KEY"
-  echo "==> SSH key generated and added to keychain."
+  # Add to macOS keychain and agent (no-op if agent not running)
+  ssh-add --apple-use-keychain "$KEY" 2>/dev/null || true
+  echo "==> SSH key generated."
 fi
 
 # ─── Register with GitHub ─────────────────────────────────────────────────────
