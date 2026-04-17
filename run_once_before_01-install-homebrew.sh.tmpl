@@ -5,6 +5,10 @@
 {{ if eq .chezmoi.os "darwin" -}}
 set -euo pipefail
 
+# Ensure ~/.config is owned by the current user
+mkdir -p "$HOME/.config"
+sudo chown -R "$(whoami):staff" "$HOME/.config"
+
 echo "==> Checking Xcode Command Line Tools..."
 if ! xcode-select -p &>/dev/null; then
   echo "==> Installing Xcode Command Line Tools..."
