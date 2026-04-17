@@ -53,6 +53,7 @@ brew "stow"
 brew "tldr"
 brew "tmux"
 brew "trash"
+brew "atuin"
 brew "zoxide"
 
 # ─── Formulae: Git ────────────────────────────────────────────────────────────
