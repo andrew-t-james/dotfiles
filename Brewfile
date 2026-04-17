@@ -63,9 +63,10 @@ brew "lazygit"
 # ─── Formulae: Languages & Runtimes ──────────────────────────────────────────
 
 brew "mise"
+brew "neovim"
 brew "zig"
 brew "uv"
-brew "luarocks"        # For nvim plugins?
+brew "luarocks"
 
 # ─── Formulae: Infrastructure & Cloud ─────────────────────────────────────────
 
