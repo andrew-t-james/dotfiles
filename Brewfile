@@ -18,7 +18,7 @@ cask "cleanshot"
 cask "codex"
 cask "codexbar"
 cask "copilot-cli"
-cask "docker"          # Docker Desktop vs OrbStack — pick one
+cask "docker-desktop"
 cask "font-geist-mono"
 cask "font-geist-mono-nerd-font"
 cask "ghostty"
