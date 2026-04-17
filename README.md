@@ -5,7 +5,7 @@ Managed with [chezmoi](https://chezmoi.io). One command gets you from a fresh Ma
 ## Quickstart
 
 ```sh
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --source ~/dotfiles andrew-t-james/dotfiles
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --source ~/dotfiles --apply andrew-t-james/dotfiles
 ```
 
 This will:
