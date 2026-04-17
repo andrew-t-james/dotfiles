@@ -92,6 +92,9 @@ brew "yq"
 
 # brew "ollama"
 
+tap "FelixKratz/formulae"
+brew "FelixKratz/formulae/borders"
+
 # ─── Services ─────────────────────────────────────────────────────────────────
 
 # borders   — run: brew services start borders
