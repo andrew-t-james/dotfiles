@@ -3,21 +3,23 @@
 # Installs npm global packages on all managed node versions
 set -euo pipefail
 
-# Ensure brew bins are in PATH
-eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null || true)"
+BREW_PREFIX="${HOMEBREW_PREFIX:-/opt/homebrew}"
+[[ -f "$BREW_PREFIX/bin/brew" ]] || BREW_PREFIX="/usr/local"
+eval "$("$BREW_PREFIX/bin/brew" shellenv 2>/dev/null || true)"
 
-if ! command -v mise &>/dev/null; then
+MISE_BIN="$BREW_PREFIX/bin/mise"
+if [[ ! -x "$MISE_BIN" ]]; then
   echo "==> mise not found, skipping npm globals."
   exit 0
 fi
 
 echo "==> Installing mise tools..."
-mise install
+"$MISE_BIN" install
 
 echo "==> Installing npm globals across all node versions..."
 for version in 22.22.0 24.13.1; do
   echo "  node@$version: installing @antfu/ni..."
-  mise exec node@"$version" -- npm install -g @antfu/ni || echo "  skipped node@$version"
+  "$MISE_BIN" exec node@"$version" -- npm install -g @antfu/ni || echo "  skipped node@$version"
 done
 
 echo "==> npm globals installed."
