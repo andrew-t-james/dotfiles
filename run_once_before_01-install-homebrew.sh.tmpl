@@ -7,33 +7,45 @@ set -euo pipefail
 
 mkdir -p "$HOME/.config"
 
+# ─── Xcode CLT ───────────────────────────────────────────────────────────────
 echo "==> Checking Xcode Command Line Tools..."
 if ! xcode-select -p &>/dev/null; then
-  echo "==> Installing Xcode Command Line Tools (click Install in the dialog)..."
-  xcode-select --install
-  until xcode-select -p &>/dev/null; do sleep 5; done
-  echo "==> Xcode CLT installed."
-else
-  echo "==> Xcode CLT already installed."
+  echo ""
+  echo "  Xcode Command Line Tools are not installed."
+  echo "  Run this and wait for it to finish:"
+  echo ""
+  echo "    xcode-select --install"
+  echo ""
+  echo "  Then re-run the bootstrap:"
+  echo ""
+  echo "    sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- init --source ~/dotfiles --apply andrew-t-james/dotfiles"
+  echo ""
+  exit 1
 fi
+echo "==> Xcode CLT OK."
 
+# ─── Homebrew ────────────────────────────────────────────────────────────────
 echo "==> Checking Homebrew..."
-if ! command -v brew &>/dev/null; then
-  echo "==> Installing Homebrew..."
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+BREW_BIN="/opt/homebrew/bin/brew"
+[[ -x "$BREW_BIN" ]] || BREW_BIN="/usr/local/bin/brew"
 
-  # Add brew to PATH for Apple Silicon
-  if [[ -f /opt/homebrew/bin/brew ]]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
+if [[ ! -x "$BREW_BIN" ]]; then
+  echo "==> Installing Homebrew..."
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  BREW_BIN="/opt/homebrew/bin/brew"
+  [[ -x "$BREW_BIN" ]] || BREW_BIN="/usr/local/bin/brew"
   echo "==> Homebrew installed."
 else
   echo "==> Homebrew already installed."
 fi
 
+eval "$("$BREW_BIN" shellenv)"
+
+# ─── chezmoi ─────────────────────────────────────────────────────────────────
 echo "==> Installing chezmoi via brew..."
 brew install chezmoi
 
+# ─── Brewfile ────────────────────────────────────────────────────────────────
 echo "==> Running brew bundle..."
 brew bundle --file="{{ .chezmoi.sourceDir }}/Brewfile" || echo "==> Some packages failed, continuing..."
 echo "==> brew bundle complete."
