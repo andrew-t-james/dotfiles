@@ -9,15 +9,10 @@ cask "1password-cli"
 cask "aerospace"
 cask "appcleaner"
 cask "balenaetcher"
-cask "beekeeper-studio"
-cask "cap"
-cask "chatgpt"
-cask "claude"
 cask "claude-code"
 cask "cleanshot"
 cask "codex"
-cask "codexbar"
-cask "copilot-cli"
+# cask "codexbar"
 cask "docker-desktop"
 cask "font-geist-mono"
 cask "font-geist-mono-nerd-font"
@@ -36,6 +31,8 @@ cask "slack"
 
 # ─── Formulae: Shell & Navigation ─────────────────────────────────────────────
 
+brew "antigen"
+brew "atuin"
 brew "bat"
 brew "btop"
 brew "direnv"
@@ -47,12 +44,8 @@ brew "hyperfine"
 brew "jq"
 brew "sesh"
 brew "starship"
-brew "stow"
-brew "tldr"
 brew "tmux"
 brew "trash"
-brew "antigen"
-brew "atuin"
 brew "zoxide"
 
 # ─── Formulae: Git ────────────────────────────────────────────────────────────
@@ -94,7 +87,7 @@ brew "yq"
 
 # ─── Formulae: Media / ML ─────────────────────────────────────────────────────
 
-brew "ollama"
+# brew "ollama"
 
 # ─── Services ─────────────────────────────────────────────────────────────────
 
