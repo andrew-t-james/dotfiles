@@ -44,6 +44,9 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 
 # ─── Keyboard ─────────────────────────────────────────────────────────────────
+# Remap Caps Lock → Escape (takes effect immediately; LaunchAgent persists it)
+hidutil property --set '{"UserKeyMapping":[{"HIDKeyboardModifierMappingSrc":0x700000039,"HIDKeyboardModifierMappingDst":0x700000029}]}' &>/dev/null || true
+
 defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
 # Disable press-and-hold for keys in favor of key repeat
