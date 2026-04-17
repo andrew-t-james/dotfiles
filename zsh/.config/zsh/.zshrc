@@ -22,6 +22,7 @@ path=(
   ./bin
   $HOME/.local/bin
   $HOME/.local/share/omarchy/bin
+  ${HOME}/bin
   $path
 )
 export PATH
@@ -191,3 +192,5 @@ refresh-xcompose() {
   pkill fcitx5
   setsid fcitx5 &>/dev/null &
 }
+export PATH="$(uv tool dir)/cocoindex-code/bin:$PATH"
+export CLAUDE_CODE_NO_FLICKER=1

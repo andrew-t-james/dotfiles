@@ -38,7 +38,7 @@ keymap("n", "}", "}zz", opts)
 --   opts)
 
 vim.keymap.set("n", "tt", function()
-  require("fzf-lua").grep_cword()
+  require("fff").live_grep({ query = vim.fn.expand("<cword>") })
 end, opts)
 
 -- nvim tmux navigation keymaps

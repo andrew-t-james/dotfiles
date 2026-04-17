@@ -58,4 +58,14 @@ env/.envrc
 .vectorcode/
 .tool-versions
 mise.toml
+
 Wizard-*/
+Auto Run Docs/*
+.bg-shell/
+.planning/
+.gsd/
+.sisyphus/
+.factory/
+.omc/
+.omx/
+codedb.snapshot

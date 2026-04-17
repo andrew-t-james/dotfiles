@@ -9,7 +9,7 @@ return {
     dim = { enabled = true },
     explorer = { enabled = false },
     image = require("plugins.snacks.image"),
-    indent = { enabled = true, animate = { enabled = false } },
+    indent = { enabled = false },
     input = { enabled = true },
     notifier = { enabled = false, timeout = 3000, style = "minimal", top_down = false },
     quickfile = { enabled = true },
