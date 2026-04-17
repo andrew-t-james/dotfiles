@@ -2,8 +2,6 @@
 # Generated from NIX_MIGRATION_PLAN.md
 # AUDIT items are commented out with # AUDIT:
 
-tap "homebrew/bundle"
-
 # ─── Casks ────────────────────────────────────────────────────────────────────
 
 cask "1password"
