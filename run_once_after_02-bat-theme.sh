@@ -3,6 +3,8 @@
 # Rebuilds bat's theme cache so custom syntaxes and themes are available.
 set -euo pipefail
 
+eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null || true)"
+
 if command -v bat &>/dev/null; then
   echo "==> Building bat theme cache..."
   bat cache --build

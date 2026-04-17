@@ -3,6 +3,9 @@
 # Installs npm global packages on all managed node versions
 set -euo pipefail
 
+# Ensure brew and mise are in PATH
+eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null || true)"
+
 echo "==> Installing npm globals across all node versions..."
 
 for version in 22.22.0 24.13.1; do

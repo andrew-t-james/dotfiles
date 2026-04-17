@@ -2,6 +2,8 @@
 # run_once_after_03-install-ai-tools.sh.tmpl
 set -euo pipefail
 
+eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null || true)"
+
 echo "==> Installing AI CLI tools..."
 
 # Install oh-my-claudecode
