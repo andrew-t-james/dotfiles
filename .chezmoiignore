@@ -1,0 +1,54 @@
+# Linux only
+{{ if ne .chezmoi.os "linux" }}
+dot_config/hypr
+{{ end }}
+
+# Tmux plugin manager (installed separately)
+dot_config/tmux/plugins
+dot_config/tmux/resurrect
+
+# Claude - ephemeral/generated dirs
+dot_claude/projects
+dot_claude/sessions
+dot_claude/transcripts
+dot_claude/history.jsonl
+dot_claude/cache
+dot_claude/paste-cache
+dot_claude/file-history
+dot_claude/shell-snapshots
+dot_claude/tasks
+dot_claude/todos
+dot_claude/plans
+dot_claude/backups
+dot_claude/debug
+dot_claude/downloads
+dot_claude/telemetry
+dot_claude/usage-data
+dot_claude/statsig
+dot_claude/.omc
+dot_claude/memory
+
+# Codex - ephemeral/generated
+dot_codex/.system
+dot_codex/auth.json
+dot_codex/sessions
+dot_codex/memories
+dot_codex/cache
+dot_codex/logs_2.sqlite*
+dot_codex/state_5.sqlite*
+dot_codex/sqlite
+dot_codex/history.json
+dot_codex/history.jsonl
+dot_codex/shell_snapshots
+dot_codex/tmp
+dot_codex/.tmp
+dot_codex/vendor_imports
+dot_codex/update-check.json
+dot_codex/models_cache.json
+dot_codex/gsd-file-manifest.json
+dot_codex/installation_id
+dot_codex/internal_storage.json
+dot_codex/version.json
+dot_codex/.codex-global-state.json
+dot_codex/.personality_migration
+dot_codex/log

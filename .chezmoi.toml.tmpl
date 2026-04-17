@@ -1,0 +1,4 @@
+[data]
+  name = "andrew james"
+  email = {{ promptStringOnce . "email" "Git email" | quote }}
+  work = {{ promptBoolOnce . "work" "Work machine?" }}

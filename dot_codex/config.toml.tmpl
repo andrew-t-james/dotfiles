@@ -1,0 +1,37 @@
+model_reasoning_effort = "xhigh"
+
+model_context_window = 1000000
+model_auto_compact_token_limit = 900000
+
+model = "gpt-5.4"
+personality = "pragmatic"
+
+[mcp_servers.codedb]
+command = "{{ .chezmoi.homeDir }}/bin/codedb"
+args = [ "mcp" ]
+
+[notice]
+hide_gpt5_1_migration_prompt = true
+
+[notice.model_migrations]
+gpt-5-codex = "gpt-5.4"
+"gpt-5.3-codex" = "gpt-5.4"
+
+[features]
+multi_agent = true
+child_agents_md = true
+experimental_use_rmcp_client = true
+
+codex_hooks = true
+[env]
+USE_OMX_EXPLORE_CMD = "1"
+
+[agents]
+max_threads = 6
+max_depth = 2
+
+# fff-mcp — fast file finder with frecency scoring
+[mcp_servers.fff]
+command = "{{ .chezmoi.homeDir }}/.local/bin/fff-mcp"
+args = []
+enabled = true

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(docker kill:*)",
+      "Bash(openssl rand:*)",
+      "Bash(command:*)",
+      "Bash(curl:*)",
+      "Bash(docker:*)",
+      "Bash(xargs:*)"
+    ]
+  }
+}

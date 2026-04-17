@@ -1,0 +1,76 @@
+[push]
+  default = upstream
+  autoSetupRemote = true
+
+[user]
+  name = <user-name>
+  email = <github-account-email>
+	signingkey = <signingkey>
+
+; [github]
+  ; user = <github-username>
+
+[color]
+  ui = true
+  status = auto
+
+[core]
+  ; editor = code-insiders --wait
+  editor = ~/.local/bin/nvim
+  excludesfile = /Users/andrew/.gitignore_global
+	pager = delta --line-numbers --dark
+
+[diff]
+  tool = delta --line-numbers --dark
+; [difftool "default-difftool"]
+;   cmd = code-insiders --wait --diff $LOCAL $REMOTE
+;
+[credential]
+  helper = osxkeychain
+
+[commit]
+	gpgsign = true
+
+[interactive]
+  diffFiler = delta --color-only
+
+[gpg]
+	program = /opt/homebrew/bin/gpg
+
+[delta]
+    features = catppuccin-mocha line-numbers-plus-style = 28
+
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+    line-numbers-left-style = cyan
+    line-numbers-right-style = cyan
+    line-numbers-minus-style = 124
+
+[alias]
+    # Create a new branch from remote develop without tracking
+    # Usage: git nb feat/your-feature-name
+    # 1. Creates new branch from origin/develop without tracking info
+    # 2. Automatically checks out the new branch
+    # $1 represents the new branch name passed as argument
+    nb = "!f() { git branch $1 refs/remotes/origin/develop --no-track; git checkout $1; }; f"
+
+    # Rebase current branch on remote develop
+    # Works with worktree setups where develop is checked out elsewhere
+    # Usage: git rbd
+    rbd = !git fetch origin && git rebase origin/develo
+
+    # Merge remote develop into current branch
+    # Works with worktree setups where develop is checked out elsewhere
+    # Usage: git mbd
+    mbd = !git fetch origin && git merge origin/develop
+
+[include]
+    path = ~/.config/delta/catppuccin.gitconfig
+
+[rerere]
+	enabled = true
