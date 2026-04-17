@@ -31,6 +31,9 @@ else
   echo "==> Homebrew already installed."
 fi
 
+echo "==> Installing chezmoi via brew..."
+brew install chezmoi
+
 echo "==> Running brew bundle..."
 brew bundle --file="{{ .chezmoi.sourceDir }}/Brewfile" || echo "==> Some packages failed, continuing..."
 echo "==> brew bundle complete."
