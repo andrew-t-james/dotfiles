@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# run_once_after_05-mise-npm-globals.sh
+# Installs npm global packages on all managed node versions
+set -euo pipefail
+
+echo "==> Installing npm globals across all node versions..."
+
+for version in 22.22.0 24.13.1; do
+  echo "  node@$version: installing @antfu/ni..."
+  mise exec node@"$version" -- npm install -g @antfu/ni
+done
+
+echo "==> npm globals installed."
