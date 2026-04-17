@@ -59,6 +59,11 @@ if command -v starship &>/dev/null; then
   eval "$(starship init zsh)"
 fi
 
+# ---------------- ATUIN ----------------
+if command -v atuin &>/dev/null; then
+  eval "$(atuin init zsh)"
+fi
+
 # ---------------- TOOL INIT ----------------
 # mise (environment/version manager)
 if command -v mise &> /dev/null; then
@@ -70,16 +75,6 @@ if command -v zoxide &> /dev/null; then
   eval "$(zoxide init zsh)"
 fi
 
-# fzf keybindings
-if [[ -f /usr/share/fzf/key-bindings.zsh ]]; then
-  source /usr/share/fzf/key-bindings.zsh
-fi
-
-# macOS Homebrew fzf path fallback
-if [[ "$OSTYPE" == "darwin"* && -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
-  source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
-  export FZF_CTRL_R_OPTS="--preview 'echo {}' --preview-window down:3:hidden --bind '?:toggle-preview'"
-fi
 
 # ---------------- DIRENV ----------------
 if command -v direnv &> /dev/null; then
