@@ -33,6 +33,6 @@ else
 fi
 
 echo "==> Running brew bundle..."
-brew bundle --file="{{ .chezmoi.sourceDir }}/Brewfile"
+brew bundle --file="{{ .chezmoi.sourceDir }}/Brewfile" || echo "==> Some packages failed, continuing..."
 echo "==> brew bundle complete."
 {{ end -}}
