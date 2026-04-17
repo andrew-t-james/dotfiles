@@ -1,0 +1,69 @@
+[push]
+	default = current
+	autoSetupRemote = true
+
+[user]
+  name = {{ .name }}
+  email = {{ .email }}
+{{- if .work }}
+  signingkey = D586707CB3720015
+{{- end }}
+
+[color]
+  ui = true
+  status = auto
+
+[core]
+  editor = {{ .chezmoi.homeDir }}/.local/bin/nvim
+  excludesfile = {{ .chezmoi.homeDir }}/.config/git/git_ignore_global
+  pager = delta --line-numbers --dark
+
+[diff]
+  tool = delta --line-numbers --dark
+
+[credential]
+  helper = osxkeychain
+
+[commit]
+  gpgsign = {{ .work }}
+
+[interactive]
+  diffFilter = delta --color-only
+
+[gpg]
+  program = /opt/homebrew/bin/gpg
+
+[delta]
+  features = catppuccin-mocha
+  line-numbers-plus-style = 28
+
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
+  hunk-header-decoration-style = cyan box ul
+
+[delta "line-numbers"]
+  line-numbers-left-style = cyan
+  line-numbers-right-style = cyan
+  line-numbers-minus-style = 124
+
+[alias]
+  nb = "!f() { git branch $1 refs/remotes/origin/develop --no-track; git checkout $1; }; f"
+  rbd = !git fetch origin && git rebase origin/develop
+  mbd = !git fetch origin && git merge origin/develop
+
+[include]
+  path = {{ .chezmoi.homeDir }}/.config/delta/catppuccin.gitconfig
+
+[rerere]
+  enabled = true
+
+[init]
+  defaultBranch = main
+
+[filter "lfs"]
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+  required = true
+  clean = git-lfs clean -- %f
