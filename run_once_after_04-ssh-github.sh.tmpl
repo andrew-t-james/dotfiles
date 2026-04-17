@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# run_once_after_04-ssh-github.sh.tmpl
+# Generates a machine-specific SSH key and registers it with GitHub.
+# Only runs on macOS.
+{{ if eq .chezmoi.os "darwin" -}}
+set -euo pipefail
+
+KEY="$HOME/.ssh/id_ed25519"
+TITLE="$(scutil --get ComputerName 2>/dev/null || hostname)"
+
+# ─── Skip if key already exists ───────────────────────────────────────────────
+if [[ -f "$KEY" ]]; then
+  echo "==> SSH key already exists at $KEY, skipping generation."
+else
+  echo "==> Generating SSH key for $TITLE..."
+  mkdir -p "$HOME/.ssh"
+  chmod 700 "$HOME/.ssh"
+  ssh-keygen -t ed25519 -C "{{ .email }}" -f "$KEY" -N ""
+
+  # Add to macOS keychain and agent
+  ssh-add --apple-use-keychain "$KEY"
+  echo "==> SSH key generated and added to keychain."
+fi
+
+# ─── Register with GitHub ─────────────────────────────────────────────────────
+if ! gh auth status &>/dev/null; then
+  echo ""
+  echo "  GitHub CLI is not authenticated."
+  echo "  Run: gh auth login"
+  echo "  Then re-run: chezmoi apply"
+  echo ""
+  exit 0
+fi
+
+# Check if this key is already on GitHub
+PUB_KEY=$(cat "${KEY}.pub")
+if gh ssh-key list 2>/dev/null | grep -qF "${PUB_KEY%% *}"; then
+  echo "==> SSH key already registered with GitHub, skipping."
+else
+  echo "==> Adding SSH key to GitHub as '$TITLE'..."
+  gh ssh-key add "${KEY}.pub" --title "$TITLE" --type authentication
+  echo "==> SSH key added to GitHub."
+fi
+{{ end -}}
