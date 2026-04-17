@@ -4,14 +4,24 @@ Managed with [chezmoi](https://chezmoi.io). One command gets you from a fresh Ma
 
 ## Quickstart
 
+**Step 1 — Install Xcode CLT** (skip if already done):
 ```sh
-# 1. Bootstrap everything
-sh -c "$(curl -fsLS get.chezmoi.io)" -- init --source ~/dotfiles --apply andrew-t-james/dotfiles
+xcode-select --install
+```
+Wait for the dialog to complete before continuing.
 
-# 2. Authenticate GitHub CLI (needed to register SSH key)
+**Step 2 — Bootstrap:**
+```sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/andrew-t-james/dotfiles/main/bootstrap.sh)"
+```
+
+**Step 3 — Open a new terminal, then authenticate GitHub CLI:**
+```sh
 gh auth login
+```
 
-# 3. Re-apply to register SSH key with GitHub
+**Step 4 — Re-apply to register SSH key with GitHub:**
+```sh
 chezmoi apply
 ```
 
