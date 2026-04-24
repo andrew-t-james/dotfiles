@@ -85,62 +85,23 @@ alias python=python3 # use python3 as default python command
 alias yolo='claude --dangerously-skip-permissions'
 alias cdx='codex --dangerously-bypass-approvals-and-sandbox'
 
-if ! whence -w oc >/dev/null 2>&1; then
-  oc() {
-    if [ -z "${_OC_RUNNER_KIND:-}" ]; then
-      if command -v opencode >/dev/null 2>&1; then
-        _OC_RUNNER_KIND="opencode"
-        _OC_RUNNER="opencode"
-      elif command -v mise >/dev/null 2>&1; then
-        local _oc_bin _oc_sh
-        _oc_bin="$(mise which claude-max-proxy 2>/dev/null || true)"
-        if [ -n "$_oc_bin" ]; then
-          _oc_sh="$(dirname "$_oc_bin")/../lib/node_modules/opencode-claude-max-proxy/bin/oc.sh"
-          if [ -x "$_oc_sh" ]; then
-            _OC_RUNNER_KIND="shim"
-            _OC_RUNNER="$_oc_sh"
-          fi
-        fi
-      fi
-    fi
+# dmux wrapper — works around send-keys race condition (standardagents/dmux#84)
+# Runs dmux directly as the pane process, bypassing shell init entirely
+dmux() {
+  local pn ph sn dmux_bin
+  pn="$(basename "$(pwd)")"
+  ph="$(printf '%s' "$(pwd)" | md5 | cut -c1-8)"
+  sn="dmux-${pn//./-}-${ph}"
+  dmux_bin="$(command -v dmux)"
 
-    if [ "${_OC_RUNNER_KIND:-}" = "shim" ] && [ -x "${_OC_RUNNER:-}" ]; then
-      "$_OC_RUNNER" "$@"
-      return $?
-    fi
-
-    if [ "${_OC_RUNNER_KIND:-}" = "opencode" ]; then
-      opencode "$@"
-      return $?
-    fi
-
-    echo "oc: could not find oc shim or opencode binary" >&2
-    return 127
-  }
-fi
-
-if ! whence -w ocd >/dev/null 2>&1; then
-  ocd() {
-    local _base_url
-    _base_url="${CLAUDE_PROXY_BASE_URL:-http://127.0.0.1:3456}"
-
-    if ! command -v opencode >/dev/null 2>&1; then
-      echo "ocd: opencode is not installed" >&2
-      return 127
-    fi
-
-    if command -v curl >/dev/null 2>&1 \
-      && [ "${OC_DISABLE_HEALTHCHECK:-0}" != "1" ] \
-      && ! curl -sf --connect-timeout "${OC_HEALTHCHECK_CONNECT_TIMEOUT:-0.25}" --max-time "${OC_HEALTHCHECK_MAX_TIME:-0.75}" "$_base_url/health" >/dev/null 2>&1; then
-      echo "ocd: proxy at $_base_url is not responding" >&2
-      return 1
-    fi
-
-    ANTHROPIC_API_KEY="${ANTHROPIC_API_KEY:-dummy}" \
-    ANTHROPIC_BASE_URL="$_base_url" \
-      opencode "$@"
-  }
-fi
+  if tmux has-session -t "$sn" 2>/dev/null; then
+    command dmux "$@"
+  else
+    tmux new-session -d -s "$sn" "$dmux_bin"
+    sleep 0.5
+    tmux attach-session -t "$sn"
+  fi
+}
 
 # ====================
 # Whatsapp tui be

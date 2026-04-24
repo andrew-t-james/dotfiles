@@ -121,14 +121,6 @@ zd() {
   fi
 }
 
-open() {
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    open "$@"  # macOS native
-  else
-    xdg-open "$@" >/dev/null 2>&1
-  fi
-}
-
 iso2sd() {
   if [[ $# -ne 2 ]]; then
     echo "Usage: iso2sd <input_file> <output_device>"
@@ -194,5 +186,4 @@ refresh-xcompose() {
   pkill fcitx5
   setsid fcitx5 &>/dev/null &
 }
-export PATH="$(uv tool dir)/cocoindex-code/bin:$PATH"
 export CLAUDE_CODE_NO_FLICKER=1

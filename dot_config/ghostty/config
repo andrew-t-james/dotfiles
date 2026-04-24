@@ -14,3 +14,5 @@ cursor-style-blink = false
 clipboard-read = "allow"
 clipboard-paste-protection = false
 keybind = shift+enter=text:\x1b\r
+
+background-opacity = 0.95
