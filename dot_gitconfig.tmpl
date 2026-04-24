@@ -6,7 +6,7 @@
   name = {{ .name }}
   email = {{ .email }}
 {{- if .work }}
-  signingkey = D586707CB3720015
+  signingkey = {{ .chezmoi.homeDir }}/.ssh/id_ed25519.pub
 {{- end }}
 
 [color]
@@ -31,7 +31,7 @@
   diffFilter = delta --color-only
 
 [gpg]
-  program = /opt/homebrew/bin/gpg
+  format = ssh
 
 [delta]
   features = catppuccin-mocha

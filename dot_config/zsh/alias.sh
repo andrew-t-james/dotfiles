@@ -85,8 +85,8 @@ alias python=python3 # use python3 as default python command
 alias yolo='claude --dangerously-skip-permissions'
 alias cdx='codex --dangerously-bypass-approvals-and-sandbox'
 
-# dmux wrapper — works around send-keys race condition (standardagents/dmux#84)
-# Runs dmux directly as the pane process, bypassing shell init entirely
+# dmux wrapper — isolated tmux socket, no personal config interference
+# Works around send-keys race (standardagents/dmux#84) and plugin conflicts
 dmux() {
   local pn ph sn dmux_bin
   pn="$(basename "$(pwd)")"
@@ -94,12 +94,12 @@ dmux() {
   sn="dmux-${pn//./-}-${ph}"
   dmux_bin="$(command -v dmux)"
 
-  if tmux has-session -t "$sn" 2>/dev/null; then
-    command dmux "$@"
+  if command tmux -L dmux has-session -t "$sn" 2>/dev/null; then
+    command tmux -L dmux attach-session -t "$sn"
   else
-    tmux new-session -d -s "$sn" "$dmux_bin"
-    sleep 0.5
-    tmux attach-session -t "$sn"
+    command tmux -L dmux -f ~/.config/tmux/dmux.conf new-session -d -s "$sn" "$dmux_bin"
+    sleep 0.1
+    command tmux -L dmux attach-session -t "$sn"
   fi
 }
 

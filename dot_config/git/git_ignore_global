@@ -69,3 +69,7 @@ Auto Run Docs/*
 .omc/
 .omx/
 codedb.snapshot
+.dmux/
+
+scratch
+
