@@ -85,24 +85,6 @@ alias python=python3 # use python3 as default python command
 alias yolo='claude --dangerously-skip-permissions'
 alias cdx='codex --dangerously-bypass-approvals-and-sandbox'
 
-# dmux wrapper — isolated tmux socket, no personal config interference
-# Works around send-keys race (standardagents/dmux#84) and plugin conflicts
-dmux() {
-  local pn ph sn dmux_bin
-  pn="$(basename "$(pwd)")"
-  ph="$(printf '%s' "$(pwd)" | md5 | cut -c1-8)"
-  sn="dmux-${pn//./-}-${ph}"
-  dmux_bin="$(command -v dmux)"
-
-  if command tmux -L dmux has-session -t "$sn" 2>/dev/null; then
-    command tmux -L dmux attach-session -t "$sn"
-  else
-    command tmux -L dmux -f ~/.config/tmux/dmux.conf new-session -d -s "$sn" "$dmux_bin"
-    sleep 0.1
-    command tmux -L dmux attach-session -t "$sn"
-  fi
-}
-
 # ====================
 # Whatsapp tui be
 # ====================
