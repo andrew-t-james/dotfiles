@@ -1,0 +1,80 @@
+onboarding = false
+
+[theme]
+name = "catppuccin"
+# Available: catppuccin, tokyo-night, dracula, nord, gruvbox,
+#            one-dark, solarized, kanagawa, rose-pine, vesper
+
+# [theme.custom]
+# accent      = "#f5c2e7"
+# panel_bg    = "reset"      # or "default"/"none"/"transparent" or a color
+# surface0    = "#313244"
+# surface1    = "#45475a"
+# surface_dim = "#1e1e2e"
+# overlay0    = "#6c7086"
+# overlay1    = "#7f849c"
+# text        = "#cdd6f4"
+# subtext0    = "#a6adc8"
+# mauve       = "#cba6f7"
+# green       = "#a6e3a1"
+# yellow      = "#f9e2af"
+# red         = "#f38ba8"
+# blue        = "#89b4fa"
+# teal        = "#94e2d5"
+# peach       = "#fab387"
+
+[keys]
+prefix             = "ctrl+a"
+new_workspace      = "n"
+rename_workspace   = "shift+n"
+close_workspace    = "shift+d"
+new_tab            = "c"
+split_vertical     = "v"
+split_horizontal   = "s"
+close_pane         = "x"
+fullscreen         = "f"
+resize_mode        = "r"
+toggle_sidebar     = "b"
+reload_config      = "shift+r"
+previous_workspace = "ctrl+alt+k"
+next_workspace     = "ctrl+alt+j"
+previous_tab       = "alt+["
+next_tab           = "alt+]"
+focus_pane_left    = "ctrl+h"
+focus_pane_down    = "ctrl+j"
+focus_pane_up      = "ctrl+k"
+focus_pane_right   = "ctrl+l"
+
+# Unset by default — assign a key to enable
+detach     = ""
+rename_tab = ""
+close_tab  = ""
+
+[ui]
+sidebar_width     = 26
+confirm_close     = true
+agent_panel_scope = "all"   # "all" or "current"
+accent            = "cyan"  # named, "#rrggbb", or "rgb(r,g,b)"
+
+[ui.toast]
+delivery = "herdr"   # "off", "herdr", or "terminal"
+
+[ui.sound]
+enabled = true
+
+[ui.sound.agents]
+pi             = "default"   # "default", "on", or "off"
+claude         = "default"
+codex          = "default"
+gemini         = "default"
+cursor         = "default"
+cline          = "default"
+open_code      = "default"
+github_copilot = "default"
+kimi           = "default"
+droid          = "default"
+amp            = "default"
+
+[advanced]
+allow_nested           = false
+scrollback_limit_bytes = 10000000   # 0 disables scrollback

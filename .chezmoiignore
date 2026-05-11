@@ -7,6 +7,15 @@ dot_config/hypr
 dot_config/tmux/plugins
 dot_config/tmux/resurrect
 
+# Herdr - runtime files (sockets, logs, session state, release-notes cache)
+dot_config/herdr/*.sock
+dot_config/herdr/*.log
+dot_config/herdr/session.json
+dot_config/herdr/release-notes.json
+
+# Local-only env vars (work secrets, machine-specific) — sourced by zshrc if present
+dot_config/zsh/env.local.sh
+
 # Claude - ephemeral/generated dirs
 dot_claude/projects
 dot_claude/sessions
