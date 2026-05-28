@@ -13,3 +13,5 @@ hypr/.config/hypr/hyprland.local.conf
 .claude/
 zsh/.config/zsh/.aliases.local.sh
 bin/
+!dot_local/bin/
+!dot_local/bin/executable_herdr-sesh-workspace

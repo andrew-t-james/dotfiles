@@ -25,17 +25,19 @@ name = "catppuccin"
 
 [keys]
 prefix             = "ctrl+a"
-new_workspace      = "n"
-rename_workspace   = "shift+n"
-close_workspace    = "shift+d"
-new_tab            = "c"
-split_vertical     = "v"
-split_horizontal   = "s"
-close_pane         = "x"
-fullscreen         = "f"
-resize_mode        = "r"
-toggle_sidebar     = "b"
-reload_config      = "shift+r"
+new_workspace      = "prefix+n"
+rename_workspace   = "prefix+shift+n"
+close_workspace    = "prefix+shift+d"
+workspace_picker   = ""
+settings           = ""
+new_tab            = "prefix+c"
+split_vertical     = "prefix+v"
+split_horizontal   = "prefix+s"
+close_pane         = "prefix+x"
+zoom               = "prefix+f"
+resize_mode        = "prefix+r"
+toggle_sidebar     = "prefix+b"
+reload_config      = "prefix+shift+r"
 previous_workspace = "ctrl+alt+k"
 next_workspace     = "ctrl+alt+j"
 previous_tab       = "alt+["
@@ -45,6 +47,16 @@ focus_pane_down    = "ctrl+j"
 focus_pane_up      = "ctrl+k"
 focus_pane_right   = "ctrl+l"
 
+[[keys.command]]
+key     = "prefix+w"
+type    = "pane"
+command = "$HOME/.local/bin/herdr-sesh-workspace"
+
+[[keys.command]]
+key     = "prefix+g"
+type    = "pane"    # "shell" or "pane"
+command = "lazygit"
+
 # Unset by default — assign a key to enable
 detach     = ""
 rename_tab = ""
@@ -53,17 +65,17 @@ close_tab  = ""
 [ui]
 sidebar_width     = 26
 confirm_close     = true
-agent_panel_scope = "all"   # "all" or "current"
-accent            = "cyan"  # named, "#rrggbb", or "rgb(r,g,b)"
+agent_panel_scope = "all"  # "all" or "current"
+accent            = "cyan" # named, "#rrggbb", or "rgb(r,g,b)"
 
 [ui.toast]
-delivery = "herdr"   # "off", "herdr", or "terminal"
+delivery = "herdr" # "off", "herdr", or "terminal"
 
 [ui.sound]
 enabled = true
 
 [ui.sound.agents]
-pi             = "default"   # "default", "on", or "off"
+pi             = "default" # "default", "on", or "off"
 claude         = "default"
 codex          = "default"
 gemini         = "default"
@@ -77,4 +89,4 @@ amp            = "default"
 
 [advanced]
 allow_nested           = false
-scrollback_limit_bytes = 10000000   # 0 disables scrollback
+scrollback_limit_bytes = 10000000 # 0 disables scrollback

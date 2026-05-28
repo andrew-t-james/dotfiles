@@ -1,0 +1,160 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+die() {
+  printf 'herdr-sesh-workspace: %s\n' "$*" >&2
+  exit 1
+}
+
+ansi() {
+  printf '\033[%sm' "$1"
+}
+
+need() {
+  command -v "$1" >/dev/null 2>&1 || die "missing required command: $1"
+}
+
+need herdr
+need jq
+
+build_candidates() {
+  local workspaces panes
+
+  workspaces=$(herdr workspace list)
+  panes=$(herdr pane list)
+
+  jq -nr --argjson workspaces "$workspaces" --argjson panes "$panes" '
+    $workspaces.result.workspaces[]
+      | . as $workspace
+      | (
+          $panes.result.panes
+          | map(select(.workspace_id == $workspace.workspace_id and (.cwd // "") != ""))
+          | .[0].cwd // ""
+        ) as $path
+      | ($workspace.number | tostring) as $number
+      | ($workspace.label // $workspace.workspace_id) as $label
+      | ($workspace.agent_status // "unknown") as $status
+      | (if $workspace.focused then "1" else "0" end) as $focused
+      | (if $workspace.focused then "▣" else "□" end) as $icon
+      | [
+          $workspace.workspace_id,
+          $path,
+          $label,
+          ($icon + " " + $label),
+          $focused
+        ]
+      | @tsv
+  '
+}
+
+preview_workspace() {
+  local workspace_id=$1
+  local workspace panes active_tab label number status focused pane_rows rows
+  local mauve blue green yellow red overlay reset status_color focused_color
+
+  workspace=$(herdr workspace get "$workspace_id")
+  panes=$(herdr pane list --workspace "$workspace_id")
+
+  active_tab=$(jq -r '.result.workspace.active_tab_id // ""' <<< "$workspace")
+  label=$(jq -r '.result.workspace.label // .result.workspace.workspace_id' <<< "$workspace")
+  number=$(jq -r '.result.workspace.number // "?"' <<< "$workspace")
+  status=$(jq -r '.result.workspace.agent_status // "unknown"' <<< "$workspace")
+  focused=$(jq -r 'if .result.workspace.focused then "focused" else "not focused" end' <<< "$workspace")
+
+  mauve=$(ansi '38;2;203;166;247')
+  blue=$(ansi '38;2;137;180;250')
+  green=$(ansi '38;2;166;227;161')
+  yellow=$(ansi '38;2;249;226;175')
+  red=$(ansi '38;2;243;139;168')
+  overlay=$(ansi '38;2;147;153;178')
+  reset=$(ansi 0)
+
+  case "$status" in
+    working) status_color=$yellow ;;
+    idle) status_color=$green ;;
+    blocked) status_color=$red ;;
+    *) status_color=$overlay ;;
+  esac
+  if [[ "$focused" == "focused" ]]; then
+    focused_color=$green
+  else
+    focused_color=$overlay
+  fi
+
+  printf '%sspace %s%s  %s%s%s  %s%s%s  %s%s%s\n' "$mauve" "$number" "$reset" "$blue" "$label" "$reset" "$status_color" "$status" "$reset" "$focused_color" "$focused" "$reset"
+  printf '%sactive tab%s %s\n\n' "$overlay" "$reset" "$active_tab"
+
+  pane_rows=$(
+    jq -r --arg active "$active_tab" '
+      .result.panes
+      | sort_by((.tab_id != $active), (if .focused then 0 else 1 end), .pane_id)
+      | .[]
+      | [.pane_id, .tab_id, (.cwd // ""), (.agent_status // "unknown"), (.agent // ""), (if .focused then "*" else " " end)]
+      | @tsv
+    ' <<< "$panes"
+  )
+
+  rows=$(awk -F '\t' -v active="$active_tab" '$2 == active' <<< "$pane_rows")
+  [[ -n "$rows" ]] || rows=$pane_rows
+
+  while IFS=$'\t' read -r pane_id tab_id cwd pane_status agent marker; do
+    [[ -n "$pane_id" ]] || continue
+    printf '%s pane %s  tab %s  %s' "$marker" "$pane_id" "$tab_id" "$pane_status"
+    [[ -n "$agent" ]] && printf '  %s' "$agent"
+    printf '\n'
+    printf '%scwd%s %s\n' "$overlay" "$reset" "${cwd/#$HOME/~}"
+    printf '%s------------------------------------------------------------%s\n' "$overlay" "$reset"
+    herdr pane read "$pane_id" --source visible --lines 80 --format ansi --ansi 2>/dev/null \
+      || printf 'unable to read pane %s\n' "$pane_id"
+    printf '\n\n'
+  done <<< "$rows"
+}
+
+if [[ "${1:-}" == "--preview" ]]; then
+  [[ -n "${2:-}" ]] || die "missing workspace id"
+  preview_workspace "$2"
+  exit 0
+fi
+
+if [[ "${1:-}" == "--print-candidates" ]]; then
+  build_candidates
+  exit 0
+fi
+
+if [[ $# -gt 0 ]]; then
+  herdr workspace focus "$1" >/dev/null
+  exit 0
+fi
+
+need fzf
+
+candidate_rows=$(build_candidates)
+focused_pos=$(
+  printf '%s\n' "$candidate_rows" \
+    | awk -F '\t' '$5 == "1" { print NR; exit }'
+)
+[[ -n "$focused_pos" ]] || focused_pos=1
+
+selected=$(
+  printf '%s\n' "$candidate_rows" \
+    | fzf \
+        --no-sort \
+        --exact \
+        --ansi \
+        --delimiter=$'\t' \
+        --with-nth=4 \
+        --nth=1 \
+        --border-label=' sesh ' \
+        --prompt='⚡  ' \
+        --color='fg:#cdd6f4,bg:#1e1e2e,hl:#f38ba8,fg+:#cdd6f4,bg+:#313244,hl+:#f38ba8,info:#cba6f7,prompt:#89b4fa,pointer:#f5c2e7,marker:#a6e3a1,spinner:#f5e0dc,header:#94e2d5,border:#6c7086,label:#cba6f7,query:#cdd6f4' \
+        --sync \
+        --popup=80%,70% \
+        --preview-window='right:55%' \
+        --preview="$0 --preview {1}" \
+        --bind="start:pos($focused_pos),tab:down,btab:up"
+)
+
+[[ -n "$selected" ]] || exit 0
+
+IFS=$'\t' read -r workspace_id _path _label _display _focused <<< "$selected"
+herdr workspace focus "$workspace_id" >/dev/null
