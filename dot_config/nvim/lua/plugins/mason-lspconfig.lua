@@ -9,12 +9,11 @@ return {
       "graphql", -- graphql-language-service-cli
       "jsonls", -- json-lsp
       "lua_ls", -- lua-language-server
-      "oxc", -- oxc-language-server (oxlint)
       "pyright", -- pyright
       "rust_analyzer", -- rust-analyzer
       "tailwindcss", -- tailwindcss-language-server
-      "tsserver", -- typescript-language-server
       "templ", -- templ-language-server
+      -- TypeScript: tsgo (native preview, npm) is the active server; vtsls kept as fallback
       "vtsls", -- vtsls
       "yamlls", -- yaml-language-server
     },

@@ -16,27 +16,6 @@ dot_config/herdr/release-notes.json
 # Local-only env vars (work secrets, machine-specific) — sourced by zshrc if present
 dot_config/zsh/env.local.sh
 
-# Claude - ephemeral/generated dirs
-dot_claude/projects
-dot_claude/sessions
-dot_claude/transcripts
-dot_claude/history.jsonl
-dot_claude/cache
-dot_claude/paste-cache
-dot_claude/file-history
-dot_claude/shell-snapshots
-dot_claude/tasks
-dot_claude/todos
-dot_claude/plans
-dot_claude/backups
-dot_claude/debug
-dot_claude/downloads
-dot_claude/telemetry
-dot_claude/usage-data
-dot_claude/statsig
-dot_claude/.omc
-dot_claude/memory
-
 # Codex - ephemeral/generated
 dot_codex/.system
 dot_codex/auth.json

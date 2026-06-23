@@ -9,19 +9,15 @@ after-login-command = []
 # You can use it to add commands that run after AeroSpace startup.
 # 'after-startup-command' is run after 'after-login-command'
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
-# aerospace does not currency support gradients
-# after-startup-command = [
-#   'exec-and-forget borders active_color=gradient(top_left=0xffffc640,bottom_right=0xffba3aa5) width=8.0',
-# ]
 after-startup-command = [
-  "exec-and-forget borders active_color=0xffffc640 width=8.0",
+  'exec-and-forget borders active_color="gradient(top_left=0xffffc640,bottom_right=0xffba3aa5)" width=8.0',
 ]
 
 # Start AeroSpace at login
 start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
-enable-normalization-flatten-containers = true
+enable-normalization-flatten-containers                         = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # See: https://nikitabobko.github.io/AeroSpace/guide#layouts
@@ -43,7 +39,7 @@ default-root-container-orientation = 'auto'
 # See https://nikitabobko.github.io/AeroSpace/commands#move-mouse
 # Fallback value (if you omit the key): on-focused-monitor-changed = []
 on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
-on-focus-changed = ['move-mouse window-lazy-center']
+on-focus-changed           = ['move-mouse window-lazy-center']
 
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
 # Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
@@ -64,11 +60,11 @@ preset = 'qwerty'
 #                 See: https://nikitabobko.github.io/AeroSpace/guide#assign-workspaces-to-monitors
 [gaps]
 inner.horizontal = 10
-inner.vertical = 10
-outer.left = 10
-outer.bottom = 10
-outer.top = 10
-outer.right = 10
+inner.vertical   = 10
+outer.left       = 10
+outer.bottom     = 10
+outer.top        = 10
+outer.right      = 10
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -175,81 +171,81 @@ alt-shift-l = ['join-with right', 'mode main']
 
 [[on-window-detected]]
 if.app-id = "com.electron.shortwave"
-run = "move-node-to-workspace email"
+run       = "move-node-to-workspace email"
 
 [[on-window-detected]]
 if.app-id = "com.superhuman.electron"
-run = "move-node-to-workspace email"
+run       = "move-node-to-workspace email"
 
 [[on-window-detected]]
 if.app-id = "com.cron.electron"
-run = "move-node-to-workspace calendar"
+run       = "move-node-to-workspace calendar"
 
 [[on-window-detected]]
 if.app-id = "com.flexibits.fantastical2.mac"
-run = "move-node-to-workspace calendar"
+run       = "move-node-to-workspace calendar"
 
 [[on-window-detected]]
 if.app-id = "com.mitchellh.ghostty"
-run = "move-node-to-workspace dev"
+run       = "move-node-to-workspace dev"
 
 [[on-window-detected]]
 if.app-id = "company.thebrowser.Browser"
-run = "move-node-to-workspace browser"
+run       = "move-node-to-workspace browser"
 
 [[on-window-detected]]
 if.app-id = "app.zen-browser.zen"
-run = "move-node-to-workspace browser"
+run       = "move-node-to-workspace browser"
 
 [[on-window-detected]]
 if.app-id = "com.google.Chrome"
-run = "move-node-to-workspace browser"
+run       = "move-node-to-workspace browser"
 
 [[on-window-detected]]
 if.app-id = "com.google.Chrome.beta"
-run = "move-node-to-workspace browser"
+run       = "move-node-to-workspace browser"
 
 [[on-window-detected]]
 if.app-id = "com.brave.Browser"
-run = "move-node-to-workspace browser"
+run       = "move-node-to-workspace browser"
 
 [[on-window-detected]]
 if.app-id = "com.apple.MobileSMS"
-run = "move-node-to-workspace messages"
+run       = "move-node-to-workspace messages"
 
 [[on-window-detected]]
 if.app-id = "com.hnc.Discord"
-run = "move-node-to-workspace messages"
+run       = "move-node-to-workspace messages"
 
 [[on-window-detected]]
 if.app-id = "notion.id"
-run = "move-node-to-workspace notes"
+run       = "move-node-to-workspace notes"
 
 [[on-window-detected]]
 if.app-id = "com.linear"
-run = "move-node-to-workspace linear"
+run       = "move-node-to-workspace linear"
 
 [[on-window-detected]]
 if.app-id = "com.mikekreeki.tasks"
-run = "move-node-to-workspace tasks"
+run       = "move-node-to-workspace tasks"
 
 [[on-window-detected]]
 if.app-id = "com.electron.griply"
-run = "move-node-to-workspace tasks"
+run       = "move-node-to-workspace tasks"
 
 
 [[on-window-detected]]
 if.app-id = "com.microsoft.Outlook"
-run = "move-node-to-workspace outlook"
+run       = "move-node-to-workspace outlook"
 
 [[on-window-detected]]
 if.app-id = "com.tinyspeck.slackmacgap"
-run = "move-node-to-workspace slack"
+run       = "move-node-to-workspace slack"
 
 [[on-window-detected]]
 if.app-id = "com.taskade"
-run = "move-node-to-workspace taskade"
+run       = "move-node-to-workspace taskade"
 
 [[on-window-detected]]
 if.app-id = "net.whatsapp.WhatsApp"
-run = "move-node-to-workspace whatsapp"
+run       = "move-node-to-workspace whatsapp"

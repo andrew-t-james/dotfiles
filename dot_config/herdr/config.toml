@@ -1,5 +1,8 @@
 onboarding = false
 
+[session]
+resume_agents_on_restore = true
+
 [theme]
 name = "catppuccin"
 # Available: catppuccin, tokyo-night, dracula, nord, gruvbox,
@@ -53,7 +56,7 @@ type    = "pane"
 command = "$HOME/.local/bin/herdr-sesh-workspace"
 
 [[keys.command]]
-key     = "prefix+g"
+key     = "prefix+l"
 type    = "pane"    # "shell" or "pane"
 command = "lazygit"
 

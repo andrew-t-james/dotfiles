@@ -6,9 +6,10 @@ return {
     opts.inlay_hints = { enabled = false }
     opts.servers = opts.servers or {}
 
-    -- Disable tsserver/ts_ls in favor of vtsls
+    -- Disable other TS LSPs in favor of tsgo (native Go-based, faster)
     opts.servers.tsserver = { enabled = false }
     opts.servers.ts_ls = { enabled = false }
+    opts.servers.vtsls = { enabled = false }
 
     local ts_filetypes = {
       "javascript",
@@ -99,9 +100,9 @@ return {
       }
     end
 
-    -- Configure vtsls (recommended TypeScript LSP)
+    -- Configure vtsls (kept here as a fallback — disabled in favor of tsgo)
     opts.servers.vtsls = {
-      enabled = true,
+      enabled = false,
       filetypes = ts_filetypes,
       settings = {
         complete_function_calls = true,
@@ -133,12 +134,25 @@ return {
       keys = ts_keys(),
     }
 
-    -- Configure tsgo (experimental Go-based TypeScript LSP)
+    -- Configure tsgo (Go-based native TypeScript LSP — primary)
     -- Install: npm install -g @typescript/native-preview
     -- Note: tsgo does not yet support goToSourceDefinition or findAllFileReferences
     opts.servers.tsgo = {
-      enabled = false,
+      enabled = true,
       filetypes = ts_filetypes,
+      settings = {
+        typescript = {
+          updateImportsOnFileMove = { enabled = "always" },
+          inlayHints = {
+            parameterNames = { enabled = "literals", suppressWhenArgumentMatchesName = true },
+            parameterTypes = { enabled = true },
+            variableTypes = { enabled = false },
+            propertyDeclarationTypes = { enabled = true },
+            functionLikeReturnTypes = { enabled = true },
+            enumMemberValues = { enabled = true },
+          },
+        },
+      },
       keys = {
         {
           "<leader>co",

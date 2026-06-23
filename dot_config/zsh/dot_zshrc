@@ -13,8 +13,19 @@ ZSH_LOCAL="$HOME/.config/zsh"
 [[ -f "$ZSH_LOCAL/alias.sh" ]] && source "$ZSH_LOCAL/alias.sh"
 [[ -f "$ZSH_LOCAL/functions.sh" ]] && source "$ZSH_LOCAL/functions.sh"
 [[ -f "$ZSH_LOCAL/clone-worktree.sh" ]] && source "$ZSH_LOCAL/clone-worktree.sh"
+[[ -f "$ZSH_LOCAL/env.local.sh" ]] && source "$ZSH_LOCAL/env.local.sh"
 
 bindkey -v  # Optional: enable vi-mode keybindings
+
+# Disable Ghostty's kitty keyboard protocol (breaks ESC in fzf/sesh popups).
+# DCS-wrapped when inside tmux so it passes through to the outer terminal.
+if [[ -t 1 ]]; then
+  if [[ -n "$TMUX" ]]; then
+    printf '\ePtmux;\e\e[=0u\e\\'
+  else
+    printf '\e[=0u'
+  fi
+fi
 
 # ---------------- PATH SETUP ----------------
 # Homebrew (must come first so brew-installed tools are found)

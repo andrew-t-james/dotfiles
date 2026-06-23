@@ -24,6 +24,8 @@ cask "linear-linear"
 cask "localsend"
 cask "notion"
 cask "notion-calendar"
+tap "aprilnea/tap"
+cask "aprilnea/tap/openlogi"
 # cask "opencode-desktop"
 # AUDIT: cask "postman"         # Still using?
 # cask "qmk-toolbox"

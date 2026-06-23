@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataStar Todo App Example</title>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0/bundles/datastar.js"></script>
+    <style>
+        body { font-family: system-ui; padding: 2rem; max-width: 600px; margin: 0 auto; }
+        .todo-input { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .todo-input input { flex: 1; padding: 0.75rem; font-size: 1rem; }
+        .filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .filters button { padding: 0.5rem 1rem; border: 1px solid #ddd; background: white; cursor: pointer; }
+        .filters button.active { background: #1976d2; color: white; border-color: #1976d2; }
+        .todo-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem; border-bottom: 1px solid #eee; }
+        .todo-item.completed .todo-text { text-decoration: line-through; opacity: 0.5; }
+        .todo-text { flex: 1; }
+        .todo-checkbox { width: 1.25rem; height: 1.25rem; }
+        .delete-btn { background: none; border: none; color: #f44336; cursor: pointer; font-size: 1.25rem; }
+        .stats { margin-top: 1rem; color: #666; font-size: 0.875rem; }
+        .empty { color: #999; font-style: italic; padding: 2rem; text-align: center; }
+    </style>
+</head>
+<body>
+    <!--
+    DATASTAR TODO APP - COMPLETE EXAMPLE
+    ====================================
+
+    This demonstrates a full DataStar application with:
+    - Input binding and keyboard handling
+    - Filter state (all/active/completed)
+    - Server-rendered list (no data-for!)
+    - Toggle and delete actions
+    - Computed statistics
+    - Empty state handling
+
+    KEY PATTERNS:
+    1. Filter is CLIENT state (signals)
+    2. Todo list is SERVER rendered (SSE patches #todo-list)
+    3. Each action sets ID explicitly before @post (Gotcha #18)
+    4. Empty state always rendered, hidden with data-show
+    -->
+
+    <div data-signals="{
+        input: '',
+        filter: 'all',
+        todo_id: '',
+        total_count: 0,
+        active_count: 0,
+        completed_count: 0
+    }">
+        <h1>DataStar Todo</h1>
+
+        <!-- Add todo input -->
+        <div class="todo-input">
+            <input type="text"
+                   data-bind:input
+                   data-on:keydown__enter="$input.trim() && @post('/api/todos/add'); $input = ''"
+                   placeholder="What needs to be done?" />
+        </div>
+
+        <!-- Filters (client-side state) -->
+        <div class="filters">
+            <button data-on:click="$filter = 'all'; @get('/api/todos')"
+                    data-class:active="$filter === 'all'">
+                All (<span data-text="$total_count"></span>)
+            </button>
+            <button data-on:click="$filter = 'active'; @get('/api/todos')"
+                    data-class:active="$filter === 'active'">
+                Active (<span data-text="$active_count"></span>)
+            </button>
+            <button data-on:click="$filter = 'completed'; @get('/api/todos')"
+                    data-class:active="$filter === 'completed'">
+                Completed (<span data-text="$completed_count"></span>)
+            </button>
+        </div>
+
+        <!-- Empty state (always render, hide with CSS) -->
+        <div id="empty-state"
+             data-show="$total_count === 0"
+             style="display:none"
+             class="empty">
+            No todos yet. Add one above!
+        </div>
+
+        <!-- Todo list container - Backend patches this -->
+        <div id="todo-list">
+            <!--
+            Backend sends HTML like:
+
+            <div class="todo-item" id="todo-1">
+                <input type="checkbox" class="todo-checkbox"
+                       data-on:change="$todo_id = '1'; @post('/api/todos/toggle')" />
+                <span class="todo-text">Buy milk</span>
+                <button class="delete-btn"
+                        data-on:click="$todo_id = '1'; @post('/api/todos/delete')">x</button>
+            </div>
+
+            <div class="todo-item completed" id="todo-2">
+                <input type="checkbox" class="todo-checkbox" checked
+                       data-on:change="$todo_id = '2'; @post('/api/todos/toggle')" />
+                <span class="todo-text">Walk dog</span>
+                <button class="delete-btn"
+                        data-on:click="$todo_id = '2'; @post('/api/todos/delete')">x</button>
+            </div>
+            -->
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats" data-show="$total_count > 0" style="display:none">
+            <span data-text="$active_count"></span> items left
+        </div>
+
+        <!-- Load todos on page load -->
+        <div data-on:load__window__once="@get('/api/todos')"></div>
+    </div>
+
+    <!--
+    BACKEND API SPECIFICATION:
+    ==========================
+
+    GET /api/todos
+    Query: ?datastar={"filter":"all"}
+
+    Response (SSE):
+    event: datastar-patch-elements
+    data: elements <div id="todo-list">...rendered todos...</div>
+
+    event: datastar-patch-signals
+    data: signals {"total_count": 5, "active_count": 3, "completed_count": 2}
+
+
+    POST /api/todos/add
+    Body: {"input": "Buy groceries", "filter": "all"}
+
+    Response: Same as GET (returns updated list)
+
+
+    POST /api/todos/toggle
+    Body: {"todo_id": "1", "filter": "all"}
+
+    Response: Same as GET (returns updated list)
+
+
+    POST /api/todos/delete
+    Body: {"todo_id": "1", "filter": "all"}
+
+    Response: Same as GET (returns updated list)
+
+
+    PHP BACKEND EXAMPLE:
+
+    function handle_todos_get() {
+        $signals = Datastar::readSignals();
+        $filter = $signals['filter'] ?? 'all';
+
+        // Get todos from database
+        $todos = get_todos_from_db($filter);
+
+        Datastar::sendHeaders();
+
+        // Render todos HTML
+        $html = '<div id="todo-list">';
+        foreach ($todos as $todo) {
+            $completed_class = $todo['completed'] ? 'completed' : '';
+            $checked = $todo['completed'] ? 'checked' : '';
+            $html .= '
+                <div class="todo-item ' . $completed_class . '" id="todo-' . $todo['id'] . '">
+                    <input type="checkbox" class="todo-checkbox" ' . $checked . '
+                           data-on:change="$todo_id = \'' . $todo['id'] . '\'; @post(\'/api/todos/toggle\')" />
+                    <span class="todo-text">' . esc_html($todo['text']) . '</span>
+                    <button class="delete-btn"
+                            data-on:click="$todo_id = \'' . $todo['id'] . '\'; @post(\'/api/todos/delete\')">x</button>
+                </div>
+            ';
+        }
+        $html .= '</div>';
+
+        Datastar::patchElements($html);
+        Datastar::patchSignals([
+            'total_count' => count($all_todos),
+            'active_count' => count($active_todos),
+            'completed_count' => count($completed_todos),
+        ]);
+
+        exit;
+    }
+    -->
+</body>
+</html>

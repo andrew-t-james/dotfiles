@@ -6,11 +6,6 @@ eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shell
 
 echo "==> Installing AI CLI tools..."
 
-# Install oh-my-claudecode
-if ! claude mcp list 2>/dev/null | grep -q 'oh-my-claudecode'; then
-  claude mcp install oh-my-claudecode 2>/dev/null || true
-fi
-
 # Install oh-my-codex (omx setup regenerates OMX config sections)
 if command -v codex &>/dev/null; then
   if ! command -v omx &>/dev/null; then

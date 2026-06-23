@@ -10,12 +10,12 @@ return {
       "prettier",
       "shfmt",
       "stylua",
+      "taplo",
       "yamlfmt",
 
       -- Linters
       "flake8",
       "luacheck",
-      "oxlint",
       "shellcheck",
       "yamllint",
 

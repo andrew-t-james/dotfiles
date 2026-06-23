@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataStar Form Validation Example</title>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0/bundles/datastar.js"></script>
+    <style>
+        body { font-family: system-ui; padding: 2rem; max-width: 500px; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.25rem; font-weight: 500; }
+        input { width: 100%; padding: 0.5rem; box-sizing: border-box; }
+        input.error { border-color: red; }
+        .error-text { color: red; font-size: 0.875rem; margin-top: 0.25rem; }
+        .success { color: green; padding: 1rem; background: #e8f5e9; border-radius: 4px; }
+        button { padding: 0.75rem 1.5rem; background: #1976d2; color: white; border: none; cursor: pointer; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .loading { opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <!--
+    DATASTAR FORM WITH VALIDATION
+    =============================
+    This demonstrates:
+    - data-bind: Two-way binding to form inputs
+    - data-computed: Client-side validation
+    - data-attr:disabled: Conditional attributes
+    - data-class: Conditional CSS classes
+    - data-indicator: Loading state management
+    - data-show: Conditional display (with FOUC prevention)
+    - @post: Backend submission
+
+    NOTE: Real validation should also happen on backend!
+    -->
+
+    <div data-signals="{
+        email: '',
+        password: '',
+        confirm_password: '',
+        submitting: false,
+        success: false,
+        error: ''
+    }">
+        <h1>Sign Up Form</h1>
+
+        <!-- Success message (hidden by default - FOUC prevention) -->
+        <div data-show="$success" style="display:none" class="success">
+            Account created successfully!
+        </div>
+
+        <!-- Error message -->
+        <div data-show="$error" data-text="$error" style="display:none" class="error-text"></div>
+
+        <form data-on:submit.prevent="@post('/api/signup')"
+              data-class:loading="$submitting">
+
+            <!-- Email field -->
+            <div class="form-group"
+                 data-computed:email_valid="$email.includes('@') && $email.includes('.')">
+                <label>Email</label>
+                <input type="email"
+                       data-bind:email
+                       data-class:error="$email && !$email_valid"
+                       placeholder="you@example.com" />
+                <div data-show="$email && !$email_valid"
+                     style="display:none"
+                     class="error-text">
+                    Please enter a valid email address
+                </div>
+            </div>
+
+            <!-- Password field -->
+            <div class="form-group"
+                 data-computed:password_valid="$password.length >= 8">
+                <label>Password</label>
+                <input type="password"
+                       data-bind:password
+                       data-class:error="$password && !$password_valid"
+                       placeholder="At least 8 characters" />
+                <div data-show="$password && !$password_valid"
+                     style="display:none"
+                     class="error-text">
+                    Password must be at least 8 characters
+                </div>
+            </div>
+
+            <!-- Confirm password -->
+            <div class="form-group"
+                 data-computed:passwords_match="$password === $confirm_password">
+                <label>Confirm Password</label>
+                <input type="password"
+                       data-bind:confirm_password
+                       data-class:error="$confirm_password && !$passwords_match"
+                       placeholder="Repeat password" />
+                <div data-show="$confirm_password && !$passwords_match"
+                     style="display:none"
+                     class="error-text">
+                    Passwords do not match
+                </div>
+            </div>
+
+            <!-- Submit button with validation and loading state -->
+            <div data-computed:form_valid="$email_valid && $password_valid && $passwords_match">
+                <button type="submit"
+                        data-attr:disabled="!$form_valid || $submitting"
+                        data-indicator:submitting>
+                    <span data-show="!$submitting">Create Account</span>
+                    <span data-show="$submitting" style="display:none">Creating...</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!--
+    BACKEND RESPONSE EXAMPLE (SSE):
+
+    On success:
+    event: datastar-patch-signals
+    data: signals {"success": true, "submitting": false}
+
+    On error:
+    event: datastar-patch-signals
+    data: signals {"error": "Email already registered", "submitting": false}
+    -->
+</body>
+</html>

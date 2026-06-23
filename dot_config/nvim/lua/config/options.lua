@@ -95,3 +95,7 @@ end
 
 -- provided by rust-analyzer.
 vim.g.lazyvim_rust_diagnostics = "rust-analyzer"
+
+-- fff.nvim owns file/grep pickers; route LazyVim's LSP/symbol/diagnostic pickers
+-- to snacks (default is fzf-lua, which we disabled for fff).
+vim.g.lazyvim_picker = "snacks"

@@ -15,4 +15,4 @@ clipboard-read = "allow"
 clipboard-paste-protection = false
 keybind = shift+enter=text:\x1b\r
 
-background-opacity = 0.95
+background-opacity = 0.98

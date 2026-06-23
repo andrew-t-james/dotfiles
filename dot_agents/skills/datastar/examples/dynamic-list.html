@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataStar Dynamic List Example</title>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0/bundles/datastar.js"></script>
+    <style>
+        body { font-family: system-ui; padding: 2rem; max-width: 600px; }
+        .item { display: flex; align-items: center; gap: 1rem; padding: 0.75rem; border: 1px solid #ddd; margin-bottom: 0.5rem; border-radius: 4px; }
+        .item.completed { text-decoration: line-through; opacity: 0.6; }
+        .item-text { flex: 1; }
+        .add-form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        .add-form input { flex: 1; padding: 0.5rem; }
+        button { padding: 0.5rem 1rem; cursor: pointer; }
+        .delete-btn { background: #f44336; color: white; border: none; }
+        .empty { color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+    <!--
+    DATASTAR DYNAMIC LIST (TODO-STYLE)
+    ==================================
+    This demonstrates:
+    - Lists are rendered on BACKEND (no data-for in DataStar!)
+    - SSE patches the #items container with new HTML
+    - Each item sets signal explicitly before @post (Gotcha #18)
+    - Empty state handling with data-show
+
+    CRITICAL: DataStar does NOT have loops!
+    Backend must render the list HTML and send via SSE.
+    -->
+
+    <div data-signals="{
+        input_text: '',
+        item_id: '',
+        loading: false,
+        item_count: 0
+    }">
+        <h1>Shopping List</h1>
+
+        <!-- Add form -->
+        <div class="add-form">
+            <input type="text"
+                   data-bind:input_text
+                   data-on:keydown__enter="$input_text && @post('/api/items/add'); $input_text = ''"
+                   placeholder="Add item..." />
+            <button data-on:click="$input_text && @post('/api/items/add'); $input_text = ''"
+                    data-attr:disabled="!$input_text"
+                    data-indicator:loading>
+                <span data-show="!$loading">Add</span>
+                <span data-show="$loading" style="display:none">...</span>
+            </button>
+        </div>
+
+        <!-- Empty state (ALWAYS render, hide with style) -->
+        <div id="empty-state"
+             data-show="$item_count === 0"
+             style="display:none"
+             class="empty">
+            No items yet. Add something above!
+        </div>
+
+        <!-- Items container - Backend patches this with HTML -->
+        <div id="items">
+            <!-- Backend sends HTML like:
+            <div class="item" id="item-1">
+                <span class="item-text">Milk</span>
+                <button data-on:click="$item_id = '1'; @post('/api/items/toggle')">Toggle</button>
+                <button class="delete-btn" data-on:click="$item_id = '1'; @post('/api/items/delete')">Delete</button>
+            </div>
+            -->
+        </div>
+
+        <!-- Load items on page load -->
+        <div data-on:load__window__once="@get('/api/items')"></div>
+    </div>
+
+    <!--
+    BACKEND IMPLEMENTATION NOTES:
+
+    1. GET /api/items - Returns full list HTML:
+
+    event: datastar-patch-elements
+    data: elements <div id="items"><div class="item" id="item-1">...</div></div>
+
+    event: datastar-patch-signals
+    data: signals {"item_count": 3}
+
+
+    2. POST /api/items/add - Adds item, returns updated list:
+
+    // Read signals from request body
+    $signals = json_decode(file_get_contents('php://input'), true);
+    $text = $signals['input_text'];
+
+    // Add to database...
+
+    // Return updated HTML
+    event: datastar-patch-elements
+    data: elements <div id="items">...all items...</div>
+
+    event: datastar-patch-signals
+    data: signals {"item_count": 4}
+
+
+    3. POST /api/items/delete - Removes item:
+
+    $signals = json_decode(file_get_contents('php://input'), true);
+    $item_id = $signals['item_id'];
+
+    // Delete from database...
+
+    // Return updated HTML
+
+
+    GOTCHA #18 - Why we set $item_id in click handler:
+    If we put data-signals="{item_id: '1'}" on each item,
+    they would ALL share the same global signal!
+    Last item's ID would always be sent.
+
+    Solution: Set the signal explicitly RIGHT BEFORE @post:
+    data-on:click="$item_id = '1'; @post('/api/items/delete')"
+    -->
+</body>
+</html>

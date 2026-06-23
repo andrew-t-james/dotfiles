@@ -12,6 +12,7 @@ return {
     indent = { enabled = false },
     input = { enabled = true },
     notifier = { enabled = false, timeout = 3000, style = "minimal", top_down = false },
+    picker = { enabled = true },
     quickfile = { enabled = true },
     scroll = { enabled = false },
     statuscolumn = { enabled = true },

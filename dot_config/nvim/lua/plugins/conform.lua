@@ -23,6 +23,20 @@ return {
       stylua = {
         prepend_args = { "--config-path", vim.fn.expand("~/.config/nvim/stylua.toml") },
       },
+      taplo = {
+        command = "taplo",
+        args = {
+          "format",
+          "--option",
+          "align_entries=true",
+          "--option",
+          "align_comments=true",
+          "--stdin-filepath",
+          "$FILENAME",
+          "-",
+        },
+        stdin = true,
+      },
     },
     formatters_by_ft = {
       -- Lua files
@@ -49,6 +63,9 @@ return {
       -- Documentation
       markdown = { "oxfmt", "biome", "prettier" },
       ["markdown.mdx"] = { "oxfmt", "biome", "prettier" },
+
+      -- TOML
+      toml = { "taplo" },
 
       -- Other formats
       graphql = { "oxfmt", "biome", "prettier" },

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataStar Counter Example</title>
+    <script type="module" src="https://cdn.jsdelivr.net/gh/starfederation/datastar@v1.0.0/bundles/datastar.js"></script>
+    <style>
+        body { font-family: system-ui; padding: 2rem; }
+        .counter { font-size: 3rem; margin: 1rem 0; }
+        button { padding: 0.5rem 1rem; margin: 0.25rem; font-size: 1rem; }
+    </style>
+</head>
+<body>
+    <!--
+    SIMPLEST DATASTAR EXAMPLE
+    ========================
+    This demonstrates:
+    - data-signals: Define reactive state
+    - data-text: Display signal value
+    - data-on:click: Handle events with expressions
+
+    NOTE: snake_case for signal names!
+    -->
+
+    <div data-signals="{count: 0}">
+        <h1>DataStar Counter</h1>
+
+        <div class="counter" data-text="$count"></div>
+
+        <button data-on:click="$count++">+1</button>
+        <button data-on:click="$count--">-1</button>
+        <button data-on:click="$count = 0">Reset</button>
+
+        <!-- Computed example -->
+        <div data-computed:doubled="$count * 2">
+            <p>Doubled: <span data-text="$doubled"></span></p>
+        </div>
+
+        <!-- Conditional display (note: style="display:none" for FOUC prevention) -->
+        <div data-show="$count > 10" style="display:none">
+            Count is greater than 10!
+        </div>
+
+        <div data-show="$count < 0" style="display:none; color: red;">
+            Count is negative!
+        </div>
+    </div>
+</body>
+</html>
