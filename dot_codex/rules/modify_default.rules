@@ -1,3 +1,13 @@
+#!/bin/sh
+set -eu
+
+current_rules="$(mktemp)"
+baseline_rules="$(mktemp)"
+trap 'rm -f "$current_rules" "$baseline_rules"' EXIT
+
+cat > "$current_rules"
+
+cat > "$baseline_rules" <<'RULES'
 prefix_rule(pattern=["bun"], decision="allow")
 prefix_rule(pattern=["codex", "exec"], decision="allow")
 prefix_rule(pattern=["open"], decision="allow")
@@ -22,3 +32,43 @@ prefix_rule(pattern=["agent-browser", "close", "--all"], decision="allow")
 prefix_rule(pattern=["agent-browser", "--cdp", "9222", "open"], decision="allow")
 prefix_rule(pattern=["curl", "-I", "-s", "https://agency-dev.ajwc.dev/health/live"], decision="allow")
 prefix_rule(pattern=["pgrep", "-af", "cloudflared tunnel run agency-dev"], decision="allow")
+RULES
+
+# Replace the managed baseline block so removed permissions are revoked. Keep
+# runtime-added rules outside the block in their existing order. The baseline
+# lookup also migrates the previously unmarked managed rules into the block.
+awk \
+  -v baseline_start="# AJ:BASELINE:START" \
+  -v baseline_end="# AJ:BASELINE:END" '
+  FNR == NR {
+    if ($0 != "") {
+      baseline_rules[$0] = 1
+      baseline_lines[++baseline_count] = $0
+    }
+    next
+  }
+
+  $0 == baseline_start { in_baseline = 1; next }
+  $0 == baseline_end { in_baseline = 0; next }
+  in_baseline { next }
+
+  $0 != "" && !baseline_rules[$0] && !seen_runtime[$0]++ {
+    runtime_lines[++runtime_count] = $0
+  }
+
+  END {
+    for (line_number = 1; line_number <= runtime_count; line_number++) {
+      print runtime_lines[line_number]
+    }
+
+    if (runtime_count > 0) {
+      print ""
+    }
+
+    print baseline_start
+    for (line_number = 1; line_number <= baseline_count; line_number++) {
+      print baseline_lines[line_number]
+    }
+    print baseline_end
+  }
+' "$baseline_rules" "$current_rules"

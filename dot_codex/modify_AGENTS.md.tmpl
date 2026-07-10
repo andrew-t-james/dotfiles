@@ -1,0 +1,44 @@
+#!/bin/sh
+set -eu
+
+input_file="$(mktemp)"
+fallback_file={{ joinPath .chezmoi.sourceDir ".chezmoitemplates/codex-AGENTS.md" | quote }}
+trap 'rm -f "$input_file"' EXIT
+
+cat > "$input_file"
+
+# Seed a new machine with the last known generated instructions. Once OMX has
+# written the target, its live content remains the source of truth.
+if [ ! -s "$input_file" ]; then
+  cat "$fallback_file" > "$input_file"
+fi
+
+# OMX owns the generated instructions. Replace only the personal block and
+# remove the legacy unmarked sentence that preceded this modifier.
+awk '
+  $0 == "<!-- AJ:GLOBAL:START -->" { in_personal_block = 1; next }
+  $0 == "<!-- AJ:GLOBAL:END -->" { in_personal_block = 0; next }
+  in_personal_block { next }
+  $0 == "alwasy use semantic branch names and semantic titles fro prs" { next }
+  { lines[++line_count] = $0 }
+  END {
+    while (line_count > 0 && lines[line_count] == "") {
+      line_count--
+    }
+
+    for (line_number = 1; line_number <= line_count; line_number++) {
+      print lines[line_number]
+    }
+
+    if (line_count > 0) {
+      print ""
+    }
+
+    print "<!-- AJ:GLOBAL:START -->"
+    print "## Personal defaults"
+    print ""
+    print "- Use semantic branch names such as `fix/...`, `feat/...`, or `chore/...` by default."
+    print "- Use conventional PR titles such as `fix(scope): summary` by default."
+    print "<!-- AJ:GLOBAL:END -->"
+  }
+' "$input_file"

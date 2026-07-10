@@ -1,0 +1,24 @@
+#!/bin/sh
+set -eu
+
+config_file="$(mktemp)"
+trap 'rm -f "$config_file"' EXIT
+
+cat > "$config_file"
+
+# Codex owns mutable application state in config.toml. Chezmoi only enforces
+# portable invariants and preserves every other key written by Codex.
+yq -p=toml -o=toml '
+  .model_context_window = 1000000 |
+  .model_auto_compact_token_limit = 900000 |
+  .features.multi_agent = true |
+  .features.child_agents_md = true |
+  .features.experimental_use_rmcp_client = true |
+  .features.hooks = true |
+  .features.goals = true |
+  .agents.max_threads = 6 |
+  .agents.max_depth = 2 |
+  .mcp_servers.fff.command = (strenv(HOME) + "/.local/bin/fff-mcp") |
+  .mcp_servers.fff.args = [] |
+  .mcp_servers.fff.enabled = true
+' "$config_file"
