@@ -1,6 +1,6 @@
 bat/.config/bat/themes
 
-nvim/.config/nvim/lazy-lock.json
+dot_config/nvim/lazy-lock.json
 nvim/.config/nvim/spell
 
 tmux/.config/tmux/plugins
@@ -11,7 +11,7 @@ zsh/.config/zsh/.zshrc.zwc
 
 hypr/.config/hypr/hyprland.local.conf
 .claude/
-zsh/.config/zsh/.aliases.local.sh
+dot_config/zsh/dot_aliases.local.sh
 bin/
 !dot_local/bin/
 !dot_local/bin/executable_herdr-sesh-workspace
