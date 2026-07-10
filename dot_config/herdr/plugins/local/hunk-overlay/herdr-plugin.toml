@@ -1,0 +1,24 @@
+id = "hunk.overlay"
+name = "Hunk Overlay"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Open Hunk diffs in Herdr overlay panes."
+platforms = ["linux", "macos"]
+
+[[panes]]
+id = "worktree"
+title = "Hunk worktree diff"
+placement = "overlay"
+command = ["bash", "-lc", "exec bash \"$HOME/.config/herdr/plugins/local/hunk-overlay/hunk-overlay.sh\" worktree"]
+
+[[panes]]
+id = "staged"
+title = "Hunk staged diff"
+placement = "overlay"
+command = ["bash", "-lc", "exec bash \"$HOME/.config/herdr/plugins/local/hunk-overlay/hunk-overlay.sh\" staged"]
+
+[[panes]]
+id = "branch"
+title = "Hunk branch diff"
+placement = "overlay"
+command = ["bash", "-lc", "exec bash \"$HOME/.config/herdr/plugins/local/hunk-overlay/hunk-overlay.sh\" branch"]

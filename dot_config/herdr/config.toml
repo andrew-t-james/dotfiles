@@ -45,10 +45,34 @@ previous_workspace = "ctrl+alt+k"
 next_workspace     = "ctrl+alt+j"
 previous_tab       = "alt+["
 next_tab           = "alt+]"
-focus_pane_left    = "ctrl+h"
-focus_pane_down    = "ctrl+j"
-focus_pane_up      = "ctrl+k"
-focus_pane_right   = "ctrl+l"
+focus_pane_left    = ""
+focus_pane_down    = ""
+focus_pane_up      = ""
+focus_pane_right   = ""
+
+[[keys.command]]
+key         = "ctrl+h"
+type        = "plugin_action"
+command     = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key         = "ctrl+j"
+type        = "plugin_action"
+command     = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key         = "ctrl+k"
+type        = "plugin_action"
+command     = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key         = "ctrl+l"
+type        = "plugin_action"
+command     = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"
 
 [[keys.command]]
 key     = "prefix+w"
@@ -56,9 +80,14 @@ type    = "pane"
 command = "$HOME/.local/bin/herdr-sesh-workspace"
 
 [[keys.command]]
-key     = "prefix+l"
-type    = "pane"    # "shell" or "pane"
-command = "lazygit"
+key     = "prefix+g"
+type    = "shell"
+command = "$HOME/.local/bin/herdr-hunk-overlay worktree"
+
+[[keys.command]]
+key     = "prefix+shift+g"
+type    = "shell"
+command = "$HOME/.local/bin/herdr-hunk-overlay staged"
 
 # Unset by default — assign a key to enable
 detach     = ""

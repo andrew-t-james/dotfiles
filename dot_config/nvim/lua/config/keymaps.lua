@@ -41,11 +41,6 @@ vim.keymap.set("n", "tt", function()
   require("fff").live_grep({ query = vim.fn.expand("<cword>") })
 end, opts)
 
--- nvim tmux navigation keymaps
-keymap("n", "<C-h>", require("nvim-tmux-navigation").NvimTmuxNavigateLeft)
-keymap("n", "<C-j>", require("nvim-tmux-navigation").NvimTmuxNavigateDown)
-keymap("n", "<C-k>", require("nvim-tmux-navigation").NvimTmuxNavigateUp)
-keymap("n", "<C-l>", require("nvim-tmux-navigation").NvimTmuxNavigateRight)
 keymap("n", "<C-\\>", require("nvim-tmux-navigation").NvimTmuxNavigateLastActive)
 
 -- open in gh

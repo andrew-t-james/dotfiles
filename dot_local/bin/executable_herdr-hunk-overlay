@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode=${1:-worktree}
+
+case "$mode" in
+  worktree|staged|branch) ;;
+  *)
+    printf 'herdr-hunk-overlay: usage: herdr-hunk-overlay worktree|staged|branch\n' >&2
+    exit 2
+    ;;
+esac
+
+current=$(herdr pane current --current)
+cwd=$(jq -r '.result.pane.foreground_cwd // .result.pane.cwd // env.HOME' <<< "$current")
+
+herdr plugin pane open \
+  --plugin hunk.overlay \
+  --entrypoint "$mode" \
+  --placement overlay \
+  --cwd "$cwd" \
+  --focus >/dev/null
