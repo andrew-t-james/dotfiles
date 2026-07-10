@@ -1,0 +1,53 @@
+{
+  "adapters": {
+    "debugpy": {
+      "command": "debugpy-adapter",
+      "languages": ["python"],
+      "fileTypes": [".py"],
+      "rootMarkers": ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "uv.lock", ".git"],
+      "launchDefaults": {
+        "request": "launch",
+        "type": "python",
+        "console": "integratedTerminal"
+      },
+      "attachDefaults": {
+        "request": "attach",
+        "type": "python",
+        "host": "127.0.0.1"
+      }
+    },
+    "dlv": {
+      "command": "dlv",
+      "args": ["dap"],
+      "languages": ["go"],
+      "fileTypes": [".go"],
+      "rootMarkers": ["go.mod", "go.work", ".git"],
+      "connectMode": "socket",
+      "acceptsDirectoryProgram": true,
+      "launchDefaults": {
+        "request": "launch",
+        "mode": "debug"
+      },
+      "attachDefaults": {
+        "request": "attach",
+        "mode": "local"
+      }
+    },
+    "netcoredbg": {
+      "command": "netcoredbg",
+      "args": ["--interpreter=vscode"],
+      "languages": ["csharp", "fsharp"],
+      "fileTypes": [".cs", ".fs"],
+      "rootMarkers": ["*.sln", "*.csproj", "*.fsproj", "global.json", ".git"],
+      "launchDefaults": {
+        "request": "launch",
+        "type": "coreclr",
+        "stopAtEntry": false
+      },
+      "attachDefaults": {
+        "request": "attach",
+        "type": "coreclr"
+      }
+    }
+  }
+}

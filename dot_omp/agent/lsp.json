@@ -1,0 +1,40 @@
+{
+  "servers": {
+    "typescript-language-server": {
+      "command": "typescript-language-server",
+      "args": ["--stdio"],
+      "fileTypes": [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts"],
+      "rootMarkers": ["package.json", "tsconfig.json", "jsconfig.json", ".git"]
+    },
+    "vscode-json-language-server": {
+      "command": "vscode-json-language-server",
+      "args": ["--stdio"],
+      "fileTypes": [".json", ".jsonc"],
+      "rootMarkers": ["package.json", ".git"]
+    },
+    "pyright": {
+      "command": "pyright-langserver",
+      "args": ["--stdio"],
+      "fileTypes": [".py"],
+      "rootMarkers": ["pyproject.toml", "setup.py", "setup.cfg", "requirements.txt", "Pipfile", "uv.lock", ".git"]
+    },
+    "ruff": {
+      "command": "ruff",
+      "args": ["server"],
+      "fileTypes": [".py"],
+      "rootMarkers": ["pyproject.toml", "ruff.toml", ".ruff.toml", ".git"],
+      "isLinter": true
+    },
+    "gopls": {
+      "command": "gopls",
+      "fileTypes": [".go"],
+      "rootMarkers": ["go.mod", "go.work", ".git"]
+    },
+    "csharp-ls": {
+      "command": "csharp-ls",
+      "fileTypes": [".cs", ".csx"],
+      "rootMarkers": ["*.sln", "*.csproj", "global.json", ".git"]
+    }
+  },
+  "idleTimeoutMs": 300000
+}

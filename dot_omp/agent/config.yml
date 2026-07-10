@@ -1,0 +1,10 @@
+setupVersion: 1
+modelRoles:
+  default: openai-codex/gpt-5.5:medium
+
+lsp:
+  enabled: true
+  lazy: true
+  diagnosticsOnWrite: true
+  diagnosticsOnEdit: false
+  formatOnWrite: false
