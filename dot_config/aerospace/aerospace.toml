@@ -126,7 +126,6 @@ alt-n = 'workspace notes'
 alt-a = 'workspace linear'
 alt-o = 'workspace outlook'
 alt-s = 'workspace slack'
-alt-t = 'workspace tasks'
 alt-w = 'workspace whatsapp'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
