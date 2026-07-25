@@ -1,0 +1,6 @@
+# Start the Omarchy-managed Hyprland session for the dedicated TTY3 login.
+if [[ $(tty 2>/dev/null) == /dev/tty3 ]] &&
+    command -v uwsm >/dev/null 2>&1; then
+  export DESKTOP_SESSION=omarchy
+  exec uwsm start -g -1 -e -D Hyprland hyprland.desktop
+fi

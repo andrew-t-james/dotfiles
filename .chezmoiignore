@@ -1,6 +1,8 @@
 # Linux only
 {{ if ne .chezmoi.os "linux" }}
 dot_config/hypr
+dot_bash_profile
+dot_zprofile
 {{ end }}
 
 # Tmux plugin manager (installed separately)

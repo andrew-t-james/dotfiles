@@ -70,6 +70,8 @@ The bootstrap will:
 | starship | `~/.config/starship.toml` |
 | tmux | `~/.config/tmux/` |
 | zsh | `~/.config/zsh/` |
+| bash profile | `~/.bash_profile` (Linux only) |
+| zprofile | `~/.zprofile` (Linux only) |
 | bin | `~/.local/bin/` |
 | hypr | `~/.config/hypr/` (Linux only) |
 
