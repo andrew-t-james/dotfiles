@@ -92,14 +92,8 @@ chezmoi update
 
 The shared `autoreview` skill comes from
 [`openclaw/agent-skills/skills/autoreview`](https://github.com/openclaw/agent-skills/tree/main/skills/autoreview).
-`com.local.autoreview-skill-updater` checks that upstream every Sunday at
-10:00 local time. When the skill tree changes, it runs the upstream tests,
-updates the dotfiles copy and `.agents/.skill-lock.json`, then applies the
-shared skill. Run the same check manually with:
-
-```sh
-update-autoreview-skill
-```
+Its source repository, path, and current tree hash are recorded in
+`.agents/.skill-lock.json`.
 
 ## Structure
 
