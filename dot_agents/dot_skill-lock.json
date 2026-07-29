@@ -486,6 +486,16 @@
       "skillFolderHash": "a519754a0646134602f1b4dc571df726ad0c08e5",
       "installedAt": "2026-06-23T01:50:53.433Z",
       "updatedAt": "2026-06-23T01:50:53.433Z"
+    },
+    "autoreview": {
+      "source": "openclaw/agent-skills",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/openclaw/agent-skills.git",
+      "skillPath": "skills/autoreview/SKILL.md",
+      "skillFolderHash": "be0750c0949d270193ffe3048d8ee4465f9886c9",
+      "pluginName": "agent-skills",
+      "installedAt": "2026-07-29T03:57:10Z",
+      "updatedAt": "2026-07-29T03:57:10Z"
     }
   },
   "dismissed": {
