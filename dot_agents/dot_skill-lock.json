@@ -492,7 +492,7 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/openclaw/agent-skills.git",
       "skillPath": "skills/autoreview/SKILL.md",
-      "skillFolderHash": "be0750c0949d270193ffe3048d8ee4465f9886c9",
+      "skillFolderHash": "9091198d5427b133fa9553d6fe68b2e502725bd0e84b775f627ddb0832f3c2ec",
       "pluginName": "agent-skills",
       "installedAt": "2026-07-29T03:57:10Z",
       "updatedAt": "2026-07-29T03:57:10Z"

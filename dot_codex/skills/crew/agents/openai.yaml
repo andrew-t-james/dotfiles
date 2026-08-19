@@ -1,0 +1,4 @@
+interface:
+  display_name: "Crew"
+  short_description: "Coordinate a Sol and Terra crew through a DAG"
+  default_prompt: "Use $crew to organize this task with a dependency DAG and focused Sol and Terra agents while you remain available to me."

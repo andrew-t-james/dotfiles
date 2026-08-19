@@ -1,0 +1,4 @@
+interface:
+  display_name: "OMP Crew"
+  short_description: "Coordinate OMP agents across Cursor models"
+  default_prompt: "Use $omp-crew to coordinate OMP task agents across the available Cursor and other provider models with explicit ownership and final verification."

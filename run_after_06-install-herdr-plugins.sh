@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Reconcile Herdr plugins that extend the local workspace workflow.
+# Reconcile Herdr extensions that support the local workspace workflow.
 set -euo pipefail
 
 if ! command -v herdr >/dev/null 2>&1; then
@@ -76,6 +76,10 @@ ensure_local_plugin() {
 }
 
 echo "==> Installing Herdr plugins..."
+
+# Codex must report its native session id for Herdr to resume conversations
+# after a server restart. The hook source is managed by Herdr itself.
+herdr integration install codex
 
 ensure_github_plugin vim-herdr-navigation paulbkim-dev/vim-herdr-navigation 53e318c772c4d3b7fbd904ac43bcf3e5b5d8b244
 ensure_github_plugin branch-cleanup dutifuldev/herdr-branch-cleanup d83cb4b557ae539babd454067ce83459d321b875

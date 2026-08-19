@@ -33,7 +33,10 @@ rename_workspace   = "prefix+shift+n"
 close_workspace    = "prefix+shift+d"
 workspace_picker   = ""
 settings           = ""
+detach             = ""
 new_tab            = "prefix+c"
+rename_tab         = ""
+close_tab          = ""
 split_vertical     = "prefix+v"
 split_horizontal   = "prefix+s"
 close_pane         = "prefix+x"
@@ -89,15 +92,9 @@ key     = "prefix+shift+g"
 type    = "shell"
 command = "$HOME/.local/bin/herdr-hunk-overlay staged"
 
-# Unset by default — assign a key to enable
-detach     = ""
-rename_tab = ""
-close_tab  = ""
-
 [ui]
 sidebar_width     = 26
 confirm_close     = true
-agent_panel_scope = "all"  # "all" or "current"
 accent            = "cyan" # named, "#rrggbb", or "rgb(r,g,b)"
 
 [ui.toast]
@@ -119,6 +116,8 @@ kimi           = "default"
 droid          = "default"
 amp            = "default"
 
+[experimental]
+allow_nested = false
+
 [advanced]
-allow_nested           = false
 scrollback_limit_bytes = 10000000 # 0 disables scrollback
