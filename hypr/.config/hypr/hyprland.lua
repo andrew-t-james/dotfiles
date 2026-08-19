@@ -51,3 +51,6 @@ o.window("(?i).*slack.*", { workspace = "2" })
 
 -- Keep Shortwave mail on the Email workspace.
 o.window("^chrome-app\\.shortwave\\.com__.*$", { workspace = "1" })
+
+-- Keep the native ChatGPT app on the AI workspace (ALT+A).
+o.window("(?i)^chatgpt$", { workspace = "6" })
