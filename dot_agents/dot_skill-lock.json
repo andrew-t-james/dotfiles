@@ -492,10 +492,19 @@
       "sourceType": "github",
       "sourceUrl": "https://github.com/openclaw/agent-skills.git",
       "skillPath": "skills/autoreview/SKILL.md",
-      "skillFolderHash": "9091198d5427b133fa9553d6fe68b2e502725bd0e84b775f627ddb0832f3c2ec",
+      "skillFolderHash": "b13bac8c660967da6b28cd32fb6bee95a3537cd8",
       "pluginName": "agent-skills",
       "installedAt": "2026-07-29T03:57:10Z",
-      "updatedAt": "2026-07-29T03:57:10Z"
+      "updatedAt": "2026-08-30T05:04:05Z"
+    },
+    "herdr": {
+      "source": "herdrdev/herdr",
+      "sourceType": "github",
+      "sourceUrl": "https://github.com/herdrdev/herdr.git",
+      "skillPath": "skills/herdr/SKILL.md",
+      "skillFolderHash": "f8bb649bb92ddc99e6af463ab9a635da98c7b129",
+      "installedAt": "2026-08-19T21:38:41.682Z",
+      "updatedAt": "2026-08-19T21:38:41.682Z"
     }
   },
   "dismissed": {

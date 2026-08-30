@@ -22,6 +22,14 @@ Never weaken approval, safety, write-scope, or tool restrictions when delegating
 Keep irreversible or materially branching decisions with the user. Do not delegate
 merely to fill the concurrency budget.
 
+## Optional Ponytail pass
+
+If the `ponytail` skill is available in the current runtime, load it before
+planning or implementing nodes and use it to minimize the DAG, ownership, and
+diff. Treat it as an optimization pass only: it must not override user intent,
+safety constraints, required tests, or final verification. If Ponytail is not
+available, continue normally without adding a replacement layer.
+
 ## Build the task DAG
 
 For substantive work, create a compact directed acyclic graph before spawning agents.

@@ -12,6 +12,14 @@ task context before dispatch, and reconcile all reports before claiming success.
 This skill is for the shared `.agents` environment and the Oh My Pi (`omp`)
 runtime. It is not Codex's native `$crew` workflow.
 
+## Optional Ponytail pass
+
+If the `ponytail` skill is available in the current OMP skill set, load it before
+planning or implementing nodes and use it to minimize the DAG, agent count, and
+diff. Treat it as an optimization pass only: it must not override user intent,
+safety constraints, required tests, or final verification. If Ponytail is not
+available, continue normally without adding a replacement layer.
+
 ## Available OMP models
 
 Use OMP's live catalog rather than maintaining a stale model list:
