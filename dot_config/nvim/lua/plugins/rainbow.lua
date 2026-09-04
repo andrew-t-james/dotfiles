@@ -5,6 +5,14 @@ return {
       local rainbow_delimiters = require("rainbow-delimiters")
 
       vim.g.rainbow_delimiters = {
+        condition = function(bufnr)
+          if vim.bo[bufnr].buftype ~= "" then
+            return false
+          end
+
+          local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+          return ok and parser ~= nil
+        end,
         strategy = {
           [""] = rainbow_delimiters.strategy["global"],
           vim = rainbow_delimiters.strategy["local"],
