@@ -29,6 +29,19 @@ o.bind("SUPER + SHIFT + C", "Google Calendar", {
   focus = true,
 })
 
+-- Replace Omarchy's default HEY shortcut with Shortwave.
+hl.unbind("SUPER + SHIFT + E")
+o.bind("SUPER + SHIFT + E", "Shortwave", {
+  webapp = "https://app.shortwave.com",
+  focus = true,
+})
+
+-- Replace Omarchy's default HEY compose shortcut with a Shortwave draft.
+hl.unbind("SUPER + SHIFT + ALT + E")
+o.bind("SUPER + SHIFT + ALT + E", "New Shortwave email", {
+  webapp = "https://app.shortwave.com/mailto?uri=mailto%3A",
+})
+
 -- Vim-style focus and swapping.
 for key, direction in pairs({ H = "l", J = "d", K = "u", L = "r" }) do
   o.bind("ALT + " .. key, "Focus window " .. direction, hl.dsp.focus({ direction = direction }))
