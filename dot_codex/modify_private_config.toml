@@ -10,6 +10,7 @@ cat > "$config_file"
 # portable invariants and preserves every other key written by Codex.
 yq -p=toml -o=toml '
   .default_permissions = ":danger-full-access" |
+  .approval_policy = "never" |
   .model_context_window = 1000000 |
   .model_auto_compact_token_limit = 900000 |
   .features.multi_agent = true |

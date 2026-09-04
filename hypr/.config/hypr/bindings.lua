@@ -42,6 +42,12 @@ o.bind("SUPER + SHIFT + ALT + E", "New Shortwave email", {
   webapp = "https://app.shortwave.com/mailto?uri=mailto%3A",
 })
 
+-- Restore the legacy Slack launcher on the current Chromium web app.
+o.bind("SUPER + SHIFT + ALT + S", "Slack", {
+  webapp = "https://app.slack.com/client/T0NBA084Q/D07AB2PJZH6",
+  focus = true,
+})
+
 -- Vim-style focus and swapping.
 for key, direction in pairs({ H = "l", J = "d", K = "u", L = "r" }) do
   o.bind("ALT + " .. key, "Focus window " .. direction, hl.dsp.focus({ direction = direction }))
