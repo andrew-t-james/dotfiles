@@ -18,6 +18,7 @@ yq -p=toml -o=toml '
   .features.experimental_use_rmcp_client = true |
   .features.hooks = true |
   .features.goals = true |
+  .features.context_management.experimental_mode = true |
   .agents.max_threads = 6 |
   .agents.max_depth = 2 |
   .mcp_servers.fff.command = (strenv(HOME) + "/.local/bin/fff-mcp") |
