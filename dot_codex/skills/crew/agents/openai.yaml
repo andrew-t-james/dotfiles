@@ -1,4 +1,4 @@
 interface:
   display_name: "Crew"
-  short_description: "Coordinate a Sol and Terra crew through a DAG"
-  default_prompt: "Use $crew to organize this task with a dependency DAG and focused Sol and Terra agents while you remain available to me."
+  short_description: "Coordinate Sol-led agents with optional Astra advisors"
+  default_prompt: "Use $crew to organize this task with a dependency DAG and focused Sol agents. Add an Astra Medium advisor only when its read-only analysis materially improves a Sol-owned decision, preserve my coordinator and model choices, and use project-scoped external Beads when available while you remain available to me."
