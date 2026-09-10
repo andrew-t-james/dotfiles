@@ -29,17 +29,15 @@ o.bind("SUPER + SHIFT + C", "Google Calendar", {
   focus = true,
 })
 
--- Replace Omarchy's default HEY shortcut with Shortwave.
+-- Disable Omarchy's default HEY shortcut; TTY3 launches Shortwave with the
+-- legacy SUPER+SHIFT+ALT+E chord below.
 hl.unbind("SUPER + SHIFT + E")
-o.bind("SUPER + SHIFT + E", "Shortwave", {
+
+-- Restore the TTY3 Shortwave launcher.
+hl.unbind("SUPER + SHIFT + ALT + E")
+o.bind("SUPER + SHIFT + ALT + E", "Shortwave", {
   webapp = "https://app.shortwave.com",
   focus = true,
-})
-
--- Replace Omarchy's default HEY compose shortcut with a Shortwave draft.
-hl.unbind("SUPER + SHIFT + ALT + E")
-o.bind("SUPER + SHIFT + ALT + E", "New Shortwave email", {
-  webapp = "https://app.shortwave.com/mailto?uri=mailto%3A",
 })
 
 -- Restore the legacy Slack launcher on the current Chromium web app.
