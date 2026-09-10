@@ -39,7 +39,6 @@ typeset -U path
 path=(
   ./bin
   $HOME/.local/bin
-  $HOME/.local/share/omarchy/bin
   ${HOME}/bin
   $path
 )
