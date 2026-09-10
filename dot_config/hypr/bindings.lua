@@ -52,9 +52,9 @@ for key, direction in pairs({ H = "l", J = "d", K = "u", L = "r" }) do
   o.bind("ALT + SHIFT + " .. key, "Swap window " .. direction, hl.dsp.window.swap({ direction = direction }))
 end
 
--- Walker is no longer installed in Omarchy 4; keep the muscle memory and use
--- the stock apps menu.
-o.bind("ALT + SPACE", "Apps menu", "omarchy-menu toggle apps")
+-- Walker is no longer installed in Omarchy 4; keep the muscle memory and open
+-- the root command palette.
+o.bind("ALT + SPACE", "Omarchy menu", "omarchy-menu toggle root")
 
 -- Omarchy defaults SUPER+ALT+SPACE to the Apps menu. Keep it distinct from
 -- ALT+SPACE by opening the root menu with system actions such as reboot.
