@@ -1,6 +1,6 @@
 ---
 name: crew
-description: Coordinate a native Codex agent crew with a dependency DAG, focused ownership, direct agent messaging, and task-matched GPT-5.6 Sol or Terra reasoning. Use for broad, high-stakes, ambiguous, context-scattered, or parallelizable work where delegation materially improves speed or correctness; use explicitly with $crew when the coordinator should stay available to the user while agents investigate, implement, review, or verify.
+description: Coordinate native Codex agents with a dependency DAG, focused ownership, Sol-led work with optional Astra advisors, and optional project-scoped Beads tracking outside repositories. Use when delegation materially improves speed or correctness, or explicitly with $crew to remain available while agents work. Requests to inspect or edit the skill are not requests to launch its workflow.
 ---
 
 # Crew
@@ -11,24 +11,54 @@ substitute OMX tmux `$team` for this workflow.
 
 ## Preserve authority and explicit choices
 
-Apply model and reasoning choices in this order:
-
-1. The user's explicit instructions.
-2. System, developer, repository `AGENTS.md`, and task-specific constraints.
-3. This skill's role defaults.
-4. The closest currently available model only when a requested default is unavailable.
+Follow the instruction hierarchy. Within higher-priority constraints, explicit user
+choices override this skill's defaults. Preserve the current authorization, acceptance
+requirements, model choices, and designated implementation location through handoffs
+and resumed work. Do not invent restrictions that exclude required authorized proof.
 
 Never weaken approval, safety, write-scope, or tool restrictions when delegating.
-Keep irreversible or materially branching decisions with the user. Do not delegate
-merely to fill the concurrency budget.
+Existing authorization continues to apply; do not repeatedly ask for approval of the
+same action. Do not delegate merely to fill the concurrency budget.
 
-## Optional Ponytail pass
+## Establish the coordinator's role
+
+Record this thread's role before dispatch:
+
+- **Outer monitor:** supervise the designated implementation thread and inspect its
+  evidence. Delegate code changes, test execution, and publication to that owner;
+  worker delay does not authorize becoming a competing writer or test runner.
+- **Implementation coordinator:** own the crew's integration and verification within
+  the authorized workspace; retain or delegate those nodes explicitly.
+- **Leaf:** complete the assigned scope directly and return evidence to the parent.
+
+When the user designates a Herdr thread, run the implementation crew there and keep
+the outer monitor here. Do not substitute an AGNC/provider session for that worker.
+Herdr is otherwise optional. Answer side questions without abandoning active work.
+
+## Ponytail when available
 
 If the `ponytail` skill is available in the current runtime, load it before
 planning or implementing nodes and use it to minimize the DAG, ownership, and
 diff. Treat it as an optimization pass only: it must not override user intent,
 safety constraints, required tests, or final verification. If Ponytail is not
-available, continue normally without adding a replacement layer.
+available, continue normally without adding a replacement layer. Reuse its loaded
+instructions while they remain in context.
+
+## Optional Beads tracking
+
+For substantive work, use `bd` when available to persist this project's Crew DAG.
+Read [external Beads tracking](references/beads.md) before selecting or initializing
+the store. Create and update Beads state only outside source repositories and worktrees.
+Never add tracked or untracked `.beads`, exports, redirects, hooks, or generated agent
+instructions to them. Never use `bd --global` or combine unrelated projects into one database.
+
+Reuse a verified project-specific external store across its related worktrees. If
+none exists, initialize an isolated external store using the reference; do not adopt
+an existing repo-local store or move/delete its data. If Beads is absent, continue
+with the native DAG without installing it. If a configured store fails, preserve it,
+report the tracking gap, and keep a temporary checkpoint outside the repo rather than
+silently creating a competing store. Beads is the durable graph, not a second plan
+to maintain alongside it. Native agents still execute the assignments.
 
 ## Build the task DAG
 
@@ -42,17 +72,20 @@ Define each node with:
 - `depends_on`: prerequisite node IDs.
 - `handoff_to`: successor owners that need direct updates.
 - `mode`: read-only, write, review, or verify.
-- `ownership`: files, module, system, or question owned by the node.
+- `ownership`: files, module, system, or question; include exclusive runtime resources
+  such as tunnels, ports, databases, browser contexts, and branch publication when used.
 - `role` and `agent_type`: routing role and native agent role.
 - `model` and `reasoning_effort`.
 - `fork_turns`: fresh or bounded inherited context.
-- `proof`: evidence required to mark the node complete.
+- `proof`: required behavior/check, exact input revision or diff, relevant runtime and
+  identity, result artifact, and known gaps. Include only task-relevant acceptance gates.
 
 Do not compress away this routing metadata. Before spawning, render or maintain a DAG
 table in which every delegated node has every field above. A plan that omits its
 model, reasoning effort, native agent type, fork choice, successor handoff, or proof
 is incomplete. Use `coordinator` or `not applicable` explicitly for nodes retained by
-the parent.
+the parent. Maintain full metadata in the selected graph/checkpoint; user updates
+can show only outcomes, gate changes, and routing exceptions.
 
 Then execute the graph:
 
@@ -60,16 +93,19 @@ Then execute the graph:
    budget, counting the coordinator.
 2. Run independent ready nodes in parallel.
 3. Validate each result against its `proof` before marking it complete.
-4. Pass discoveries directly to successor owners and recalculate the ready set.
+4. Pass completed inputs into successor assignments and recalculate the ready set.
 5. Start join nodes only after every required predecessor is complete.
 6. Add or split nodes when evidence changes the work, but reject cycles and duplicate
-   ownership.
+   ownership. Invalidate affected reviews and dependent gates when their inputs change.
 7. Finish only when all required implementation, integration, and verification nodes
    are complete.
 
 Prioritize capable workers on the critical path. Use low-cost scouts for parallel
 leaf discovery. Represent integration and final verification as explicit DAG nodes
-instead of treating them as implicit coordinator cleanup.
+instead of treating them as implicit coordinator cleanup. Preserve required cleanup
+and acceptance when splitting scopes; a completed leaf is not the whole objective.
+Parallelize independent code work, but isolate or serialize shared runtime acceptance.
+Only its owner may change or release a shared resource; preserve unrelated services.
 
 ## Match reasoning to each node
 
@@ -80,23 +116,25 @@ Treat these as defaults, not overrides:
 | Scout | `default` | `gpt-5.6-sol` | `low` | Narrow read-only lookup, file discovery, code-path tracing, relevant tests |
 | Worker | `default` | `gpt-5.6-sol` | `medium` | Scoped implementation, routine fixes, focused checks, supporting work |
 | Smart worker | `default` | `gpt-5.6-sol` | `high` | Difficult implementation, ambiguity resolution, critical-path coordination |
-| Terra worker | `default` | `gpt-5.6-terra` | `high` | Independent implementation, alternate approach, hard review, or cross-check |
+| Astra advisor | `default` | `gpt-6-astra` | `medium` | Read-only alternative analysis, risk assessment, or advice for a Sol-owned decision |
 
-The Sol “Light” label maps to the native `reasoning_effort: "low"` value. Use Terra
-High alongside Sol when model diversity materially improves a high-stakes decision,
-implementation, or verification node. Do not force a Terra node when the DAG has no
-useful independent work for it.
+The Sol “Light” label maps to the native `reasoning_effort: "low"` value. For
+non-trivial Sol-led work, add an Astra Medium advisor when a second perspective can
+materially reduce uncertainty in approach, boundaries, risk, or verification. The
+advisor is read-only: it hands a concise recommendation and evidence to the Sol owner,
+who retains implementation and acceptance-gate ownership. Do not create an advisor
+node for routine or already-settled work.
 
 For high-stakes, cross-boundary, or cross-package DAGs with at least two substantive
-nodes, route at least one independent hard review, alternative analysis, or
-verification node to Terra High by default. Skip that default when a higher-precedence
-instruction selects another model, Terra is unavailable, or the only possible Terra
-node would be artificial duplicate work. Merely listing Terra as available does not
-satisfy this rule: assign it a real DAG node. A strong default is Sol for primary
-implementation and Terra High for independent verification or hard review.
+nodes, default one useful early advisory or independent review node to Astra Medium.
+Skip that default when a higher-precedence instruction selects another model, Astra is
+unavailable, or the only possible Astra node would be artificial duplicate work. Merely
+listing Astra as available does not satisfy this rule: assign it a real advisory or
+review question. A strong default is Sol for primary implementation and Astra Medium
+for alternative analysis before the Sol owner commits to the approach.
 
-Use native `agent_type: "default"` for these mappings so the explicit GPT-5.6 model
-and reasoning fields control routing. Put the Scout, Worker, reviewer, or verifier
+Use native `agent_type: "default"` for these mappings so the explicit model and
+reasoning fields control routing. Put the Scout, Worker, Smart worker, or Astra advisor
 duties in the assignment message. Named specialist agent types may have fixed model
 contracts; use one only when a higher-precedence instruction requests it or its
 resolved model is acceptable. Never pair a fixed-model specialist type with an
@@ -113,7 +151,7 @@ incompatible model override and claim that the requested model ran.
   reasoning overrides when using full history.
 - Give leaf agents this boundary:
 
-  `Complete this assignment directly. Do not spawn other agents; your parent's delegation instructions apply only to your parent.`
+  `You are the assigned implementer/reviewer. Complete this scope directly. Do not spawn a replacement reviewer or other agents, or interrupt, close, or reassign siblings. Return blockers and partial evidence to your parent. Your parent's delegation instructions apply only to your parent.`
 
 - Tell every writing agent that it is not alone in the workspace, must preserve user
   changes, must not revert other agents, and must stay inside its ownership.
@@ -127,31 +165,63 @@ Use exact native routing fields when supported:
 Scout:        agent_type="default", model="gpt-5.6-sol",   reasoning_effort="low"
 Worker:       agent_type="default", model="gpt-5.6-sol",   reasoning_effort="medium"
 Smart worker: agent_type="default", model="gpt-5.6-sol",   reasoning_effort="high"
-Terra worker: agent_type="default", model="gpt-5.6-terra", reasoning_effort="high"
+Astra advisor: agent_type="default", model="gpt-6-astra", reasoning_effort="medium"
 ```
 
-If a model is unavailable, preserve the intended reasoning level with the closest
-allowed model and tell the user about the fallback.
+Check actual spawn arguments against the node's resolved model, effort, agent type,
+and fork choice. Check runtime model metadata when exposed; a label in a prompt is
+not proof that model ran. Preserve overrides on recovery and follow-up assignments.
+If a model is unavailable, use the closest allowed fallback only when the task permits
+substitution and disclose it. Otherwise leave that node blocked and progress independent
+work. Correct rejected tool arguments using the current API; do not repeat an invalid
+call or transfer native effort values blindly to a separate review CLI.
 
 ## Let the graph communicate
 
 Avoid making the coordinator a relay for every dependency:
 
-- After agents are spawned, tell each owner which successor agents consume its output.
-- Ask agents to message those successors directly when findings unblock or invalidate
-  their nodes.
-- Use direct messages for live dependency updates and follow-up tasks for new work.
+- Pass prerequisite artifacts in the spawn prompt when the successor does not yet
+  exist. For existing owners, provide agent IDs and use direct messages for relevant
+  discoveries or invalidation. Informational messages do not satisfy completion gates.
+- Use `followup_task` for new work on an idle agent; a `send_message` alone does not
+  start its turn. Avoid repeated checkpoint prompts that disrupt productive workers.
 - Let agents propose new nodes or edges, but keep DAG mutation and cycle prevention
   with the coordinator.
 - Track active ownership centrally so two agents do not repeat the same investigation
   or write the same files.
 
-## Stay available and integrate
+## Monitor progress and recover stalled nodes
 
-Give the user concise updates at material DAG transitions and remain responsive while
-agents run. Monitor status rather than waiting blindly. Treat agent reports as inputs,
-not final proof: inspect the relevant artifacts, reconcile conflicts, run task-level
-verification, and own the final answer.
+Keep one coordinating owner for monitoring. Track node state, live agent/thread ID,
+last material evidence, expected next result, and next action. Observe status and
+artifacts within the task's progress window; no universal short timeout or repeated
+nudge is appropriate for every node. Give concise updates while long work runs and
+at material transitions. Do not create duplicate scheduled monitors.
+
+For a stalled or superseded lane, inspect its partial work and owned processes,
+preserve useful evidence, and stop the old owner before assigning overlapping work.
+Reuse an idle agent or narrow and reassign the remaining scope; repeated stalls require
+rescoping or an explicit blocker, not endless identical respawns. Route recovery through
+the designated implementation owner. Missing/interrupted output is not a passing gate.
+
+On resume, reconcile the existing graph, live owners, routing, input revisions, and
+proof state before spawning. Keep one durable checkpoint in Beads when enabled, or
+the runtime's existing continuity surface; any file-based checkpoint stays outside
+source repositories. Do not reconstruct completion from conversational claims alone.
+
+## Join proof and finish
+
+Treat agent reports as inputs, not final proof. The implementation owner reconciles
+artifacts and runs task-level verification; an outer monitor inspects that evidence.
+Join every required review, including late findings, before final approval or publication.
+Bind proof to the tested revision/diff and relevant environment: changed inputs reopen
+affected gates, and a green descendant cannot validate an untested earlier stacked PR.
+
+Keep required local tests, browser/runtime acceptance, hosted CI, deployment, merge,
+and provider acceptance distinct. Do not replace a missing required gate with an easier
+one or add live-provider requirements to unrelated local work. Close the objective only
+after its required gates pass and owned-resource cleanup is accounted for. In Beads,
+the coordinator records accepted proof before closing the corresponding node/epic.
 
 In the handoff, state the achieved outcome, the important model/DAG choices, completed
 verification, and any remaining risk. Do not expose coordination noise that does not
