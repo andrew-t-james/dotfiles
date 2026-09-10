@@ -174,11 +174,7 @@ web2app() {
 
   cat > "$LAUNCHER" <<SCRIPT
 #!/bin/bash
-if hyprctl clients -j | grep -q '"class": "$APP_NAME"'; then
-  hyprctl dispatch focuswindow "class:$APP_NAME"
-else
-  zen-browser --new-instance -P "$APP_NAME" --name "$APP_NAME" --new-window "$APP_URL"
-fi
+omarchy-launch-or-focus-webapp "$APP_NAME" "$APP_URL"
 SCRIPT
   chmod +x "$LAUNCHER"
 

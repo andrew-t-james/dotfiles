@@ -44,7 +44,7 @@ o.bind("SUPER + SHIFT + ALT + E", "New Shortwave email", {
 
 -- Restore the legacy Slack launcher on the current Chromium web app.
 o.bind("SUPER + SHIFT + ALT + S", "Slack", {
-  webapp = "https://app.slack.com/client/T0NBA084Q/D07AB2PJZH6",
+  webapp = "https://app.slack.com/client",
   focus = true,
 })
 

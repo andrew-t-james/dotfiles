@@ -15,7 +15,8 @@ if $APPLY; then
   # Keep Omarchy and XDG URL handlers on the stock Chromium default.
   omarchy default browser chromium
 
-  omarchy webapp install shortwave https://app.shortwave.com "$SRC_ICON_DIR/shortwave.png"
+  install -Dm644 "$SRC_ICON_DIR/shortwave.png" "$HOME/.local/share/applications/icons/shortwave.png"
+  omarchy webapp install shortwave https://app.shortwave.com shortwave.png
 
   echo "[INFO] Installed Shortwave using Omarchy's default browser"
 else

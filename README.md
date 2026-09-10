@@ -43,7 +43,7 @@ The bootstrap will:
 - **AI tools**: Claude, Claude Code, Codex, Copilot CLI
 - **Productivity**: Raycast, Notion, Notion Calendar, Linear, Slack
 - **Dev**: Beekeeper Studio, QMK Toolbox, Docker/OrbStack
-- **Browsers**: Google Chrome, Zen Browser
+- **Browsers**: Google Chrome, Chromium
 - **Utilities**: CleanShot X, 1Password, AppCleaner, LocalSend
 
 ### CLI Tools (Homebrew Formulae)
