@@ -12,6 +12,9 @@ action-validator = "latest"
 tuist = "latest"
 "github:can1357/oh-my-pi" = "latest"
 "github:gastownhall/beads" = "1.2.2"
+"aqua:modem-dev/hunk" = "latest"
+codex = "latest"
+gh = "latest"
 
 "npm:typescript-language-server" = "latest"
 "npm:pyright" = "latest"
@@ -22,3 +25,6 @@ tuist = "latest"
 "pipx:debugpy" = "latest"
 "dotnet:csharp-ls" = "latest"
 "github:Samsung/netcoredbg" = "3.2.0-1092"
+
+[settings.upgrade]
+auto_prune = false

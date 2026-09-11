@@ -71,3 +71,14 @@ o.bind("SUPER + ALT + SPACE", "Omarchy menu", "omarchy-menu toggle root")
 -- macOS-style screenshot shortcuts retained from the old config.
 o.bind("SUPER + SHIFT + 3", "Screenshot window", "omarchy-capture-screenshot windows")
 o.bind("SUPER + SHIFT + 4", "Screenshot region", "omarchy-capture-screenshot region")
+
+-- flea --default: begin. Written by `flea --default`; `flea --default off` removes the block whole.
+hl.unbind("SUPER + SHIFT + F")
+o.bind("SUPER + SHIFT + F", "File manager", { launch = 'flea --gui' })
+hl.unbind("SUPER + ALT + SHIFT + F")
+o.bind("SUPER + ALT + SHIFT + F", "File manager (cwd)", { launch = 'flea --gui "$(omarchy-cmd-terminal-cwd)"' })
+-- flea --default: end.
+
+-- flea --picker: begin. Written by `flea --picker`; `flea --picker off` removes the block whole.
+o.window("com.thisisgm.flea.picker", { tag = "+floating-window" })
+-- flea --picker: end.
