@@ -1,4 +1,11 @@
--- Returns colorscheme based on omarchy theme
+local fallback = "catppuccin"
+
+-- Omarchy theme state only exists on Linux. Keep the shared macOS config on
+-- its normal colorscheme instead of coupling it to an Omarchy path.
+if (vim.uv or vim.loop).os_uname().sysname ~= "Linux" then
+  return fallback
+end
+
 local theme_map = {
   ["catppuccin-latte"] = "catppuccin-latte",
   ["catppuccin"] = "catppuccin",
@@ -14,10 +21,11 @@ local theme_map = {
   ["tokyo-night"] = "tokyonight-night",
 }
 
-local f = io.open(vim.fn.expand("~/.config/omarchy/current/theme.name"), "r")
+local state_home = vim.env.XDG_STATE_HOME or vim.fn.expand("~/.local/state")
+local f = io.open(state_home .. "/omarchy/current/theme.name", "r")
 if f then
   local name = f:read("*l")
   f:close()
-  return theme_map[name] or "catppuccin"
+  return theme_map[name] or fallback
 end
-return "catppuccin"
+return fallback
