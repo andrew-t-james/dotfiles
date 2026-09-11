@@ -83,7 +83,12 @@ herdr integration install codex
 
 ensure_github_plugin vim-herdr-navigation paulbkim-dev/vim-herdr-navigation 53e318c772c4d3b7fbd904ac43bcf3e5b5d8b244
 ensure_github_plugin branch-cleanup dutifuldev/herdr-branch-cleanup d83cb4b557ae539babd454067ce83459d321b875
-ensure_github_plugin hunk.diff edmundmiller/herdr-plugin-hunk 11ba5dcca4358203ca68f160becf6870cf016c18
+
+# hunk.diff's adapter expects an obsolete JSON response from `herdr pane run`.
+# The local overlay uses Herdr's native plugin-pane entrypoints and Mise's Hunk.
+if plugin_installed hunk.diff; then
+  herdr plugin uninstall hunk.diff
+fi
 ensure_local_plugin hunk.overlay "$HOME/.config/herdr/plugins/local/hunk-overlay"
 
 echo "==> Herdr plugins installed."
