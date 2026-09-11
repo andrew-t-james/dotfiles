@@ -1,6 +1,6 @@
 ---
 name: crew
-description: Coordinate native Codex agents with a dependency DAG, focused ownership, Sol-led work with optional Astra advisors, and optional project-scoped Beads tracking outside repositories. Use when delegation materially improves speed or correctness, or explicitly with $crew to remain available while agents work. Requests to inspect or edit the skill are not requests to launch its workflow.
+description: Coordinate native Codex agents with a dependency DAG, focused ownership, configurable routing with a Luna Max and Astra Medium explicit-invocation preset, and optional project-scoped Beads tracking outside repositories. Use when delegation materially improves speed or correctness, or explicitly with $crew to remain available while agents work. Requests to inspect or edit the skill are not requests to launch its workflow.
 ---
 
 # Crew
@@ -20,6 +20,50 @@ Never weaken approval, safety, write-scope, or tool restrictions when delegating
 Existing authorization continues to apply; do not repeatedly ask for approval of the
 same action. Do not delegate merely to fill the concurrency budget.
 
+## Crew invocation preset
+
+For an explicit `$crew` invocation, use this preset unless the user overrides it:
+
+- Surface: `auto` — use Herdr when the invoking thread has `HERDR_ENV=1`; otherwise
+  use a native Desktop child thread.
+- Primary crew: `gpt-5.6-luna` with `reasoning_effort: "max"` for the implementation
+  coordinator and all non-advisor delegated nodes.
+- Advisor: read-only `gpt-6-astra` with `reasoning_effort: "medium"`, available to
+  the outer orchestrator whenever substantive work provides a real advisory question.
+  This is an on-demand role, not a one-consultation limit; omit artificial advisor work.
+
+If `$crew` is invoked without a goal, ask only: “What should the crew accomplish?”
+Do not ask the user to restate the preset. If the invocation already includes a goal,
+proceed without an intake question.
+
+Treat these compact prompt options as Crew flags even though skill invocations are
+natural-language prompts rather than a CLI:
+
+- `--surface auto|desktop|herdr`
+- `--primary <model>:<effort>`
+- `--advisor <model>:<effort>` or `--no-advisor`
+
+Accept `luna`, `sol`, and `astra` as aliases for their available canonical model IDs.
+Explicit natural-language choices remain equivalent to flags and override the preset.
+Ask one concise question only when an explicit override is incomplete or unavailable.
+Normal implicit delegation may use the role defaults below.
+
+For an explicit `$crew` invocation, the current thread always becomes the outer
+orchestrator/monitor after intake. Launch exactly one separate implementation
+coordinator on the selected surface. That coordinator owns the DAG, integration,
+verification, and implementation/scout child-agent launches. The outer monitor stays
+available to the user, watches evidence and blockers, and does not become a competing
+implementer. It may directly launch or reuse read-only advisor agents as described below.
+
+On Desktop, start the implementation coordinator as a native child agent and explicitly
+authorize it to coordinate the bounded child DAG. In Herdr, use the designated
+Herdr-managed coding-agent thread as the implementation coordinator and have that thread
+launch its own native children. Follow the Herdr skill for pane and agent control; if
+Herdr is explicitly selected but the invoking thread is not running under `HERDR_ENV=1`,
+report that surface as unavailable rather than silently switching to Desktop. Preserve
+the selected models and reasoning efforts through coordinator startup, descendant
+launches, retries, and handoffs on either surface.
+
 ## Establish the coordinator's role
 
 Record this thread's role before dispatch:
@@ -34,6 +78,23 @@ Record this thread's role before dispatch:
 When the user designates a Herdr thread, run the implementation crew there and keep
 the outer monitor here. Do not substitute an AGNC/provider session for that worker.
 Herdr is otherwise optional. Answer side questions without abandoning active work.
+
+## Use advisors on demand
+
+The outer orchestrator may consult the selected advisor model whenever an independent
+perspective can materially improve a decision, including approach selection, risk review,
+evidence interpretation, recovery from a changed assumption, or final acceptance. There
+is no fixed one-advisor-call or one-advisor-node limit.
+
+Give every consultation one concrete read-only question, the evidence it should inspect,
+and the owner that needs its recommendation. Reuse an existing advisor with
+`followup_task` when continuity helps; use separate advisor nodes when independent
+questions can run in parallel. Feed accepted advice to the implementation coordinator
+without transferring implementation or acceptance-gate ownership to the advisor.
+
+Advisor use remains bounded by the live concurrency budget and actual decision value.
+Do not create repetitive consultations, performative second opinions, or duplicate reviews
+after the relevant uncertainty is settled.
 
 ## Ponytail when available
 
@@ -126,12 +187,14 @@ who retains implementation and acceptance-gate ownership. Do not create an advis
 node for routine or already-settled work.
 
 For high-stakes, cross-boundary, or cross-package DAGs with at least two substantive
-nodes, default one useful early advisory or independent review node to Astra Medium.
+nodes, default at least one useful early advisory or independent review node to Astra Medium.
 Skip that default when a higher-precedence instruction selects another model, Astra is
 unavailable, or the only possible Astra node would be artificial duplicate work. Merely
 listing Astra as available does not satisfy this rule: assign it a real advisory or
-review question. A strong default is Sol for primary implementation and Astra Medium
-for alternative analysis before the Sol owner commits to the approach.
+review question. Continue consulting Astra later when new evidence creates another
+material question; the early default is not a lifetime limit. A strong default is Sol
+for primary implementation and Astra Medium for alternative analysis before the Sol
+owner commits to the approach.
 
 Use native `agent_type: "default"` for these mappings so the explicit model and
 reasoning fields control routing. Put the Scout, Worker, Smart worker, or Astra advisor

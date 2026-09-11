@@ -22,6 +22,13 @@ for key, destination in pairs(workspace_keys) do
   o.bind("ALT + SHIFT + " .. key, "Move window to " .. label, hl.dsp.window.move({ workspace = tostring(workspace) }))
 end
 
+-- Replace Omarchy's ChatGPT web app shortcut with the desktop app.
+hl.unbind("SUPER + SHIFT + A")
+o.bind("SUPER + SHIFT + A", "ChatGPT desktop", {
+  launch = "chatgpt",
+  focus = "(?i)^chatgpt$",
+})
+
 -- Replace Omarchy's default HEY Calendar shortcut with Google Calendar too.
 hl.unbind("SUPER + SHIFT + C")
 o.bind("SUPER + SHIFT + C", "Google Calendar", {
