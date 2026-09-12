@@ -1,291 +1,154 @@
 ---
 name: crew
-description: Coordinate native Codex agents with a dependency DAG, focused ownership, configurable routing with a Luna Max and Astra Medium explicit-invocation preset, and optional project-scoped Beads tracking outside repositories. Use when delegation materially improves speed or correctness, or explicitly with $crew to remain available while agents work. Requests to inspect or edit the skill are not requests to launch its workflow.
+description: Coordinate native Codex agent crews across Desktop or Herdr. Use for explicit $crew requests or tasks where multiple agents materially improve the outcome. Editing this skill does not invoke it.
 ---
 
 # Crew
 
-Use Codex native multi-agent tools inside the current thread. Keep the coordinator
-user-facing while bounded subagents execute the task graph behind the scenes. Do not
-substitute OMX tmux `$team` for this workflow.
+Coordinate the smallest useful agent graph that delivers the requested outcome. Optimize
+for correct, reviewable work rather than agent activity, review count, or code volume.
 
-## Preserve authority and explicit choices
+## Invocation and routing
 
-Follow the instruction hierarchy. Within higher-priority constraints, explicit user
-choices override this skill's defaults. Preserve the current authorization, acceptance
-requirements, model choices, and designated implementation location through handoffs
-and resumed work. Do not invent restrictions that exclude required authorized proof.
+Explicit user choices override these defaults. Preserve authorization, acceptance gates,
+models, reasoning efforts, and the designated workspace through every handoff and resume.
 
-Never weaken approval, safety, write-scope, or tool restrictions when delegating.
-Existing authorization continues to apply; do not repeatedly ask for approval of the
-same action. Do not delegate merely to fill the concurrency budget.
+For an explicit `$crew` invocation:
 
-## Crew invocation preset
+| Setting | Default |
+| --- | --- |
+| Surface | `auto`: Herdr when `HERDR_ENV=1`, otherwise a native Desktop child thread |
+| Primary | `gpt-5.6-luna` with `reasoning_effort: "max"` |
+| Advisor | read-only `gpt-6-astra` with `reasoning_effort: "medium"` |
 
-For an explicit `$crew` invocation, use this preset unless the user overrides it:
+The resolved primary route applies to the coordinator and all non-advisor descendants.
+The resolved advisor route applies to advisor/reviewer threads.
 
-- Surface: `auto` — use Herdr when the invoking thread has `HERDR_ENV=1`; otherwise
-  use a native Desktop child thread.
-- Primary crew: `gpt-5.6-luna` with `reasoning_effort: "max"` for the implementation
-  coordinator and all non-advisor delegated nodes.
-- Advisor: read-only `gpt-6-astra` with `reasoning_effort: "medium"`, available to
-  the outer orchestrator whenever substantive work provides a real advisory question.
-  This is an on-demand role, not a one-consultation limit; omit artificial advisor work.
-
-If `$crew` is invoked without a goal, ask only: “What should the crew accomplish?”
-Do not ask the user to restate the preset. If the invocation already includes a goal,
-proceed without an intake question.
-
-Treat these compact prompt options as Crew flags even though skill invocations are
-natural-language prompts rather than a CLI:
+Accept the same compact overrides:
 
 - `--surface auto|desktop|herdr`
 - `--primary <model>:<effort>`
 - `--advisor <model>:<effort>` or `--no-advisor`
 
-Accept `luna`, `sol`, and `astra` as aliases for their available canonical model IDs.
-Explicit natural-language choices remain equivalent to flags and override the preset.
-Ask one concise question only when an explicit override is incomplete or unavailable.
-Normal implicit delegation may use the role defaults below.
+Map `luna`, `sol`, and `astra` to `gpt-5.6-luna`, `gpt-5.6-sol`, and `gpt-6-astra`.
+Natural-language overrides are equivalent to flags. Ask only when an override is
+incomplete or unavailable; do not silently substitute a requested model. If `$crew` has
+no goal, ask only: “What should the crew accomplish?”
 
-For an explicit `$crew` invocation, the current thread always becomes the outer
-orchestrator/monitor after intake. Launch exactly one separate implementation
-coordinator on the selected surface. That coordinator owns the DAG, integration,
-verification, and implementation/scout child-agent launches. The outer monitor stays
-available to the user, watches evidence and blockers, and does not become a competing
-implementer. It may directly launch or reuse read-only advisor agents as described below.
+The invoking thread is the outer monitor. On Desktop, launch exactly one native child as
+the implementation coordinator. On Herdr, designate exactly one Herdr-managed Codex agent
+as that coordinator. It owns the DAG, implementation, integration, verification, and its
+native worker children. The outer monitor remains responsive and may own read-only advisor
+threads, but must not become a competing implementer. Preserve native parent/child
+relationships on retry and resume. Read [surface routing](references/surfaces.md) before
+starting Herdr or when surface selection or recovery is relevant.
 
-On Desktop, start the implementation coordinator as a native child agent and explicitly
-authorize it to coordinate the bounded child DAG. In Herdr, use the designated
-Herdr-managed coding-agent thread as the implementation coordinator and have that thread
-launch its own native children. Follow the Herdr skill for pane and agent control; if
-Herdr is explicitly selected but the invoking thread is not running under `HERDR_ENV=1`,
-report that surface as unavailable rather than silently switching to Desktop. Preserve
-the selected models and reasoning efforts through coordinator startup, descendant
-launches, retries, and handoffs on either surface.
+## Set scope before work
 
-## Establish the coordinator's role
+Record a compact scope contract before implementation:
 
-Record this thread's role before dispatch:
+- required user-visible behavior and proof;
+- excluded adjacent work;
+- expected production and test change shape, including cumulative stack size when known;
+- any required new subsystem, migration, compatibility layer, or shared contract.
 
-- **Outer monitor:** supervise the designated implementation thread and inspect its
-  evidence. Delegate code changes, test execution, and publication to that owner;
-  worker delay does not authorize becoming a competing writer or test runner.
-- **Implementation coordinator:** own the crew's integration and verification within
-  the authorized workspace; retain or delegate those nodes explicitly.
-- **Leaf:** complete the assigned scope directly and return evidence to the parent.
+Every new subsystem, migration, persistent contract, compatibility path, or broad surface
+rollout must map to an explicit requirement. Delete compatibility for unshipped
+intermediate designs by default. A valid review finding does not itself authorize new
+product scope.
 
-When the user designates a Herdr thread, run the implementation crew there and keep
-the outer monitor here. Do not substitute an AGNC/provider session for that worker.
-Herdr is otherwise optional. Answer side questions without abandoning active work.
+At integration points, compare the whole cumulative diff—not only the current slice—to
+the scope contract. Separate production, tests, generated files, migrations, and support
+tools when that changes the judgment. Stop and replan when work introduces an unplanned
+boundary or materially exceeds the expected change shape. Split independent improvements
+instead of absorbing them into the active deliverable.
 
-## Use advisors on demand
+Within the scope contract, continue through implementation, relevant verification, and
+repairs without pausing for routine approval. Stop only for a new authority, scope,
+safety, or materially branching decision.
 
-The outer orchestrator may consult the selected advisor model whenever an independent
-perspective can materially improve a decision, including approach selection, risk review,
-evidence interpretation, recovery from a changed assumption, or final acceptance. There
-is no fixed one-advisor-call or one-advisor-node limit.
+## Build the smallest DAG
 
-Give every consultation one concrete read-only question, the evidence it should inspect,
-and the owner that needs its recommendation. Reuse an existing advisor with
-`followup_task` when continuity helps; use separate advisor nodes when independent
-questions can run in parallel. Feed accepted advice to the implementation coordinator
-without transferring implementation or acceptance-gate ownership to the advisor.
+Use a DAG only where ownership or dependencies benefit from it. A sequential or single-
+worker task may have a one-node graph; do not invent parallel work.
 
-Advisor use remains bounded by the live concurrency budget and actual decision value.
-Do not create repetitive consultations, performative second opinions, or duplicate reviews
-after the relevant uncertainty is settled.
+Each delegated node records:
 
-## Ponytail when available
+- `id`, outcome, dependencies, and successor handoff;
+- read/write/review mode and exclusive file, system, or runtime ownership;
+- model, reasoning effort, native agent type, and `fork_turns` choice;
+- proof tied to the relevant revision or diff, environment, result, and known gaps.
 
-If the `ponytail` skill is available in the current runtime, load it before
-planning or implementing nodes and use it to minimize the DAG, ownership, and
-diff. Treat it as an optimization pass only: it must not override user intent,
-safety constraints, required tests, or final verification. If Ponytail is not
-available, continue normally without adding a replacement layer. Reuse its loaded
-instructions while they remain in context.
+The coordinator retains integration and final verification unless explicitly delegated.
+Start only ready nodes, run genuinely independent nodes in parallel, and serialize shared
+resources. Changed inputs invalidate dependent reviews and proof. A completed child is not
+evidence that the whole objective is complete.
 
-## Optional Beads tracking
+### Optional Beads
 
-For substantive work, use `bd` when available to persist this project's Crew DAG.
-Read [external Beads tracking](references/beads.md) before selecting or initializing
-the store. Create and update Beads state only outside source repositories and worktrees.
-Never add tracked or untracked `.beads`, exports, redirects, hooks, or generated agent
-instructions to them. Never use `bd --global` or combine unrelated projects into one database.
+Use Beads when the user requests durable tracking or the graph is likely to span context
+windows, resumptions, or multiple worktrees. If selected and `bd` is available, first read
+[external Beads tracking](references/beads.md); keep its store outside every repository,
+never use `--global`, and keep one authoritative graph. Otherwise the implementation
+coordinator keeps that graph in native parent/child thread state or the existing continuity
+checkpoint. Missing or failed Beads must not block the crew or cause a repo-local fallback.
 
-Reuse a verified project-specific external store across its related worktrees. If
-none exists, initialize an isolated external store using the reference; do not adopt
-an existing repo-local store or move/delete its data. If Beads is absent, continue
-with the native DAG without installing it. If a configured store fails, preserve it,
-report the tracking gap, and keep a temporary checkpoint outside the repo rather than
-silently creating a competing store. Beads is the durable graph, not a second plan
-to maintain alongside it. Native agents still execute the assignments.
+## Delegate with hard boundaries
 
-## Build the task DAG
+Prefer `fork_turns: "none"` for focused workers and use native `agent_type: "default"`
+with explicit model and reasoning fields. Full-history forks inherit the parent route, so
+omit incompatible overrides. Give each child its exact scope, inputs, ownership, proof,
+dependencies, successor, model, effort, and write constraints. Include this boundary in
+every leaf assignment:
 
-For substantive work, create a compact directed acyclic graph before spawning agents.
-The coordinator owns and updates the DAG.
+`Complete this scope directly. Do not spawn other agents or reviewers, and do not
+interrupt, close, or reassign siblings. Return blockers and partial evidence to your
+parent.`
 
-Define each node with:
+Tell writing agents they share the workspace, must preserve user and sibling changes, and
+must remain inside their ownership. Only a coordinator may own a child DAG, and only when
+at least two independent children justify it. Check actual spawn arguments and runtime
+metadata when exposed; prompt labels are not routing proof.
 
-- `id`: stable short name.
-- `outcome`: one concrete deliverable.
-- `depends_on`: prerequisite node IDs.
-- `handoff_to`: successor owners that need direct updates.
-- `mode`: read-only, write, review, or verify.
-- `ownership`: files, module, system, or question; include exclusive runtime resources
-  such as tunnels, ports, databases, browser contexts, and branch publication when used.
-- `role` and `agent_type`: routing role and native agent role.
-- `model` and `reasoning_effort`.
-- `fork_turns`: fresh or bounded inherited context.
-- `proof`: required behavior/check, exact input revision or diff, relevant runtime and
-  identity, result artifact, and known gaps. Include only task-relevant acceptance gates.
+## Keep review convergent
 
-Do not compress away this routing metadata. Before spawning, render or maintain a DAG
-table in which every delegated node has every field above. A plan that omits its
-model, reasoning effort, native agent type, fork choice, successor handoff, or proof
-is incomplete. Use `coordinator` or `not applicable` explicitly for nodes retained by
-the parent. Maintain full metadata in the selected graph/checkpoint; user updates
-can show only outcomes, gate changes, and routing exceptions.
+Use the configured advisor—Astra Medium by default—only for a concrete read-only question
+whose answer can change a decision. For complex work, prefer one early boundary/approach
+review and one revision-bound final review. Reuse an existing advisor for corrective
+deltas. Additional reviews require materially changed input or a named unresolved
+question; do not create performative second opinions.
 
-Then execute the graph:
+Before acting on a finding, classify it:
 
-1. Start ready nodes whose dependencies are complete, up to the live concurrency
-   budget, counting the coordinator.
-2. Run independent ready nodes in parallel.
-3. Validate each result against its `proof` before marking it complete.
-4. Pass completed inputs into successor assignments and recalculate the ready set.
-5. Start join nodes only after every required predecessor is complete.
-6. Add or split nodes when evidence changes the work, but reject cycles and duplicate
-   ownership. Invalidate affected reviews and dependent gates when their inputs change.
-7. Finish only when all required implementation, integration, and verification nodes
-   are complete.
+1. A defect introduced by this change: fix in scope.
+2. A blocker to an explicit requirement: fix or rescope.
+3. An independent improvement or broader behavior: separate work.
+4. Compatibility for an unshipped intermediate design: remove by default.
 
-Prioritize capable workers on the critical path. Use low-cost scouts for parallel
-leaf discovery. Represent integration and final verification as explicit DAG nodes
-instead of treating them as implicit coordinator cleanup. Preserve required cleanup
-and acceptance when splitting scopes; a completed leaf is not the whole objective.
-Parallelize independent code work, but isolate or serialize shared runtime acceptance.
-Only its owner may change or release a shared resource; preserve unrelated services.
+After two review/fix rounds without convergence, stop broad review cycling. Batch the
+remaining defect family, reduce or split scope, or replace the approach before requesting
+another whole-diff review. User-requested reviews and changed-input verification still
+apply.
 
-## Match reasoning to each node
+## Execute, recover, and finish
 
-Treat these as defaults, not overrides:
+Pass prerequisite artifacts in a successor's prompt, or message an existing owner when
+evidence changes. Use `followup_task` to start new work on an idle child; `send_message`
+alone is informational.
 
-| Role | Native `agent_type` | Model | Reasoning | Assignments |
-| --- | --- | --- | --- | --- |
-| Scout | `default` | `gpt-5.6-sol` | `low` | Narrow read-only lookup, file discovery, code-path tracing, relevant tests |
-| Worker | `default` | `gpt-5.6-sol` | `medium` | Scoped implementation, routine fixes, focused checks, supporting work |
-| Smart worker | `default` | `gpt-5.6-sol` | `high` | Difficult implementation, ambiguity resolution, critical-path coordination |
-| Astra advisor | `default` | `gpt-6-astra` | `medium` | Read-only alternative analysis, risk assessment, or advice for a Sol-owned decision |
+For a stalled or superseded node, preserve its evidence and owned processes, stop the old
+owner, then narrow or reassign the remainder. Do not create overlapping replacement work.
+On resume, reconcile the graph, live parent/child threads, routing, revisions, dirty state,
+and proof before spawning.
 
-The Sol “Light” label maps to the native `reasoning_effort: "low"` value. For
-non-trivial Sol-led work, add an Astra Medium advisor when a second perspective can
-materially reduce uncertainty in approach, boundaries, risk, or verification. The
-advisor is read-only: it hands a concise recommendation and evidence to the Sol owner,
-who retains implementation and acceptance-gate ownership. Do not create an advisor
-node for routine or already-settled work.
+Treat agent reports and turn status as inputs, not acceptance. The implementation
+coordinator integrates and runs task-level verification; the outer monitor inspects the
+evidence. Final proof identifies the exact revision or dirty-diff fingerprint, required
+checks, outstanding findings, relevant runtime identity, and owned-resource disposition.
+Do not replace a missing required gate with an easier one or add unrelated live-provider
+proof.
 
-For high-stakes, cross-boundary, or cross-package DAGs with at least two substantive
-nodes, default at least one useful early advisory or independent review node to Astra Medium.
-Skip that default when a higher-precedence instruction selects another model, Astra is
-unavailable, or the only possible Astra node would be artificial duplicate work. Merely
-listing Astra as available does not satisfy this rule: assign it a real advisory or
-review question. Continue consulting Astra later when new evidence creates another
-material question; the early default is not a lifetime limit. A strong default is Sol
-for primary implementation and Astra Medium for alternative analysis before the Sol
-owner commits to the approach.
-
-Use native `agent_type: "default"` for these mappings so the explicit model and
-reasoning fields control routing. Put the Scout, Worker, Smart worker, or Astra advisor
-duties in the assignment message. Named specialist agent types may have fixed model
-contracts; use one only when a higher-precedence instruction requests it or its
-resolved model is acceptable. Never pair a fixed-model specialist type with an
-incompatible model override and claim that the requested model ran.
-
-## Spawn focused agents
-
-- Prefer `fork_turns: "none"` for focused scouts and leaf workers.
-- Include all essential task context, acceptance criteria, safety boundaries, write
-  ownership, dependency inputs, and proof requirements in fresh-context prompts.
-- When recent conversation is essential, use the smallest positive `fork_turns` value
-  that supplies it.
-- Full-history forks inherit the parent's model and reasoning; omit explicit model and
-  reasoning overrides when using full history.
-- Give leaf agents this boundary:
-
-  `You are the assigned implementer/reviewer. Complete this scope directly. Do not spawn a replacement reviewer or other agents, or interrupt, close, or reassign siblings. Return blockers and partial evidence to your parent. Your parent's delegation instructions apply only to your parent.`
-
-- Tell every writing agent that it is not alone in the workspace, must preserve user
-  changes, must not revert other agents, and must stay inside its ownership.
-- Permit a smart worker to coordinate a small sub-DAG only when its node contains at
-  least two genuinely independent children. Give it an explicit child budget and
-  require it to report the child nodes and dependencies to the parent.
-
-Use exact native routing fields when supported:
-
-```text
-Scout:        agent_type="default", model="gpt-5.6-sol",   reasoning_effort="low"
-Worker:       agent_type="default", model="gpt-5.6-sol",   reasoning_effort="medium"
-Smart worker: agent_type="default", model="gpt-5.6-sol",   reasoning_effort="high"
-Astra advisor: agent_type="default", model="gpt-6-astra", reasoning_effort="medium"
-```
-
-Check actual spawn arguments against the node's resolved model, effort, agent type,
-and fork choice. Check runtime model metadata when exposed; a label in a prompt is
-not proof that model ran. Preserve overrides on recovery and follow-up assignments.
-If a model is unavailable, use the closest allowed fallback only when the task permits
-substitution and disclose it. Otherwise leave that node blocked and progress independent
-work. Correct rejected tool arguments using the current API; do not repeat an invalid
-call or transfer native effort values blindly to a separate review CLI.
-
-## Let the graph communicate
-
-Avoid making the coordinator a relay for every dependency:
-
-- Pass prerequisite artifacts in the spawn prompt when the successor does not yet
-  exist. For existing owners, provide agent IDs and use direct messages for relevant
-  discoveries or invalidation. Informational messages do not satisfy completion gates.
-- Use `followup_task` for new work on an idle agent; a `send_message` alone does not
-  start its turn. Avoid repeated checkpoint prompts that disrupt productive workers.
-- Let agents propose new nodes or edges, but keep DAG mutation and cycle prevention
-  with the coordinator.
-- Track active ownership centrally so two agents do not repeat the same investigation
-  or write the same files.
-
-## Monitor progress and recover stalled nodes
-
-Keep one coordinating owner for monitoring. Track node state, live agent/thread ID,
-last material evidence, expected next result, and next action. Observe status and
-artifacts within the task's progress window; no universal short timeout or repeated
-nudge is appropriate for every node. Give concise updates while long work runs and
-at material transitions. Do not create duplicate scheduled monitors.
-
-For a stalled or superseded lane, inspect its partial work and owned processes,
-preserve useful evidence, and stop the old owner before assigning overlapping work.
-Reuse an idle agent or narrow and reassign the remaining scope; repeated stalls require
-rescoping or an explicit blocker, not endless identical respawns. Route recovery through
-the designated implementation owner. Missing/interrupted output is not a passing gate.
-
-On resume, reconcile the existing graph, live owners, routing, input revisions, and
-proof state before spawning. Keep one durable checkpoint in Beads when enabled, or
-the runtime's existing continuity surface; any file-based checkpoint stays outside
-source repositories. Do not reconstruct completion from conversational claims alone.
-
-## Join proof and finish
-
-Treat agent reports as inputs, not final proof. The implementation owner reconciles
-artifacts and runs task-level verification; an outer monitor inspects that evidence.
-Join every required review, including late findings, before final approval or publication.
-Bind proof to the tested revision/diff and relevant environment: changed inputs reopen
-affected gates, and a green descendant cannot validate an untested earlier stacked PR.
-
-Keep required local tests, browser/runtime acceptance, hosted CI, deployment, merge,
-and provider acceptance distinct. Do not replace a missing required gate with an easier
-one or add live-provider requirements to unrelated local work. Close the objective only
-after its required gates pass and owned-resource cleanup is accounted for. In Beads,
-the coordinator records accepted proof before closing the corresponding node/epic.
-
-In the handoff, state the achieved outcome, the important model/DAG choices, completed
-verification, and any remaining risk. Do not expose coordination noise that does not
-help the user evaluate the result.
+For explicit `$crew` runs, record the resolved Crew `SKILL.md` path and its Git revision or
+file hash when available so later behavior can be compared to the actual loaded skill.
+Report the outcome as implemented, verified, published, paused, or blocked independently
+of whether the latest agent turn completed.
