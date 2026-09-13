@@ -23,6 +23,8 @@ For an explicit `$crew` invocation:
 
 The resolved primary route applies to the coordinator and all non-advisor descendants.
 The resolved advisor route applies to advisor/reviewer threads.
+Explicit model routing requires `fork_turns: "none"`; put the complete bounded brief in
+the spawn prompt instead of attempting a full-history fork with model overrides.
 
 Accept the same compact overrides:
 
@@ -42,6 +44,25 @@ native worker children. The outer monitor remains responsive and may own read-on
 threads, but must not become a competing implementer. Preserve native parent/child
 relationships on retry and resume. Read [surface routing](references/surfaces.md) before
 starting Herdr or when surface selection or recovery is relevant.
+
+A coordinator is active only after its start call returns a non-empty agent or pane ID.
+Until then, do not describe it as assigned, active, running, or working, and do not wait.
+Record the returned ID in the graph and pass it to every operation whose current schema
+accepts an agent target. A host-wide wait is valid only after that live ID exists; reconcile
+its result against the recorded coordinator before treating the coordinator as settled.
+Correct a rejected start call once using the current API. If that retry fails, report the
+Crew run blocked instead of simulating coordination or silently doing the coordinator's work.
+On Desktop, `spawn_agent` must be the first collaboration action. Do not call `wait`, send
+messages, inspect the task as a substitute coordinator, or announce progress before that
+spawn succeeds. A one-node graph still runs in the separate implementation coordinator;
+it never collapses that role into the outer monitor. If native spawning is unavailable,
+report the explicit Crew run blocked.
+Prefix each root child prompt with exactly one machine-readable role line:
+
+- `Crew role: implementation-coordinator`
+- `Crew role: advisor`
+
+Do not use either marker for worker descendants owned by the implementation coordinator.
 
 ## Set scope before work
 
@@ -95,9 +116,9 @@ checkpoint. Missing or failed Beads must not block the crew or cause a repo-loca
 
 ## Delegate with hard boundaries
 
-Prefer `fork_turns: "none"` for focused workers and use native `agent_type: "default"`
-with explicit model and reasoning fields. Full-history forks inherit the parent route, so
-omit incompatible overrides. Give each child its exact scope, inputs, ownership, proof,
+Use `fork_turns: "none"` for explicitly routed coordinators and workers, and use native
+`agent_type: "default"` with explicit model and reasoning fields. A full-history fork may
+be used only when it inherits the parent route without overrides. Give each child its exact scope, inputs, ownership, proof,
 dependencies, successor, model, effort, and write constraints. Include this boundary in
 every leaf assignment:
 
@@ -136,6 +157,13 @@ Pass prerequisite artifacts in a successor's prompt, or message an existing owne
 evidence changes. Use `followup_task` to start new work on an idle child; `send_message`
 alone is informational.
 
+Wait only after recording a live coordinator ID. Use a targeted wait when the current API
+supports one; otherwise use the host-wide wait and reconcile its result against that ID.
+When a coordinator reports a completed join, inspect the result. If required proof passes,
+deliver the final answer in the same turn. If proof is missing, return the exact gap to the
+same coordinator. Close or cleanup results may be reported after an accepted answer, but
+cleanup must not delay or suppress it.
+
 For a stalled or superseded node, preserve its evidence and owned processes, stop the old
 owner, then narrow or reassign the remainder. Do not create overlapping replacement work.
 On resume, reconcile the graph, live parent/child threads, routing, revisions, dirty state,
@@ -148,7 +176,14 @@ checks, outstanding findings, relevant runtime identity, and owned-resource disp
 Do not replace a missing required gate with an easier one or add unrelated live-provider
 proof.
 
-For explicit `$crew` runs, record the resolved Crew `SKILL.md` path and its Git revision or
-file hash when available so later behavior can be compared to the actual loaded skill.
-Report the outcome as implemented, verified, published, paused, or blocked independently
-of whether the latest agent turn completed.
+Before the first collaboration action in an explicit `$crew` run, hash the resolved Crew
+`SKILL.md` and emit exactly one identity line:
+
+`Crew skill: <absolute-path>#sha256:<64-lowercase-hex>`
+
+Also record its Git revision when available. Report the outcome as implemented, verified,
+published, paused, or blocked independently of whether the latest agent turn completed.
+
+For a captured Codex JSONL run, verify the root coordinator and completion receipt with
+`scripts/validate_receipt.py --skill-sha256 <hash> <receipt.jsonl>` before using that run
+as promotion evidence.
