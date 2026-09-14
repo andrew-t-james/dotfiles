@@ -92,11 +92,6 @@ The bootstrap will:
 chezmoi update
 ```
 
-The shared `autoreview` skill comes from
-[`openclaw/agent-skills/skills/autoreview`](https://github.com/openclaw/agent-skills/tree/main/skills/autoreview).
-Its source repository, path, and current tree hash are recorded in
-`.agents/.skill-lock.json`.
-
 ## Structure
 
 ```
