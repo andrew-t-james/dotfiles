@@ -2,10 +2,10 @@ title = "👻"
 
 theme = catppuccin-mocha.conf
 
-font-size=16
+font-size = {{ if eq .chezmoi.os "linux" }}12{{ else }}16{{ end }}
 
-font-family=GeistMono Nerd Font Mono
-font-style=Regular
+font-family = GeistMono Nerd Font Mono
+font-style = Regular
 
 cursor-color = #fab387
 cursor-style = block
