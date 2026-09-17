@@ -49,6 +49,9 @@ require("default.hypr.toggles")
 -- every Slack web-app window belongs on the Social workspace.
 o.window("(?i).*slack.*", { workspace = "2" })
 
+-- Keep the Chromium WhatsApp web app on the WhatsApp workspace (ALT+W).
+o.window("^chrome-web\\.whatsapp\\.com__.*$", { workspace = "5" })
+
 -- Keep Shortwave mail on the Email workspace.
 o.window("^chrome-app\\.shortwave\\.com__.*$", { workspace = "1" })
 
