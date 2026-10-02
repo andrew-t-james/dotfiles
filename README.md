@@ -86,6 +86,11 @@ files. Prebuilt releases support Apple Silicon macOS and x86_64 Linux.
 - **macOS**: `Cmd+Shift+C` launches or activates OmaCal on the **calendar** workspace.
 - **Both**: `Alt+G` switches to the calendar workspace.
 
+On Omarchy, the clock opens OmaCal's agenda popup, and the `omacal.upcoming`
+widget shows your current or next meeting. `Super+Ctrl+Alt+D` toggles the same
+agenda. Setup enables both widgets, and Hyprland starts OmaCal at login to keep
+the bar's calendar feed available.
+
 Sign in to your calendar accounts in OmaCal on each machine. Calendar data and
 credentials stay local and are not stored in this repository. OmaCal provides
 in-app updates; reapplying the dotfiles does not redownload an existing install.

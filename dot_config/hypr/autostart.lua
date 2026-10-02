@@ -6,3 +6,6 @@ o.launch_on_start("chatgpt")
 
 -- Keep Chromium Shortwave ready on the Email workspace.
 o.exec_on_start(o.launch_webapp_sole("shortwave", "https://app.shortwave.com"))
+
+-- Keep the calendar feed and OmaCal bar widget available after login.
+o.launch_on_start("omacal --autostart")

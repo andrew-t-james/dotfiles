@@ -36,6 +36,10 @@ o.bind("SUPER + SHIFT + C", "OmaCal", {
   focus = "(?i)^(omacal|com\\.omacal\\.app)$",
 })
 
+-- Replace Omarchy's month-grid shortcut with the OmaCal agenda popup.
+hl.unbind("SUPER + CTRL + ALT + D")
+o.bind("SUPER + CTRL + ALT + D", "OmaCal agenda", "omarchy-shell omacal.upcoming toggle")
+
 -- Disable Omarchy's default HEY shortcut; TTY3 launches Shortwave with the
 -- legacy SUPER+SHIFT+ALT+E chord below.
 hl.unbind("SUPER + SHIFT + E")

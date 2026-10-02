@@ -73,6 +73,38 @@ EOF
     update-desktop-database "$APP_DIR"
   fi
   xdg-mime default omacal.desktop text/calendar
+
+  if command -v omarchy >/dev/null 2>&1; then
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+    # Also support install.sh without first running chezmoi apply.
+    mkdir -p "$CONFIG_DIR/omarchy/plugins/dotfiles.clock"
+    for plugin_file in "$SCRIPT_DIR/../dot_config/omarchy/plugins/dotfiles.clock/"*; do
+      destination="$CONFIG_DIR/omarchy/plugins/dotfiles.clock/$(basename "$plugin_file")"
+      if ! cmp -s "$plugin_file" "$destination"; then
+        install -m644 "$plugin_file" "$destination"
+      fi
+    done
+
+    if omarchy-shell shell ping >/dev/null 2>&1; then
+      # OmaCal unpacks its bundled widget on the first GUI start. Its own
+      # one-time enable attempt can fail; explicitly reconcile enablement.
+      if ! pgrep -u "$(id -u)" -x omacal >/dev/null; then
+        uwsm-app -- "$BIN_DIR/omacal" --autostart >/dev/null 2>&1 &
+      fi
+      for (( attempt = 0; attempt < 50; attempt++ )); do
+        [[ ! -f "$CONFIG_DIR/omarchy/plugins/omacal.upcoming/manifest.json" ]] || break
+        sleep 0.2
+      done
+      omarchy-shell shell rescanPlugins
+      omarchy plugin enable omacal.upcoming
+      omarchy plugin enable dotfiles.clock
+    else
+      # At bootstrap there may be no graphical shell yet. Queue the layout;
+      # Hyprland autostart supplies the app and its widget on first login.
+      python3 "$SCRIPT_DIR/configure-omacal-bar.py"
+    fi
+  fi
 fi
 
 echo "[INFO] OmaCal installed and selected as the default calendar"

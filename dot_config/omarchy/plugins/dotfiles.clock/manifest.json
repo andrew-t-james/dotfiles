@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "dotfiles.clock",
+  "name": "Clock with OmaCal",
+  "version": "1.0.0",
+  "author": "Andrew James",
+  "description": "Date/time label opening the OmaCal agenda",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "Clock with OmaCal",
+    "description": "Date/time label opening the OmaCal agenda",
+    "category": "Time",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.clock"
+  }
+}
