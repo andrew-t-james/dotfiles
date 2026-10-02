@@ -90,6 +90,7 @@ On Omarchy, the clock opens OmaCal's agenda popup, and the `omacal.upcoming`
 widget shows your current or next meeting. `Super+Ctrl+Alt+D` toggles the same
 agenda. Setup enables both widgets, and Hyprland starts OmaCal at login to keep
 the bar's calendar feed available.
+The native OmaCal tray icon is hidden on Omarchy so only the agenda widget appears.
 
 Sign in to your calendar accounts in OmaCal on each machine. Calendar data and
 credentials stay local and are not stored in this repository. OmaCal provides

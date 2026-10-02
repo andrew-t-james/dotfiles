@@ -23,6 +23,12 @@ for section in ("left", "center", "right"):
             clock_found = True
         if widget_id == "omacal.upcoming":
             agenda_found = True
+        if widget_id == "omarchy.tray":
+            entry = dict(entry) if isinstance(entry, dict) else {"id": widget_id}
+            entry["hidden"] = list(dict.fromkeys(
+                entry.get("hidden", []) + ["tray-icon tray app omacal-tray"]
+            ))
+            entries[index] = entry
 if not clock_found:
     layout["center"].append({"id": "dotfiles.clock"})
 if not agenda_found:
