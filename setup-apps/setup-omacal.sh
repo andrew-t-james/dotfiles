@@ -101,11 +101,10 @@ EOF
       omarchy plugin enable dotfiles.clock
       # The agenda widget supplies the tray's calendar actions. Hide the
       # duplicate native tray item, preserving other hidden applications.
-      hidden_tray_ids="$(jq -c '
-        [.bar.layout[][] | select(type == "object" and .id == "omarchy.tray")
-          | .hidden[]?] + ["tray-icon tray app omacal-tray"] | unique
-      ' "$CONFIG_DIR/omarchy/shell.json")"
-      omarchy bar set omarchy.tray hidden "$hidden_tray_ids" --json
+      # Some shell versions serialize array values through setBarWidget as
+      # strings. Write the list as JSON and reload the user configuration.
+      python3 "$SCRIPT_DIR/configure-omacal-bar.py" --tray-only
+      omarchy-shell shell reloadConfig
     else
       # At bootstrap there may be no graphical shell yet. Queue the layout;
       # Hyprland autostart supplies the app and its widget on first login.
