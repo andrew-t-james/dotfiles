@@ -58,5 +58,5 @@ o.window("^chrome-app\\.shortwave\\.com__.*$", { workspace = "1" })
 -- Keep the native ChatGPT app on the AI workspace (ALT+A).
 o.window("(?i)^chatgpt$", { workspace = "6" })
 
--- Keep the Google Calendar web app on the Calendar workspace (ALT+G).
-o.window("^chrome-calendar\\.google\\.com__.*$", { workspace = "7" })
+-- Keep OmaCal on the Calendar workspace (ALT+G).
+o.window("(?i)^(omacal|com\\.omacal\\.app)$", { workspace = "7" })

@@ -29,11 +29,11 @@ o.bind("SUPER + SHIFT + A", "ChatGPT desktop", {
   focus = "(?i)^chatgpt$",
 })
 
--- Replace Omarchy's default HEY Calendar shortcut with Google Calendar too.
+-- Replace Omarchy's default HEY Calendar shortcut with OmaCal.
 hl.unbind("SUPER + SHIFT + C")
-o.bind("SUPER + SHIFT + C", "Google Calendar", {
-  webapp = "https://calendar.google.com/calendar/u/0/r",
-  focus = true,
+o.bind("SUPER + SHIFT + C", "OmaCal", {
+  launch = "omacal",
+  focus = "(?i)^(omacal|com\\.omacal\\.app)$",
 })
 
 -- Disable Omarchy's default HEY shortcut; TTY3 launches Shortwave with the

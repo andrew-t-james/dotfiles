@@ -121,6 +121,8 @@ alt-d = 'workspace dev'
 alt-e = 'workspace email'
 alt-f = 'workspace browser'
 alt-g = 'workspace calendar'
+# Launch or activate the default calendar on its dedicated workspace.
+cmd-shift-c = ['workspace calendar', 'exec-and-forget open -b com.omacal.app']
 alt-m = 'workspace messages'
 alt-n = 'workspace notes'
 alt-a = 'workspace linear'
@@ -175,6 +177,10 @@ run       = "move-node-to-workspace email"
 [[on-window-detected]]
 if.app-id = "com.superhuman.electron"
 run       = "move-node-to-workspace email"
+
+[[on-window-detected]]
+if.app-id = "com.omacal.app"
+run       = "move-node-to-workspace calendar"
 
 [[on-window-detected]]
 if.app-id = "com.cron.electron"

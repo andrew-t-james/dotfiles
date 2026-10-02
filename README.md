@@ -41,7 +41,7 @@ The bootstrap will:
 - **Terminals**: Ghostty (primary)
 - **Editors**: Zed, Neovim (config included)
 - **AI tools**: Claude, Claude Code, Codex, Copilot CLI
-- **Productivity**: Raycast, Notion, Notion Calendar, Linear, Slack
+- **Productivity**: Raycast, Notion, OmaCal, Linear, Slack
 - **Dev**: Beekeeper Studio, QMK Toolbox, Docker/OrbStack
 - **Browsers**: Google Chrome, Chromium
 - **Utilities**: CleanShot X, 1Password, AppCleaner, LocalSend
@@ -74,6 +74,21 @@ The bootstrap will:
 | zprofile | `~/.zprofile` (Linux only) |
 | bin | `~/.local/bin/` |
 | hypr | `~/.config/hypr/` (Linux only) |
+
+### Default calendar (macOS and Linux)
+
+`chezmoi apply` installs [OmaCal](https://github.com/x3me/omacal) through its
+upstream installer if missing and selects it as the default for `.ics` calendar
+files. Prebuilt releases support Apple Silicon macOS and x86_64 Linux.
+`bash install.sh --apply` also runs this setup on Omarchy.
+
+- **Linux**: `Super+Shift+C` launches or focuses OmaCal on workspace **7**.
+- **macOS**: `Cmd+Shift+C` launches or activates OmaCal on the **calendar** workspace.
+- **Both**: `Alt+G` switches to the calendar workspace.
+
+Sign in to your calendar accounts in OmaCal on each machine. Calendar data and
+credentials stay local and are not stored in this repository. OmaCal provides
+in-app updates; reapplying the dotfiles does not redownload an existing install.
 
 ## Post-install manual steps
 
