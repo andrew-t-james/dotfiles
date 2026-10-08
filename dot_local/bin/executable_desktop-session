@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+"""Reopen this account's GUI applications without a fixed startup list."""
+import argparse
+import configparser
+import json
+import os
+from pathlib import Path
+import shlex
+import signal
+import shutil
+import subprocess
+import sys
+import threading
+import time
+from urllib.parse import urlparse
+
+STATE = Path(os.environ.get('XDG_STATE_HOME', Path.home() / '.local/state')) / 'desktop-session/apps.json'
+
+
+def clients():
+    result = subprocess.run(['hyprctl', '-j', 'clients'], capture_output=True, text=True, timeout=5, check=True)
+    return json.loads(result.stdout)
+
+
+def desktop_entries():
+    roots = [Path(os.environ.get('XDG_DATA_HOME', Path.home() / '.local/share'))]
+    roots.extend(Path(p) for p in os.environ.get('XDG_DATA_DIRS', '/usr/local/share:/usr/share').split(':'))
+    entries, seen = [], set()
+    for root in roots:
+        for path in sorted((root / 'applications').rglob('*.desktop')):
+            desktop_id = str(path.relative_to(root / 'applications')).replace('/', '-')
+            if desktop_id in seen:
+                continue
+            seen.add(desktop_id)
+            config = configparser.ConfigParser(interpolation=None, strict=False)
+            try:
+                config.read(path)
+                entry = config['Desktop Entry']
+                if entry.get('Hidden', 'false') == 'true' or entry.get('Type') != 'Application':
+                    continue
+                argv = shlex.split(entry.get('Exec', ''))
+                if argv:
+                    entries.append((path, entry.get('StartupWMClass', ''), argv))
+            except (configparser.Error, KeyError, ValueError):
+                continue
+    return entries
+
+
+def launcher(window, entries, executable):
+    wmclass = window.get('initialClass') or window.get('class', '')
+    folded = wmclass.casefold()
+    # Web apps share a browser PID; match their URL rather than the executable.
+    if folded.startswith(('chrome-', 'crx_')):
+        for path, _, argv in entries:
+            for arg in argv:
+                url = arg.removeprefix('--app=')
+                parsed = urlparse(url)
+                if parsed.scheme not in ('http', 'https') or not parsed.hostname:
+                    continue
+                app_id = f'chrome-{parsed.hostname}_{(parsed.path or "/").replace("/", "_")}'
+                if wmclass.startswith(app_id + '-'):
+                    return {'class': wmclass, 'kind': 'desktop', 'target': str(path)}
+        # Do not reopen an unidentified web app as an unrelated browser window.
+        return None
+    binary = Path(executable).name if executable else ''
+    if binary in ('chromium', 'chrome', 'google-chrome', 'brave', 'brave-browser', 'microsoft-edge'):
+        return {'class': wmclass, 'kind': 'browser', 'target': shutil.which(binary) or executable}
+    for path, startup_class, argv in entries:
+        if folded in (startup_class.casefold(), path.stem.casefold()):
+            return {'class': wmclass, 'kind': 'desktop', 'target': str(path)}
+    if not executable:
+        return None
+    for path, _, argv in entries:
+        if Path(argv[0]).name == binary:
+            return {'class': wmclass, 'kind': 'desktop', 'target': str(path)}
+    # Reopen the GUI program itself, never replay terminal commands or process flags.
+    if binary not in ('electron', 'electron34', 'electron36', 'python', 'python3', 'bash', 'sh', 'zsh'):
+        return {'class': wmclass, 'kind': 'executable', 'target': executable}
+    return None
+
+
+def snapshot():
+    entries, apps, seen = desktop_entries(), [], set()
+    for window in clients():
+        try:
+            executable = str(Path(f'/proc/{window["pid"]}/exe').resolve(strict=True))
+        except (OSError, KeyError):
+            executable = None
+        app = launcher(window, entries, executable)
+        if app:
+            key = (app['kind'], app['target'])
+            if key not in seen:
+                apps.append(app)
+                seen.add(key)
+        else:
+            print(f'desktop-session: no launcher for {window.get("class", "unknown")}', file=sys.stderr)
+    return apps
+
+
+def save():
+    apps = snapshot()  # Failed IPC must never replace a valid saved session.
+    STATE.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    temporary = STATE.with_suffix('.tmp')
+    temporary.write_text(json.dumps(apps, indent=2) + '\n')
+    temporary.chmod(0o600)
+    temporary.replace(STATE)
+    return apps
+
+
+def restore():
+    if not STATE.exists():
+        return
+    existing = {w.get('initialClass') or w.get('class') for w in clients()}
+    apps = json.loads(STATE.read_text())
+    apps.sort(key=lambda app: app['kind'] != 'browser')
+    for app in apps:
+        if app['class'] in existing:
+            continue
+        target = app['target']
+        if not Path(target).exists():
+            print(f'desktop-session: missing launcher {target}', file=sys.stderr)
+            continue
+        if app['kind'] == 'desktop':
+            command = ['gio', 'launch', target]
+        elif app['kind'] == 'browser':
+            command = [target, '--restore-last-session']
+        elif app['kind'] == 'executable':
+            command = [target]
+        else:
+            continue
+        subprocess.Popen(['uwsm-app', '--', *command], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if app['kind'] == 'browser':
+            # Give browser restoration the first launch, ahead of any web apps.
+            for _ in range(100):
+                time.sleep(0.1)
+                opened = clients()
+                if any(w.get('class') == app['class'] for w in opened):
+                    existing.update(w.get('initialClass') or w.get('class') for w in opened)
+                    break
+
+
+def restore_once():
+    # A watcher restart is not a new desktop login.
+    signature = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
+    runtime = Path(os.environ['XDG_RUNTIME_DIR']) / 'desktop-session'
+    marker = runtime / signature
+    if not marker.exists():
+        restore()
+        runtime.mkdir(parents=True, exist_ok=True, mode=0o700)
+        marker.touch(mode=0o600)
+
+
+def try_save():
+    try:
+        save()
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        # IPC can disappear briefly during reloads; keep the previous snapshot.
+        print(f'desktop-session: capture deferred: {error}', file=sys.stderr)
+
+
+def watch():
+    stopping = threading.Event()
+    shutting_down = threading.Event()
+    monitor = subprocess.Popen([
+        'dbus-monitor', '--system',
+        "type='signal',interface='org.freedesktop.login1.Manager',member='PrepareForShutdown'",
+    ], stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+
+    def shutdown_signals():
+        for line in monitor.stdout:
+            if 'boolean true' in line:
+                shutting_down.set()
+            elif 'boolean false' in line:
+                shutting_down.clear()
+
+    threading.Thread(target=shutdown_signals, daemon=True).start()
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, lambda *_: stopping.set())
+    try:
+        restore_once()
+        # Do not overwrite the saved list while restored applications are loading.
+        stopping.wait(15)
+        while not stopping.is_set():
+            if not shutting_down.is_set():
+                try_save()
+            stopping.wait(3)
+        if not shutting_down.is_set():
+            try_save()
+    finally:
+        monitor.terminate()
+        monitor.wait(timeout=5)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('action', choices=['save', 'restore', 'watch', 'list'])
+    args = parser.parse_args()
+    if args.action == 'list':
+        print(json.dumps(snapshot(), indent=2))
+    else:
+        globals()[args.action]()
+
+
+if __name__ == '__main__':
+    main()

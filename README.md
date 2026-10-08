@@ -130,3 +130,31 @@ dotfiles/
 ```
 
 The original stow directories (`aerospace/`, `nvim/`, etc.) are kept for reference.
+
+## Linux desktop session restoration
+
+Hyprland remembers the applications open in each user's session and reopens
+them on the next login. Personal and work accounts keep separate snapshots in
+`~/.local/state/desktop-session/apps.json`; there is no fixed app list.
+
+The `desktop-session.service` user service captures changes every three seconds
+and freezes the saved list when logind announces shutdown. Installed desktop
+launchers handle native apps and Chromium web apps; regular Chromium windows
+start with previous-session restoration before web apps. Applications without
+a desktop launcher fall back to their executable when it can be identified.
+Unidentified web apps and interpreter-hosted apps are logged rather than guessed.
+
+This reopens applications, not exact window layouts, unsaved documents, or
+terminal commands. Those depend on the application's own session features.
+
+After `chezmoi apply`, Hyprland starts the tracker on the next login. To start
+it in an existing session without reopening closed apps, seed it first:
+
+```sh
+desktop-session save
+systemctl --user daemon-reload
+systemctl --user enable --now desktop-session.service
+```
+
+Inspect the currently recognized apps with `desktop-session list`. Run the
+regression checks with `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests`.

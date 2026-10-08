@@ -20,3 +20,7 @@ dot_config/zsh/dot_aliases.local.sh
 bin/
 !dot_local/bin/
 !dot_local/bin/executable_herdr-sesh-workspace
+
+# Python bytecode from session regression tests
+__pycache__/
+*.pyc

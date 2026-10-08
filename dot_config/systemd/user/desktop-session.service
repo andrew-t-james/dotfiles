@@ -1,0 +1,13 @@
+[Unit]
+Description=Remember and restore this account's open GUI applications
+PartOf=graphical-session.target
+After=graphical-session.target wayland-wm@hyprland.desktop.service
+
+[Service]
+ExecStart=%h/.local/bin/desktop-session watch
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=10
+
+[Install]
+WantedBy=graphical-session.target

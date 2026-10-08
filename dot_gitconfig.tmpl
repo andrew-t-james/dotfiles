@@ -1,3 +1,11 @@
+{{ if eq .chezmoi.os "linux" }}
+# Supply identity on fresh installs; existing Omarchy settings take precedence.
+[user]
+  name = {{ .name }}
+  email = {{ .email }}
+[include]
+  path = {{ .chezmoi.homeDir }}/.config/git/config
+{{ else }}
 [push]
 	default = current
 	autoSetupRemote = true
@@ -67,3 +75,4 @@
   process = git-lfs filter-process
   required = true
   clean = git-lfs clean -- %f
+{{ end }}

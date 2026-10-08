@@ -43,3 +43,38 @@ dot_codex/version.json
 dot_codex/.codex-global-state.json
 dot_codex/.personality_migration
 dot_codex/log
+
+# Repository support files stay in the source directory, not the home directory.
+Brewfile
+README.md
+bootstrap.sh
+install.sh
+bat
+keyboard
+nvim
+raycast-commands
+scripts
+setup-apps
+setup-omarchy
+tmux
+web-apps
+zsh
+
+# macOS configuration has no role on Linux hosts.
+{{ if eq .chezmoi.os "linux" }}
+.Library
+.config/aerospace
+.config/raycast-commands
+{{ end }}
+
+# Regression tests belong to the repository.
+tests
+
+# Test imports must never install bytecode into the user's bin directory.
+.local/bin/__pycache__
+
+{{ if ne .chezmoi.os "linux" }}
+.config/hypr
+.config/systemd/user/desktop-session.service
+.local/bin/desktop-session
+{{ end }}
