@@ -76,7 +76,5 @@ tests
 {{ if ne .chezmoi.os "linux" }}
 .config/hypr
 .config/systemd/user/desktop-session.service
-.config/systemd/user/desktop-display-watch.service
-.local/bin/desktop-display-watch
 .local/bin/desktop-session
 {{ end }}
