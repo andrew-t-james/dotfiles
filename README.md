@@ -158,3 +158,9 @@ systemctl --user enable --now desktop-session.service
 
 Inspect the currently recognized apps with `desktop-session list`. Run the
 regression checks with `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests`.
+
+`desktop-display-watch.service` checks only the active user's session. If an
+enabled monitor reports zero width or height, it requests a Hyprland reload
+to recover the display without closing apps. It skips inactive sessions,
+failed IPC queries, and package transactions that pause monitor reloads.
+Reload attempts are limited to one every 30 seconds if a display stays modeless.
