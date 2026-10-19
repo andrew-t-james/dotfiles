@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reopen this account's GUI applications without a fixed startup list."""
+"""Remember this account's GUI applications and their last window locations."""
 import argparse
 import configparser
 import json
@@ -10,11 +10,108 @@ import signal
 import shutil
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from urllib.parse import urlparse
 
 STATE = Path(os.environ.get('XDG_STATE_HOME', Path.home() / '.local/state')) / 'desktop-session/apps.json'
+
+
+def write_state(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    with tempfile.NamedTemporaryFile(mode='w', dir=path.parent, delete=False) as stream:
+        temporary = Path(stream.name)
+        try:
+            stream.write(json.dumps(value, indent=2) + '\n')
+            stream.close()
+            temporary.replace(path)
+        finally:
+            temporary.unlink(missing_ok=True)
+
+
+def window_class(window):
+    return window.get('initialClass') or window.get('class', '')
+
+
+def placement(window):
+    workspace = window.get('workspace', {})
+    name = workspace.get('name', '')
+    if not name or workspace.get('id') == 0 or window.get('pinned'):
+        return None
+    if not name.startswith('special:'):
+        name = str(workspace['id']) if name == str(workspace['id']) else 'name:' + name
+    result = {'workspace': name, 'floating': window.get('floating', False)}
+    if result['floating']:
+        result.update(at=window['at'], size=window['size'])
+    return result
+
+
+def lua_string(value):
+    # Lua accepts decimal byte escapes; do not interpolate window/workspace text
+    # as code, or use JSON's incompatible Unicode escapes.
+    return '"' + ''.join(f'\\{byte:03d}' for byte in value.encode()) + '"'
+
+
+def apply_placement(window, saved):
+    selector = lua_string('address:' + window['address'])
+    commands = [f'hl.dispatch(hl.dsp.window.move({{window={selector}, '
+                f'workspace={lua_string(saved["workspace"])}, follow=false}}))']
+    if saved['floating'] != window.get('floating', False):
+        action = 'set' if saved['floating'] else 'unset'
+        commands.append(f'hl.dispatch(hl.dsp.window.float({{window={selector}, action="{action}"}}))')
+    if saved['floating']:
+        for method, coordinates in [('resize', saved['size']), ('move', saved['at'])]:
+            x, y = (int(value) for value in coordinates)
+            commands.append(f'hl.dispatch(hl.dsp.window.{method}({{window={selector}, x={x}, y={y}, relative=false}}))')
+    subprocess.run(['hyprctl', 'eval', '; '.join(commands)], capture_output=True, text=True, timeout=5, check=True)
+
+
+class Placements:
+    """Keep closed apps' locations separately from the list of open apps.
+
+    Multiple windows of one class reuse location slots in opening order. An
+    address is placed only once, so subsequent user moves become the new default.
+    """
+    def __init__(self):
+        self.path = STATE.with_name('placements.json')
+        self.saved = json.loads(self.path.read_text()) if self.path.exists() else {}
+        self.slots = {}
+        self.dirty = False
+
+    def update(self, windows=None, restore=True):
+        windows = clients() if windows is None else windows
+        windows = [w for w in windows if w.get('mapped', True) and window_class(w) and placement(w)]
+        present = {w['address'] for w in windows}
+        self.slots = {address: slot for address, slot in self.slots.items() if address in present}
+        for window in windows:
+            address, wmclass = window['address'], window_class(window)
+            locations = self.saved.setdefault(wmclass, [])
+            if address not in self.slots:
+                used = {slot for owner, slot in self.slots.values() if owner == wmclass}
+                slot = next(index for index in range(len(used) + 1) if index not in used)
+                if restore and slot < len(locations):
+                    # Place before recording, or the startup workspace would
+                    # overwrite the location we were about to restore.
+                    apply_placement(window, locations[slot])
+                self.slots[address] = (wmclass, slot)
+                if restore and slot < len(locations):
+                    continue
+            _, slot = self.slots[address]
+            current = placement(window)
+            if slot == len(locations):
+                locations.append(current)
+                self.dirty = True
+            elif locations[slot] != current:
+                locations[slot] = current
+                self.dirty = True
+        if self.dirty:
+            write_state(self.path, self.saved)
+            self.dirty = False
+
+
+def login_marker():
+    return Path(os.environ['XDG_RUNTIME_DIR']) / 'desktop-session' / os.environ['HYPRLAND_INSTANCE_SIGNATURE']
 
 
 def clients():
@@ -99,15 +196,11 @@ def snapshot():
 
 def save():
     apps = snapshot()  # Failed IPC must never replace a valid saved session.
-    STATE.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
-    temporary = STATE.with_suffix('.tmp')
-    temporary.write_text(json.dumps(apps, indent=2) + '\n')
-    temporary.chmod(0o600)
-    temporary.replace(STATE)
+    write_state(STATE, apps)
     return apps
 
 
-def restore():
+def restore(placements=None):
     if not STATE.exists():
         return
     existing = {w.get('initialClass') or w.get('class') for w in clients()}
@@ -134,19 +227,22 @@ def restore():
             for _ in range(100):
                 time.sleep(0.1)
                 opened = clients()
+                if placements is not None:
+                    placements.update(opened)
                 if any(w.get('class') == app['class'] for w in opened):
                     existing.update(w.get('initialClass') or w.get('class') for w in opened)
                     break
 
 
-def restore_once():
+def restore_once(placements=None):
     # A watcher restart is not a new desktop login.
-    signature = os.environ['HYPRLAND_INSTANCE_SIGNATURE']
-    runtime = Path(os.environ['XDG_RUNTIME_DIR']) / 'desktop-session'
-    marker = runtime / signature
+    marker = login_marker()
     if not marker.exists():
-        restore()
-        runtime.mkdir(parents=True, exist_ok=True, mode=0o700)
+        if placements is None:
+            restore()
+        else:
+            restore(placements)
+        marker.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         marker.touch(mode=0o600)
 
 
@@ -177,14 +273,26 @@ def watch():
     for sig in (signal.SIGTERM, signal.SIGINT):
         signal.signal(sig, lambda *_: stopping.set())
     try:
-        restore_once()
-        # Do not overwrite the saved list while restored applications are loading.
-        stopping.wait(15)
+        placements = Placements()
+        # A service restart should learn current positions, not move live windows.
+        if login_marker().exists():
+            placements.update(restore=False)
+        restore_once(placements)
+        # Keep placing new windows while startup apps are still loading, but
+        # give the open-app snapshot its existing startup grace period.
+        next_save = time.monotonic() + 15
         while not stopping.is_set():
             if not shutting_down.is_set():
-                try_save()
-            stopping.wait(3)
+                try:
+                    placements.update()
+                except (OSError, ValueError, subprocess.SubprocessError) as error:
+                    print(f'desktop-session: placement deferred: {error}', file=sys.stderr)
+                if time.monotonic() >= next_save:
+                    try_save()
+                    next_save = time.monotonic() + 3
+            stopping.wait(0.5)
         if not shutting_down.is_set():
+            placements.update()
             try_save()
     finally:
         monitor.terminate()
@@ -197,6 +305,9 @@ def main():
     args = parser.parse_args()
     if args.action == 'list':
         print(json.dumps(snapshot(), indent=2))
+    elif args.action == 'save':
+        save()
+        Placements().update(restore=False)
     else:
         globals()[args.action]()
 

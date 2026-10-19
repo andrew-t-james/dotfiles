@@ -1,5 +1,5 @@
 [Unit]
-Description=Remember and restore this account's open GUI applications
+Description=Remember and restore this account's GUI applications and window locations
 PartOf=graphical-session.target
 After=graphical-session.target wayland-wm@hyprland.desktop.service
 

@@ -137,15 +137,24 @@ Hyprland remembers the applications open in each user's session and reopens
 them on the next login. Personal and work accounts keep separate snapshots in
 `~/.local/state/desktop-session/apps.json`; there is no fixed app list.
 
+Window locations are kept separately in `~/.local/state/desktop-session/placements.json`.
+Both automatically restored apps and apps opened manually return to their last
+workspace. Floating windows also recover their position and size. Moving a window
+updates its remembered location; closing an app keeps its location for next time.
+Multiple windows of the same app reuse saved locations in opening order.
+
 The `desktop-session.service` user service captures changes every three seconds
-and freezes the saved list when logind announces shutdown. Installed desktop
+and checks window locations every half second. Both snapshots freeze when logind
+announces shutdown. Installed desktop
 launchers handle native apps and Chromium web apps; regular Chromium windows
 start with previous-session restoration before web apps. Applications without
 a desktop launcher fall back to their executable when it can be identified.
 Unidentified web apps and interpreter-hosted apps are logged rather than guessed.
 
-This reopens applications, not exact window layouts, unsaved documents, or
-terminal commands. Those depend on the application's own session features.
+Tiled window sizes and split order follow Hyprland's layout. Documents, browser
+tabs, and terminal commands depend on the application's own session features.
+Locations are learned from the current desktop when upgrading; the previous
+app-only snapshots contain no locations to recover.
 
 After `chezmoi apply`, Hyprland starts the tracker on the next login. To start
 it in an existing session without reopening closed apps, seed it first:

@@ -87,12 +87,14 @@ class SessionTests(unittest.TestCase):
             if len(waits) == 2:
                 stopping.set()
         stopping.wait = wait
-        with patch.object(session.threading, 'Event', side_effect=[stopping, shutdown]), patch.object(session.threading, 'Thread') as thread, patch.object(session.subprocess, 'Popen') as monitor, patch.object(session, 'restore_once'), patch.object(session, 'save') as save:
+        with patch.object(session.threading, 'Event', side_effect=[stopping, shutdown]), patch.object(session.threading, 'Thread') as thread, patch.object(session.subprocess, 'Popen') as monitor, patch.object(session, 'restore_once'), patch.object(session, 'login_marker') as marker, patch.object(session, 'Placements') as placements, patch.object(session, 'save') as save:
+            marker.return_value.exists.return_value = False
             monitor.return_value.stdout = ['signal member=PrepareForShutdown\n', '   boolean true\n']
             # Deliver the actual D-Bus monitor output before the capture loop.
             thread.return_value.start.side_effect = lambda: thread.call_args.kwargs['target']()
             session.watch()
             save.assert_not_called()
+            placements.return_value.update.assert_not_called()
             monitor.return_value.terminate.assert_called_once()
 
     def test_restore_skips_already_open_apps(self):
@@ -102,6 +104,120 @@ class SessionTests(unittest.TestCase):
             with patch.object(session, 'STATE', state), patch.object(session, 'clients', return_value=[{'class': 'Slack'}]), patch.object(session.subprocess, 'Popen') as launch:
                 session.restore()
                 launch.assert_not_called()
+
+
+class PlacementTests(unittest.TestCase):
+    def setUp(self):
+        self.directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.directory.cleanup)
+        state = patch.object(session, 'STATE', Path(self.directory.name) / 'apps.json')
+        state.start()
+        self.addCleanup(state.stop)
+
+    def window(self, address='0x1', wmclass='editor', workspace=3, floating=False):
+        return {'address': address, 'class': wmclass, 'initialClass': wmclass,
+                'workspace': {'id': workspace, 'name': str(workspace)},
+                'mapped': True, 'floating': floating, 'at': [100, 200], 'size': [800, 600]}
+
+    def test_closed_app_location_survives_empty_session_and_next_login(self):
+        tracker = session.Placements()
+        tracker.update([self.window()], restore=False)
+        tracker.update([])
+        restored = session.Placements()
+        with patch.object(session, 'apply_placement') as move:
+            restored.update([self.window('0x2', workspace=9)])
+        self.assertEqual(move.call_args.args[1]['workspace'], '3')
+        self.assertEqual(restored.saved['editor'][0]['workspace'], '3')
+        self.assertEqual(session.json.loads(restored.path.read_text())['editor'][0]['workspace'], '3')
+        self.assertEqual(restored.path.stat().st_mode & 0o777, 0o600)
+
+    def test_user_moves_are_learned_without_repeatedly_forcing_old_location(self):
+        tracker = session.Placements()
+        tracker.update([self.window()], restore=False)
+        with patch.object(session, 'apply_placement') as move:
+            tracker.update([self.window(workspace=8)])
+            tracker.update([])
+            tracker.update([self.window('0x2', workspace=1)])
+        move.assert_called_once()
+        self.assertEqual(move.call_args.args[1]['workspace'], '8')
+
+    def test_multiple_windows_keep_separate_location_slots(self):
+        windows = [self.window('0x1', workspace=3), self.window('0x2', workspace=4)]
+        session.Placements().update(windows, restore=False)
+        tracker = session.Placements()
+        with patch.object(session, 'apply_placement') as move:
+            tracker.update([self.window('0xa', workspace=1), self.window('0xb', workspace=1)])
+        self.assertEqual([call.args[1]['workspace'] for call in move.call_args_list], ['3', '4'])
+
+    def test_native_and_browser_webapps_keep_independent_locations(self):
+        windows = [self.window(wmclass='chromium', workspace=4),
+                   self.window('0x2', wmclass='chrome-app.slack.com__-Default', workspace=2)]
+        tracker = session.Placements()
+        tracker.update(windows, restore=False)
+        self.assertEqual(tracker.saved['chromium'][0]['workspace'], '4')
+        self.assertEqual(tracker.saved['chrome-app.slack.com__-Default'][0]['workspace'], '2')
+
+    def test_restart_learns_current_locations_without_moving_live_windows(self):
+        session.Placements().update([self.window()], restore=False)
+        with patch.object(session, 'apply_placement') as move:
+            tracker = session.Placements()
+            tracker.update([self.window(workspace=4)], restore=False)
+            tracker.update([self.window(workspace=4)])
+        move.assert_not_called()
+        self.assertEqual(tracker.saved['editor'][0]['workspace'], '4')
+
+    def test_failed_move_retries_without_overwriting_saved_location(self):
+        session.Placements().update([self.window()], restore=False)
+        tracker = session.Placements()
+        with patch.object(session, 'apply_placement', side_effect=session.subprocess.TimeoutExpired('hyprctl', 5)):
+            with self.assertRaises(session.subprocess.TimeoutExpired):
+                tracker.update([self.window('0x2', workspace=9)])
+        self.assertNotIn('0x2', tracker.slots)
+        self.assertEqual(tracker.saved['editor'][0]['workspace'], '3')
+        with patch.object(session, 'apply_placement') as move:
+            tracker.update([self.window('0x2', workspace=9)])
+        move.assert_called_once()
+
+    def test_named_and_special_workspaces(self):
+        window = self.window()
+        for name, expected in [('development', 'name:development'), ('special:notes', 'special:notes')]:
+            window['workspace']['name'] = name
+            self.assertEqual(session.placement(window)['workspace'], expected)
+
+    def test_failed_write_is_retried_even_if_no_window_has_changed(self):
+        tracker = session.Placements()
+        with patch.object(session, 'write_state', side_effect=OSError('temporarily unavailable')):
+            with self.assertRaises(OSError):
+                tracker.update([self.window()], restore=False)
+        self.assertTrue(tracker.dirty)
+        tracker.update([self.window()])
+        self.assertFalse(tracker.dirty)
+        self.assertEqual(session.json.loads(tracker.path.read_text())['editor'][0]['workspace'], '3')
+
+    def test_pinned_and_unmapped_windows_do_not_replace_main_app_locations(self):
+        tracker = session.Placements()
+        tracker.update([self.window()], restore=False)
+        for flag, value in [('pinned', True), ('mapped', False)]:
+            window = self.window(workspace=9)
+            window[flag] = value
+            tracker.update([window])
+        self.assertEqual(tracker.saved['editor'][0]['workspace'], '3')
+
+    def test_floating_window_restores_size_position_and_uses_silent_lua_dispatch(self):
+        window = self.window(floating=True)
+        saved = session.placement(window)
+        window['floating'] = False
+        with patch.object(session.subprocess, 'run') as run:
+            session.apply_placement(window, saved)
+        command = run.call_args.args[0]
+        self.assertEqual(command[:2], ['hyprctl', 'eval'])
+        self.assertIn('follow=false', command[2])
+        self.assertIn('action="set"', command[2])
+        self.assertIn('x=800, y=600, relative=false', command[2])
+        self.assertIn('x=100, y=200, relative=false', command[2])
+
+    def test_lua_strings_escape_quotes_backslashes_newlines_and_unicode(self):
+        self.assertEqual(session.lua_string('"\\\n😀'), '"\\034\\092\\010\\240\\159\\152\\128"')
 
 
 if __name__ == '__main__':
