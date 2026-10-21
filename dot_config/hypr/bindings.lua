@@ -63,13 +63,11 @@ for key, direction in pairs({ H = "l", J = "d", K = "u", L = "r" }) do
   o.bind("ALT + SHIFT + " .. key, "Swap window " .. direction, hl.dsp.window.swap({ direction = direction }))
 end
 
--- Keep the quick launcher focused on installed applications.
-o.bind("ALT + SPACE", "Apps menu", "omarchy-menu toggle apps")
-
--- Omarchy defaults SUPER+ALT+SPACE to the Apps menu. Keep it distinct from
--- ALT+SPACE by opening the root menu with system actions such as reboot.
+-- One launcher: Oma Cast on Super+Space.
+hl.unbind("ALT + SPACE")
 hl.unbind("SUPER + ALT + SPACE")
-o.bind("SUPER + ALT + SPACE", "Omarchy menu", "omarchy-menu toggle root")
+hl.unbind("SUPER + SPACE")
+o.bind("SUPER + SPACE", "Oma Cast", hl.dsp.global("oma-cast:toggle"))
 
 -- macOS-style screenshot shortcuts retained from the old config.
 o.bind("SUPER + SHIFT + 3", "Screenshot window", "omarchy-capture-screenshot windows")
