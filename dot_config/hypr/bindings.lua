@@ -63,11 +63,11 @@ for key, direction in pairs({ H = "l", J = "d", K = "u", L = "r" }) do
   o.bind("ALT + SHIFT + " .. key, "Swap window " .. direction, hl.dsp.window.swap({ direction = direction }))
 end
 
--- One launcher: Oma Cast on Super+Space.
+-- One launcher: Keystroke on Super+Space.
 hl.unbind("ALT + SPACE")
 hl.unbind("SUPER + ALT + SPACE")
 hl.unbind("SUPER + SPACE")
-o.bind("SUPER + SPACE", "Oma Cast", hl.dsp.global("oma-cast:toggle"))
+o.bind("SUPER + SPACE", "Keystroke", "omarchy-menu toggle root")
 
 -- macOS-style screenshot shortcuts retained from the old config.
 o.bind("SUPER + SHIFT + 3", "Screenshot window", "omarchy-capture-screenshot windows")
